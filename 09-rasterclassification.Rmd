@@ -1,0 +1,372 @@
+```{r, include = FALSE}
+source("common.R")
+dir.create("./tempdir/chp9")
+```
+
+# Image Classification in Data Cubes{-}
+
+
+<a href="https://www.kaggle.com/esensing/raster-classification-in-sits" target="_blank"><img src="https://kaggle.com/static/images/open-in-kaggle.svg"/></a>
+
+In this chapter, we discuss how to classify data cubes by providing a step-by-step example. Our study area is the state of Rondonia, Brazil, that underwent substantial deforestation in the last decades. According to surveys done by Brazil's National Institute for Space Research (INPE) using satellite images, from 1988 to 2021 more than 6.46 million hectares of natural tropical forest been cut for selected a study area located in the Bahia state. The objective of the case study is to detect deforested areas. 
+
+## Training the classification model{-}
+
+The case study uses the training data set `samples_prodes_4bands`, available in package `sitsdata`. This data set consists of 480 samples collected from Sentinel-2 images covering the state of Rondonia. The samples are intended to detect deforestation events, and include four classes: "Forest", "Burned_Area",   "Cleared_Area", and "Highly_Degraded". The time series cover a set of 29 dates with a period of 16 days, ranging from "2020-06-04" to "2021-08-26". The data has 12 attributes, including original bands ("B02", "B03", "B04", "B05", "B08", "B8A", "B11", and "B12") and indices ("NDVI", "EVI" and "NBR").
+
+```{r, tidy = "styler"}
+library(sitsdata)
+# obtain the samples 
+data("samples_prodes_4classes")
+# show the contents of the samples
+sits_labels_summary(samples_prodes_4classes)
+```
+## Building a data cube{-}
+
+We now build a data cube from the Sentinel-2 images available in the package `sitsdata`. These images were downloaded from the `SENTINEL-2-L2A` collection in Microsoft Planetary Computer (`MPC`). We have chosen bands "BO2", "B8A" and "B11" images in a small area of 1000 x 1000 pixels the state of Rondonia to serve as examples. As explained in the "Earth observation data cubes" chapter, we need to inform `sits` how to parse these file names to obtain tile, date and band information. Image files are named according to the convention "cube_tile_band_date" (e.g., `cube_20LKP_BO2_2020_06_04.tif`).
+
+
+```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Color composite image of the cube for date 2021-07-25"}
+# files are available in a local directory 
+data_dir <- system.file("extdata/Rondonia-20LKP/", package = "sitsdata")
+# read data cube
+ro_cube_20LKP <- sits_cube(
+    source = "MPC",
+    collection = "SENTINEL-2-L2A",
+    data_dir = data_dir,
+    parse_info = c('X1', "tile", "band", "date")
+)
+
+# plot the cube
+plot(ro_cube_20LKP, dates = "2021-07-25", red = "B11", green = "B8A", blue = "B02")
+```
+
+## Training a deep learning model{-}
+The next step is to train a LighTAE model, using the `adamw` optimizer and a learning rate of 0.001. Since the images only have bands `BO2`, `B8A` and `B11`,  we select these bands from the training data.
+
+```{r, tidy = "styler", out.width = "80%", fig.align="center", fig.cap="Training evolution of LightTAE model."}
+# use only the bands available in the cube
+samples_3bands <- sits_select(
+    data = samples_prodes_4classes, 
+    bands = sits_bands(ro_cube_20LKP)
+)
+
+# train model using LightTAE algorithm
+ltae_model <- sits_train(
+    samples = samples_3bands, 
+    ml_method = sits_lighttae(
+        opt_hparams = list(lr = 0.001)
+        )
+)
+# plot the evolution of the model
+plot(ltae_model)
+```
+
+
+## Classification using parallel processing{-}
+
+To classify both data cubes and sets of time series, use the function `sits_classify()`, which uses parallel processing for speed up performance, as described in the end of this Chapter. Its most relevant parameters are: (a) `data`, either a data cube or a set of time series; (b) `ml_model`, a trained model using one of the machine learning methods provided; (c) `multicores`, number of CPU cores that will be used for processing; (d) `memsize`, memory available for classification; (e) `output_dir`, directory where results will be stored; (f) `version`, for version control. If users want to follow the processing steps, they should turn on the parameters `verbose` to print information and `progress` to get a progress bar. The result of the classification is a data cube with a set of probability layers, one for each output class. Each probability layer contains the model's assessment of how likely is each pixel to belong to the related class. The probability cube can be visualized with `plot()`. 
+
+```{r, tidy = "styler", out.width = "80%", fig.align="center", fig.cap="Probability maps produced by LightTAE model."}
+
+# classify data cube
+ro_cube_20LKP_probs <- sits_classify(
+    data     = ro_cube_20LKP,
+    ml_model = ltae_model,
+    output_dir = "./tempdir/chp9",
+    version = "ltae",
+    multicores = 4,
+    memsize = 12
+)
+plot(ro_cube_20LKP_probs, palette = "YlGn")
+```
+
+The probability cube is a useful tool for data analysis. It is used for post-processing smoothing, as described in this Chapter, but also in uncertainty estimates and active learning, as described in the "Uncertainty and Active Learning" Chapter.
+
+```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Final classification map."}
+# generate thematic map
+defor_map <- sits_label_classification(
+    cube = ro_cube_20LKP_probs,
+    multicores = 4,
+    memsize = 12,
+    output_dir = "./tempdir/chp9",
+    version = "no_smooth"
+)
+plot(defor_map)
+```
+
+The resulting labelled map shows a number of likely misclassified pixels which are shown as small patches surrounded by a different class. These outliers are a side-effect of pixel-based time series classification. Images contain many mixed pixels irrespective of the resolution, and there is a considerable degree of data variability in each class. These effects lead to outliers whose chance of misclassification is significant. To improve this result, `sits`  includes post-processing smoothing methods that use spatial context of the probability cubes. 
+
+## Map Reclassification{-}
+
+Reclassification of a remote sensing map refers to the process of changing the classes assigned to different pixels in the image. The purpose of reclassification is to modify the information contained in the image to better suit a specific use case. In `sits`, reclassification involves assigning new class labels to pixels based on additional information provided a reference map. Based on the labels of the classification and the reference map, the users defines rules based on the desired outcome. These rules are then applied to the classified map. The result is a new map with updated labels.
+
+To illustrate the reclassification operation in `sits`, we take a classified data cube, stored in the `sitsdata` package. As discussed in the "Earth observation data cubes" chapter, `sits` can create a data cube from a classified image file. Users need to provide the original data source and collection, the directory where  data is stored (`data_dir`), the information on how to retrieve data cube parameters from file names (`parse_info`), and the labels associated to the classified image. 
+
+```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="original classification map."}
+# Open classification map
+data_dir <- system.file("extdata/Rondonia-Class", package = "sitsdata")
+ro_class <- sits_cube(
+    source = "MPC",
+    collection = "SENTINEL-2-L2A",
+    data_dir = data_dir,
+    parse_info = c("X1", "X2", "tile", "start_date", "end_date",
+                   "band", "version"),
+    bands = "class",
+    labels = c("Water", "ClearCut_Burn", "ClearCut_Soil",
+               "ClearCut_Veg", "Forest", "Bare_Soil", "Wetland")
+)
+plot(ro_class)
+```
+
+The above map shows the total extent of deforestation by clear cuts estimated by the `sits` random forest algorithm in an area in Rondonia, Brasil, based on an time series of Sentinel-2 images for the period `2020-06-04` to `2021-08-26`. Suppose we want to estimate the deforestation that ocurred period from June 2020 to August 2021. We need a reference map that contains information on forest cuts prior to 2020. 
+
+In this example, we the PRODES deforestation map of Amazonia created by Brazil's National Institute for Space Research (INPE) as our refence. This map is produced by visual interpretation. PRODES measures deforestation on an yearly basis, starting from August of one year to July of the following year. The contains classes that represent the natural world ("Forest", "Water", "NonForest", and  "NonForest2") and classes that capture the yearly deforestation increments. These classes are labelled "dYYYY" and "rYYYY"; the first label refers to deforestation on a given year (e.g., "d2008" for deforestation for August 2007 to July 2008); the second to places where the satellite data is not sufficient to determine the land cover (e.g, "r2010" for 2010). This map is available on package "sitsdata", as shown below.
+
+
+```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Deforestation map produced by sits."}
+data_dir <- system.file("extdata/PRODES", package = "sitsdata")
+prodes2021 <- sits_cube(
+    source = "USGS",
+    collection = "LANDSAT-C2L2-SR",
+    data_dir = data_dir,
+    parse_info = c("X1", "X2", "tile", "start_date", "end_date",
+                   "band", "version"),
+    bands = "class",
+    labels = c("Forest", "Water", "NonForest",
+               "NonForest2", "NoClass", "d2007", "d2008",
+               "d2009", "d2010", "d2011", "d2012",
+               "d2013", "d2014", "d2015", "d2016",
+               "d2017", "d2018", "r2010", "r2011",
+               "r2012", "r2013", "r2014", "r2015",
+               "r2016", "r2017", "r2018", "d2019",
+               "r2019", "d2020", "NoClass", "r2020",
+               "Clouds2021", "d2021", "r2021")
+)
+
+```
+Since the labels of the deforestation map are specialized and are not part of the default `sits` color table, we define a legend for better visualisation of the different deforestation classes. Using this new legend, we can plot the PRODES deforestation map.
+
+```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Deforestation map produced by PRODES."}
+
+# use the RColorBrewer pallete "YlOrBr" for the deforestation years
+colors <- grDevices::hcl.colors(n = 15, palette = "YlOrBr")
+# define the legend for the deforestation map
+def_legend <- c(
+    "Forest" = "forestgreen", "Water" = "dodgerblue3", 
+    "NonForest" = "bisque2", "NonForest2" = "bisque2",
+    "d2007" = colors[1],  "d2008" = colors[2],
+    "d2009" = colors[3],  "d2010" = colors[4], 
+    "d2011" = colors[5],  "d2012" = colors[6],
+    "d2013" = colors[7],  "d2014" = colors[8],
+    "d2015" = colors[9],  "d2016" = colors[10],
+    "d2017" = colors[11], "d2018" = colors[12],
+    "d2019" = colors[13], "d2020" = colors[14], 
+    "d2021" = colors[15], "r2010" = "azure2",
+    "r2011" = "azure2",   "r2012" = "azure2",
+    "r2013" = "azure2",   "r2014" = "azure2",
+    "r2015" = "azure2",   "r2016" = "azure2",
+    "r2017" = "azure2",   "r2018" = "azure2",
+    "r2019" = "azure2",   "r2020" = "azure2",
+    "r2021" = "azure2",   "NoClass" = "grey90",
+    "Clouds2021" = "grey90"
+    )
+plot(prodes2021, legend = def_legend)
+```
+
+Taking the PRODES map as our refence, we can include new labels in the classified map produced by `sits` using `sits_reclassify()`. The new label "Defor_2020" will be applied to all pixels that PRODES considers that have been deforested prior to July 2020. We also include a new label "Non_Forest" to include all pixels that PRODES takes as not covered by native vegetation, such as wetlands and rocky areas. The PRODES classes will be used as a mask over the `sits` deforestation map.
+
+The `sits_reclassify()` operation requires the parameters: (a) `cube`, the classified data cube whose pixels will be reclassified; (b) `mask`, the reference data cube used as a mask; (c) `rules`, a named list. The names of the `rules` list will be the new labels of the classified cube.  Each new label is associated to a `mask` vector that includes the labels of the reference map that will be joined. `sits_reclassify()` then compares the original and reference map pixel by pixel. For each pixel of the reference map whose labels in one of the `rules`, the algorithm relabels the original map. The result will be a reclassified map that has the original labels plus the new labels that have been masked using the reference map.
+
+```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Deforestation map by sits masked by PRODES map."}
+# Reclassify cube
+ro_def_2021 <- sits_reclassify(
+    cube = ro_class,
+    mask = prodes2021,
+    rules = list(
+        "Deforestation_Mask" = mask %in% c(
+            "d2007", "d2008", "d2009",
+            "d2010", "d2011", "d2012",
+            "d2013", "d2014", "d2015",
+            "d2016", "d2017", "d2018",
+            "r2010", "r2011", "r2012",
+            "r2013", "r2014", "r2015",
+            "r2016", "r2017", "r2018",
+            "d2019", "r2019", "d2020",
+            "r2020", "r2021"
+        ),
+        "Water" = mask == "Water",
+        "Non_Forest" = mask %in% c("NonForest", "NonForest2")
+    ),
+    memsize = 8,
+    multicores = 2,
+    output_dir = "./tempdir/chp9"
+)
+# plot the reclassified map
+plot(ro_def_2021)
+```
+The reclassified map has been split into deforestation prior to mid-2020 (using the PRODES map) and the areas classified by `sits` that are taken as being deforested on the period mid-2020 to mid-2021. This allows the experts to measure how much deforestation occurred in this period according to `sits` and compare the result with that of the PRODES visual interpretation map. 
+
+The `sits_reclassify()` operation is not restricted to the comparison between deforestation maps. It can be used in any case that requires masking of a result based on a reference map. 
+
+
+## Post-classification smoothing{-}
+
+Smoothing methods are an important complement to machine learning algorithms for image classification. Since these methods are mostly pixel-based, it is useful to complement them with post-processing smoothing to include spatial information in the result. For each pixel, machine learning and other statistical algorithms provide the probabilities of that pixel belonging to each of the classes. As a first step in obtaining a result, each pixel is assigned to the class whose probability is higher. After this step, smoothing methods use class probabilities to detect and correct outliers or misclassified pixels. 
+
+Image classification post-processing has been defined as "a refinement of the labelling in a classified image in order to enhance its classification accuracy" [@Huang2014]. In remote sensing image analysis, these procedures are used  to combine pixel-based classification methods with a spatial post-processing method to remove outliers and misclassified pixels. For pixel-based classifiers, post-processing methods enable the inclusion of spatial information in the final results. 
+
+Post-processing is a desirable step in any classification process. To offset these problems, most post-processing methods use the "smoothness assumption" [@Schindler2012]: nearby pixels tend to have the same label. To put this assumption in practice, smoothing methods use the neighborhood information to remove outliers and enhance consistency in the resulting product. The spatial smoothing methods are available in `sits` are bayesian smoothing and bilinear smoothing. These methods are called using the `sits_smooth()` function, as shown in the examples below.
+
+### Bayesian smoothing{-}
+
+The assumption of all spatial smoothing methods is the existence of a spatial autocorrelation effect between a pixel and its neighbors. Spatial autocorrelation describes the degree of similarity between pixels that are located close to each other. In land use classification, class probabilities of pixels in a neighborhood are mostly similar. Pixels with high probabilities of being labelled "Forest" should be surrounded by pixels with similar class probabilities. However, sometimes a pixel with high probability for a given class (e.g., "Crops") has neighbors with which have low to moderate probabilities for this class. Bayesian smoothing uses the class probability to estimate if this is a classification error. 
+
+Bayesian inference can be thought of as way of coherently updating our uncertainty in the light of new evidence.  It allows the inclusion of expert knowledge on the derivation of probabilities. Bayesian smoothing works by considering the combination of two elements: (a) our prior belief on class probabilities; (b) the estimated probabilities for a given pixel. To estimate prior distribution to the class probabilities for each pixel, we use the values for its neighbors. The assumption is that, at local level, class probabilities should be similar and provide the baseline for comparison with the pixel values produced by the classifier. Based on these two elements, Bayesian smoothing adjusts the probabilities for the pixel based on our prior beliefs.  
+
+The intuition for Bayesian smoothing is that homogeneous neighborhoods should have the same class. These situations occur when there is a high average probability for a single class, associated with a low variance. In this case, local effects dominate. Pixels which have been assigned to a different class are updated to the one that dominates the neighborhood. In these case, the prior probability is said to be informative. By contrast, in neighborhoods where the average probability for the most frequent class is not high and that have a high variance in its values, the pixel's assigned class is likely not to be updated. 
+
+One expected consequence of Bayesian smoothing is to improve the borders between the objects created by the classification. In pixel-based classification, mixed pixels at the limits between areas with different classes pose a problem for classification. These pixels contain signatures of two classes. To account for these cases, Bayesian smoothing in `sits` uses a special definition of a neighborhood. Each pixel in a probability map of a class is associated to a neighborhood with half of the size of the local window. The pixels in this neighborhood are those having the highest probability of beloging to the class. 
+
+To run Bayesian smoothing, the parameter of `sits_smooth()` are: (a) `cube`, a probability cube produced by `sits_classify()`; (b) `type` should be `bayes` (the default); (c) `window_size`, the local window to compute the neighborhood probabilities; (d) `neigh_fraction`, fraction of local neighbors used to calculate local statistics; (e) `smoothness`, an estimate of the local variance (see Technical Annex for details); (f) `multicores`, number of CPU cores that will be used for processing; (g) `memsize`, memory available for classification; (h) `output_dir`, directory where results will be stored; (i) `version`, for version control. The resulting cube can be visualized with `plot()`. The bigger one sets the `window_size` and `smoothness` parameters, the stronger the adjustments will be.  In what follows, we compare two situations of smoothing effects, by varying the `window_size` and `smoothness` parameters. 
+
+As explained above, the `window_size` parameter controls the size of the neighborhood. However, not all pixels inside the window will be included in the Bayesian estimator.  To be reliable, local class statistics should only include pixels that are likely to belong to such class. Windows centered on border pixels contain only some pixels belonging to same class as the central pixel; the others belongs to a different class. Consider a window of size 9 x 9 around a pixel in the probability map of class "Forest". It will contain the central pixel and 80 neighbors. Instead of using all those neighbors to compute the local statistics, `sits` uses only some of them. The number of neighbors used to calculate the local statistics is set by the taking those with the highest probability of belonging to class "Forest". The percentage of pixel per window used to calculate local class statistics is set by the `neigh_fraction` parameter. 
+
+Together, the parameters `window_size` and `neigh_fraction` control how many pixels in a neighborhood are used to calculate the local statistics used by the Bayesian estimator. Since the estimator is based on Gaussian distributions, it needs at least 30 samples to produce statistical significant values. For example, setting `window size` to 9 and `neigh_fraction` to 0.5 (the defaults) ensures that at least 40 samples are used to estimate the local statistics. 
+
+```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Probability maps after bayesian smoothing."}
+# compute Bayesian smoothing
+cube_smooth_w9_s20 <- sits_smooth(
+    cube = ro_cube_20LKP_probs,
+    type = "bayes",
+    window_size = 9,
+    neigh_fraction = 0.50,
+    smoothness = 20,
+    multicores = 4,
+    memsize = 12,
+    version = "bayes_w9_s20",
+    output_dir = "./tempdir/chp9"
+)
+# plot the result
+plot(cube_smooth_w9_s20, palette = "YlGn")
+```
+
+Bayesian smoothing has removed some of local variability associated to misclassified pixels which are different from their neighbors. The impact of smoothing is best appreciated comparing the labelled map produced without smoothing to the one that follows the procedure, as shown below.
+
+```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Final classification map after Bayesian smoothing with 5 x 5 window and smoothness = 30."}
+# generate thematic map
+defor_map_smooth_w9_20 <- sits_label_classification(
+    cube = cube_smooth_w9_s20,
+    multicores = 4,
+    memsize = 12,
+    output_dir = "./tempdir/chp8",
+    version = "bayes_w9_s20"
+)
+plot(defor_map_smooth_w9_20)
+```
+
+To produce an even stronger smoothing effect, the example below uses bigger values for `window_size` and `smoothness`. 
+
+```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Probability maps after bayesian smoothing with 9 x 9 window smoothness = 80."}
+# compute Bayesian smoothing
+cube_smooth_w13_s80 <- sits_smooth(
+    cube = ro_cube_20LKP_probs,
+    type = "bayes",
+    window_size = 13,
+    smoothness = 80,
+    multicores = 4,
+    memsize = 12,
+    version = "bayes_w13_s80",
+    output_dir = "./tempdir/chp8"
+)
+# plot the result
+plot(cube_smooth_w13_s80, palette = "YlGn")
+```
+
+
+Comparing the two maps, it is apparent that the smoothing procedure has reduced a lot of the noise in the original classification and produced a more homogeneous result. Although more pleasing to the eye, this map may not be be more accurate than the previous one, since much spatial details has been lost.  
+
+```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Final classification map after Bayesian smoothing with 9 x 9 size."}
+# generate thematic map
+defor_map_smooth_w13_s80 <- sits_label_classification(
+    cube = cube_smooth_w13_s80,
+    multicores = 4,
+    memsize = 12,
+    output_dir = "./tempdir/chp8",
+    version = "bayes_w13_s80"
+)
+plot(defor_map_smooth_w13_s80, palette = "YlGn")
+```
+## Bilateral smoothing{-} 
+
+One of the problems with post-classification smoothing is that we would like to remove noisy pixels (e.g., a pixel with high probability of being labeled "Forest" in the midst of pixels likely to be labeled "Cerrado"), but would also like to preserve the edges between areas. Because of its design, bilateral filter has proven to be a useful method for post-classification processing since it preserves edges while removing noisy pixels [@Schindler2012].
+
+Bilateral smoothing combines proximity (combining pixels which are close) and similarity (comparing the values of the pixels) [@Tomasi1998]. If most of the pixels in a neighborhood have similar values, it is easy to identify outliers and noisy pixels. In contrast, there is a strong difference between the values of pixels in a  neighborhood, it is possible that the pixel is located in a class boundary. The method takes a considers two factors: the distance between the pixel and its neighbors, and the difference in class probabilities between them. Each of the values contributes according to a Gaussian kernel. These factors are calculated independently. Big difference between class probability values reduce the influence of the neighbor in the smoothed pixel. Big distances between pixels also reduce the impact of neighbors.
+
+To run bilateral smoothing, the parameter of `sits_smooth()` are: (a) `cube`, a probability cube produced by `sits_classify()`; (b) `type` should be `bilateral`; (c) `window_size`, the local window to compute the neighborhood probabilities; (d) `sigma`, an estimate of the variance of the Gaussian kernel based on distances (see Technical Annex for details); (e) `tau`, an estimate of the variance of the Gaussian kernel based on local probabilities; (f) `multicores`, number of CPU cores that will be used for processing; (g) `memsize`, memory available for classification; (h) `output_dir`, directory where results will be stored; (v) `version`, for version control. The resulting cube can be visualized with `plot()`. 
+
+The bigger one sets the `window_size`, the stronger the adjustments will be.  The `sigma` parameter controls the effects of distance; larger values will reduce the influence of the neighbors. The `tau` parameter controls the influence of the class probabilities of the neighbors.  Larger values of `sigma` will increase the influence of the neighbors. To achieve a satisfactory result, we need to balance the `sigma` and `tau`. As a general rule, the values of `tau` should range from 0.05 to 0.50, while the values of `sigma` should vary between 4 and 16[@Paris2007]. The default values adopted in `sits` are `tau = 0.1` and `sigma = 8`. As the best values of `sigma` and `tau` depend on the variance of the noisy pixels, users are encouraged to experiment and find parameter values that best fit their requirements.
+
+The following example shows the behavior of the bilateral smoother and its impact on the classification map. The results show only a moderate reduction of classification noise. 
+
+```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Classified image with bilateral smoothing"}
+# smooth the result with a bilateral filter
+cube_smooth_bil_1 <- sits_smooth(
+    cube = ro_cube_20LKP_probs, 
+    type = "bilateral",
+    window_size = 5,
+    sigma = 8,
+    tau = 0.1,
+    multicores = 4,
+    memsize = 12,
+    version = "bil_w5_s8_t01",
+    output_dir = "./tempdir/chp8"
+)
+
+# label the smoothed probability images
+map_bil_1 <- sits_label_classification(
+    cube = cube_smooth_bil_1,
+    multicores = 4,
+    memsize = 12,
+    version = "bil_w5_s8_t01",
+    output_dir = "./tempdir/chp8")
+# plot the result
+plot(map_bil_1, palette = "YlGn")
+```
+
+For a stronger reduction in classification noise, we can increase the window size, while reducing the variance of the Gaussian kernels by decreasing `sigma` and `tau`. 
+
+```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Classified image with bilateral smoothing"}
+# smooth the result with a bilateral filter
+cube_smooth_bil_2 <- sits_smooth(
+    cube = ro_cube_20LKP_probs, 
+    type = "bilateral",
+    window_size = 9,
+    sigma = 16,
+    tau = 0.5,
+    multicores = 4,
+    memsize = 12,
+    version = "bil_w9_s16_t05",
+    output_dir = "./tempdir/chp8"
+)
+
+# label the smoothed probability images
+map_bil_2 <- sits_label_classification(
+    cube = cube_smooth_bil_2,
+    multicores = 4,
+    memsize = 12,
+    version = "bil_w9_s16_t05",
+    output_dir = "./tempdir/chp8")
+# plot the result
+plot(map_bil_2, palette = "YlGn")
+```
+
+Bayesian smoothing tends to produce more homogeneous labeled images than bilateral smoothing. However, some spatial details and some edges are better preserved by the bilateral method. Choosing between the methods depends on user needs and requirements. Since Bayesian smoothing is based on class probabilities and is simpler to parameterize than bilateral smoothing, we recommend the former rather than the latter.  In any case, as stated by Schindler [@Schindler2012], smoothing improves the quality of classified images and thus should be applied in most situations.
+
+
+
+
+
+
+
+

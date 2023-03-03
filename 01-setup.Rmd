@@ -1,0 +1,67 @@
+# Setup {.unnumbered}
+
+The `sits` package relies on the `sf` and `terra` **R** packages, which in turn require the GDAL and PROJ libraries. Please follow the instructions below for installing `sf` and `terra` together with GDAL, provided by Edzer Pebesma.
+
+## Support for GDAL and PROJ {.unnumbered}
+
+### Windows and MacOS {.unnumbered}
+
+Windows and MacOS users are strongly encouraged to install the `sf` and `terra` binary packages from CRAN. To install `sits` from source, please install package `Rtools` to have access to the compiling environment.
+
+### Ubuntu {.unnumbered}
+
+For Ubuntu versions 20.04 (focal) and 22.04 (jammy), we provide a script for fast installation, based on the work by Dirk Eddelbuettel in [r2u](https://github.com/eddelbuettel/r2u) project. The script installs binary versions of sits and all its dependencies. It requires R version 4.2.0 or later. To download the script use:
+
+```bash
+wget https://raw.githubusercontent.com/e-sensing/sitsbook/master/utils/fast_sits_installation_ubuntu.sh
+```
+
+and run the script as sudo:
+
+```bash
+sudo sh fast_sits_installation_ubuntu.sh
+```
+
+Alternatively, the installation can be done step-by-step. We recommend using the latest version of the GDAL, GEOS, and PROJ4  libraries. To do so, use the repository `ubuntugis-unstable`, which should be done as follows:
+
+``` sh
+sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+sudo apt-get update
+sudo apt-get install libudunits2-dev libgdal-dev libgeos-dev libproj-dev 
+```
+
+If you get an error while adding this PPA repository, it could be because you miss the package `software-properties-common`. When GDAL is running in `docker` containers, please add the security flag `--security-opt seccomp=unconfined` on start. 
+
+### Debian{-}
+
+To install on Debian, use the [rocker geospatial](https://github.com/rocker-org/geospatial) dockerfiles. 
+
+### Fedora {.unnumbered}
+
+The following command installs all required dependencies:
+
+``` sh
+sudo dnf install gdal-devel proj-devel geos-devel sqlite-devel udunits2-devel
+```
+
+## Installing the `sits` package {.unnumbered}
+
+`sits` is available on CRAN and should be installed as other **R** packages.
+
+```{r, eval = FALSE}
+install.packages("sits")
+```
+
+The source code repository is on GitHub <https://github.com/e-sensing/sits>. To install the development version of `sits`, which contains the latest updates but might be unstable, users should install `devtools` if not already available, as then install sits as follows:
+
+```{r, eval = FALSE}
+install.packages("devtools")
+devtools::install_github("e-sensing/sits@dev", dependencies = TRUE)
+```
+
+To run the examples in the book, please also install the "sitsdata" package.
+
+```{r, eval = FALSE}
+options(download.file.method = "wget")
+devtools::install_github("e-sensing/sitsdata")
+```

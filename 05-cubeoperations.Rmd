@@ -1,0 +1,169 @@
+# Operations on Data Cubes{-}
+
+```{r, echo = FALSE}
+source("common.R")
+library(sits)
+```
+
+## Pixel-based and neighborhood-based operations{-}
+
+Many remote sensing applications use attributes and indexes produced by operations on one or multiple bands. Using the  `sits_apply()` function, users specify the desired mathematical operation as function of the bands available on the cube. The function then performs the operation for all tiles and all temporal interval, using any valid R expression to compute the new indices. Besides arithmetic operators, the function also accepts vectorized R function that can be applied to a matrix (e.g., `sqrt()`, `log()`, and `sin()`. There are two types of operations in `sits_apply()`: 
+
+1. Pixel-based operations that produce an index, based on individual pixels of existing bands. The input bands and indexes should be part of the input data cube and should have the same names as used in the cube. The new index will be computed for every pixel of all images in the time series. 
+2. Neighborhood-based operations that produce a derived value based on a window centered around each individual pixel. The available functions  are `w_median()`, `w_sum()`, `w_mean()`, `w_min()`, `w_max()`, `w_sd()` (standard deviation) and `w_var()` (variance). Users set the size of the window (only odd values are allowed).
+
+The following examples show how to use the `sits_apply()` function.
+
+## Computing NDVI and its variations{-}
+
+Using vegetation indexes is an established practice on remote sensing. These indexes aim to improve discrimination of vegetation structure by combining two wavebands, one where leaf pigments reflect incoming light with another where leaves absorb incoming radiation. Green leaves from natural vegetation such as forests have a strong emissivity rate in the near infrared bands and low emissivity rates on the red bands of the electromagnetic spectrum. These spectral properties are used to calculate the NDVI (Normalized Difference Vegetation Index), a widely used index which is  computed as the normalized difference between the values of infra-red and red bands. The inclusion of red-edge bands in Sentinel-2 images has broadened the scope of the bands used to calculate these indices[@Xie2019][@Sun2020a]. In what follows, we show examples of vegetation index calculation, using a Sentinel-2 data cube. 
+
+First, we define a data cube for a tile in the Amazon region in the state of Rondonia, Brazil, including bands used to compute different vegetation indexes. We regularize the a cube using a target resolution of 60 meters to reduce processing time. 
+
+```{r, tidy="styler"}
+# create a directory to store files
+if (!file.exists("./tempdir/chp5"))
+    dir.create("./tempdir/chp5")
+
+# creating an irregular data cube from MSPC
+s2_cube <- sits_cube(
+    source = "MPC",
+    collection = "SENTINEL-2-L2A",
+    tiles = c("20LKP"),
+    bands = c("B02", "B03", "B04", "B05", "B06", "B07", "B08", "B8A", "B11", "B12","CLOUD"),
+    start_date = as.Date("2018-07-01"),
+    end_date = as.Date("2018-08-31")
+)
+# regularize the cube to 15 day intervals
+reg_cube <- sits_regularize(
+          cube       = s2_cube,
+          output_dir = "./tempdir/chp5",
+          res        = 60,
+          period     = "P15D",
+          multicores = 4
+)
+```
+
+There are many options for calculating NDVI-related indexes for Sentinel-2 bands. The most widely used method combines band "B08" (785-899 nm) and band "B04" (650-680 nm). Recent works in the literature propose the use of the red-edge bands "B05" (698-713 nm), "B06" (733-748 nm) and "B07" (773-793 nm) for capturing subtle variations in chlorophyll absorption producing indexes which are called Normalized Difference Vegetation Red-edge indexes (NDRE) [@Xie2019]. In recent paper, Sun et al.[@Sun2020a] argue that a vegetation index built using bands "B06" and "B07" provide a better approximation to leaf area index estimates. In a recent review, Chaves et al.[@Chaves2020] argues that red-edge bands are important for distinguishing leaf structure and chlorophyll content of different vegetation species. In the example below, we show how to include additional indexes in the regular data cube which has the Sentinel-2 spectral bands. 
+
+We first calculate the NDVI in the usual way, using bands B08 and B04.
+
+```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="NDVI using bands B08 and B04 of Sentinel-2"}
+
+# calculate new indexes
+reg_cube <- sits_apply(reg_cube,
+    NDVI = (B08 - B04)/(B08 + B04),
+    output_dir = "./tempdir/chp5",
+    multicores = 4,
+    memsize = 12
+)
+plot(reg_cube, band = "NDVI", palette = "RdYlGn")
+```
+We now compare the traditional NDVI with other vegetation indexes computed using red-edge bands. We first compute the NDRE1 using bands "B06" and "B05". 
+
+```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="NDRE1 using bands B06 and B05 of Sentinel-2"}
+
+# calculate new indexes
+# NDRE1 using bands B06 and B05
+reg_cube <- sits_apply(reg_cube,
+    NDRE1 = (B06 - B05)/(B06 + B05),
+    output_dir = "./tempdir/chp5",
+    multicores = 4,
+    memsize = 12
+)
+# plot NDRE1 index
+plot(reg_cube, band = "NDRE1",  palette = "RdYlGn")
+```
+You can notice that the contrast between forests and deforested areas is stronger in the NDRE1 index than with NDVI. We can also compare this index with other red-edge based indexes as shown below. We first calculate NDRE2 using bands "B07" and "B05". 
+
+```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="NDRE2 using bands B07 and B05 of Sentinel-2"}
+
+# calculate new index
+# NDRE2 using bands B07 and B05
+reg_cube <- sits_apply(reg_cube,
+    NDRE2 = (B07 - B05)/(B07 + B05),
+    output_dir = "./tempdir/chp5",
+    multicores = 4,
+    memsize = 12
+)
+# plot NDRE2 index
+plot(reg_cube, band = "NDRE2", palette = "RdYlGn")
+```
+Finally, we can calculate the third red-edge based vegetation index using bands "B06" and "B07". 
+
+```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="NDVI using bands B08 and B04 of Sentinel-2"}
+
+# calculate new indexes
+# NDRE3 using bands B07 and B06 
+reg_cube <- sits_apply(reg_cube,
+    NDRE3 = (B07 - B06)/(B07 + B06),
+    output_dir = "./tempdir/chp5",
+    multicores = 4,
+    memsize = 12
+)
+# plot NDRE3 index
+plot(reg_cube, band = "NDRE3", palette = "RdYlGn")
+```
+
+## Spectral indexes for identification of burned areas{-}
+
+Another relevant use of band combination is the creation of spectral indexes for detection of degradation by fires, which are an important element in environmental degradation. Forest fires have a significant impact on emissions and impoverish natural ecosystems[@Nepstad1999]. Fires open the canopy, make the microclimate drier and increase the amount of dry fuel[@Gao2020]. One well-established technique for detecting burned areas with remote sensing images is the normalized burn ratio (NBR) as the difference between the near infrared and the short wave infrared band, here calculated using the `B8A` and `B12` bands.
+
+```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP"}
+# calculate the normalized burn ratio 
+reg_cube <- sits_apply(reg_cube,
+    NBR = (B12 - B8A)/(B12 + B8A),
+    output_dir = "./tempdir/chp5",
+    multicores = 4,
+    memsize = 12
+)
+# plot the NBR for the first date"
+plot(reg_cube, band = "NBR", palette = "Reds")
+```
+
+## Spectral mixture analysis{-}
+
+One of most useful tools for analysis of land remote sensing images is the use of spectral mixture models[@Roberts1993, @Shimabukuro1991, @Souza2005]. The rationale for mixture models arises due to the spatial resolution associated to pixels of medium-resolution images. In general, the values for these pixels  contain a mixture of spectral responses of different types of land cover contained inside a resolution element [@Shimabukuro2019]. Assuming that the set of land cover classes (called endmembers) is known, the goal of spectral mixture analysis is to derive a set of new bands, each containing the proportion of each endmember. The most used method for spectral mixture analysis is the linear model [@Shimabukuro2019], expressed as 
+
+$$
+R_i = \sum_{j=1}^N a_{i,j}*x_j + \epsilon_i, i \in {1,...M}, M > N
+$$
+where $i=1,..M$ is the set of spectral bands and $j=1,..N$ is the set of land cover types. For each pixel, $R_i$ is the reflectance in the i-th spectral band, $x_j$ is the value of the reflectance due to the j-th endmember, $a_{i,j}$ is the proportion between the j-th endmember and the i-th spectral band. The model includes an error term $e_i$. The linear model can be interpreted as system of equations where the spectral response of the pixel is a linear combination of the spectral response of the endmembers[@Shimabukuro2019]. To solve this system of equations and obtain the proportion of each endmember, `sits` uses a non-negative least squares (NNLS) regression algorithm which is available in the R package `RStoolbox` and was developed by Jakob Schwalb-Willmann, based on the sequential coordinate-wise algorithm (SCA) proposed on Franc et al. [@Franc2005]. 
+
+
+To run the mixture model in `sits`, it is necessary to inform the values of pixels which are covered entirely by a single class. These are the so-called "pure" pixels. These pixels should be chosen carefully and based on expert knowledge of the area. The quality of the resulting endmember images depends on the quality of the pure pixels. Since `sits` supports multiple endmember spectral mixture analysis[@Roberts1998], users can specify more than one pure pixel per endmember to account for natural variability. 
+
+In `sits`, spectral mixture analysis is done by the `sits_mixture_model()` function, which has two mandatory parameters: `cube` (a data cube) and `endmembers`, a named table (or equivalent) defines the defines the pure pixels. The `endmembers` table should name the following named columns: (a) `type`, that defines the class associated to an endmember; (b) names, the names of the bands. Each line of the table should contain the value of each endmember for all bands (see example). To improve readability, we suggest that the `endmembers` parameters be defined as a `tribble`. A `tribble` is a `tibble` with an easier to read row-by-row layout. In the example below, we define three endmmembers for classes "forest", "soil", "water".  Note that the values for each band are expressed as integers ranging from 0 to 10,000. 
+
+```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="Percentage of forest per pixel estimated by mixture model"}
+# define the endmembers for three classes and six bands
+em <- tibble::tribble(
+    ~type,    ~B02, ~B03, ~B04, ~B8A, ~B11, ~B12,
+    "forest",  200,  352,  189, 2800, 1340,  546,
+    "soil",    400,  650,  700, 3600, 3500, 1800,
+    "water",   700, 1100, 1400,  850,   40,   26,
+)
+# Generate the mixture model
+reg_cube <- sits_mixture_model(
+    data = reg_cube,
+    endmembers = em,
+    multicores = 4,
+    memsize = 12,
+    output_dir = "./tempdir/chp5"
+)
+# plot the FOREST for the first date using the "forest" palette
+plot(reg_cube, band = "FOREST", palette = "Greens")
+```
+
+```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="Percentage of water per pixel estimated by mixture model"}
+
+# plot the water endmember for the first date using the water palette
+plot(reg_cube, band = "WATER", palette = "Blues")
+```
+
+```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="Percentage of soil per pixel estimated by mixture model"}
+# plot the SOIL endmember for the first date using the "soil" palette 
+plot(reg_cube, band = "SOIL", palette = "OrRd")
+```
+
+Spectral mixture analysis methods have many application on remote sensing, including  forest degradation[@Cochrane1998, @Shimabukuro2019, @Bullock2020, @Chen2021], wetland surface dynamics [@Halabisky2016] and urban area characterization [@Wu2003]. Their use in `sits` allows a unique combination of mixture models and time series analysis.

@@ -1,0 +1,207 @@
+# Uncertainty and active learning{-}
+
+```{r, echo = FALSE}
+source("common.R")
+```
+
+Land use and land cover classification tasks have unique characteristics that differ from other machine learning domains such as image recognition and natural language processing. The main challenge for land classification is to be able to describe the diversity of the planet's landscapes in a handful of labels. However, the diversity of the world's ecosystem makes all classification systems to be biased approximations of reality. As stated by Murphy : “The gradation of properties in the world means that our smallish number of categories will never map perfectly onto all objects” [@Murphy2002]. For this reason, `sits` provides tools for users to improve their classifications by iterative means, using a process called "active learning". 
+
+Active learning is an approach to information extraction where the human expert is continuously involved in providing labels to samples. In traditional classification methods, experts provide a set of training samples and use a machine learning algorithm to produce map. By contrast, the active learning approach puts the human in the loop[@Monarch2021]. At each iteration, an unlabeled set of samples is presented to the user, which assigns classes to them and includes them in the training set [@Crawford2013]. The process is repeated until the expert is satisfied with the result, as shown in the Figure below. 
+
+```{r, echo = FALSE, out.width = "100%", fig.align="center", fig.cap="Active learning approach (source: Crawford et al., 2013)"}
+knitr::include_graphics("images/active_learning.png")
+```
+
+Active learning aims to reduce bias and errors in sample selection and as such improve the accuracy of the result. At each interaction, experts are asked to review  pixels where the ML classifier indicates a high value of uncertainty. Source of classification uncertainty include missing classes and or mislabeled samples. In `sits`, active learning is supported by the combination of three functions: `sits_uncertainty()`, `sits_uncertainty_sampling()` and `sits_confidence_sampling()`. 
+
+## Measuring uncertainty{-} 
+
+The function `sits_uncertainty()` calculates the uncertainty cube based on the probabilities produced by the classifier. It takes a probability cube as input. The uncertainty measure is relevant in the context of active leaning, and helps to increase the quantity and quality of training samples by providing information about the confidence of the model. The supported types of uncertainty are 'entropy', 'least', 'margin' and 'ratio'. 
+
+Least confidence sampling is computed as the difference between no uncertainty (100% confidence) and the probability of the most likely class, normalized by the number of classes. Let $P_1(i)$ be the higher class probability for pixel $i$. Then least confidence sampling is expressed as
+
+$$
+\theta_{LC} = (1 - P_1(i)) * \frac{n}{n-1}
+$$
+
+Margin of confidence sampling is the difference between the two most confident predictions, expressed in range from 0% (no uncertainty) to 100% (maximum uncertainty). Let $P_1(i)$ and be $P_1(i)$ the two higher class probability for pixel $i$. Then, margin of confidence is expressed as 
+
+$$
+\theta_{MC} = (1 - P_1(i) - P_2(i))
+$$
+Ratio of confidence is the measure of the ratio between the two most confident predictions, expressed in range from 0% (no uncertainty) to 100% (maximum uncertainty). Let $P_1(i)$ and be $P_1(i)$ the two higher class probability for pixel $i$. Then, ratio of confidence is expressed as 
+$$
+\theta_{RC} = \frac{P_2(i)}{P_1(i)}
+$$
+
+Entropy is a measure of uncertainty used by Claude Shannon on his classic work "A Mathematical Theory of Communication". It is related to amount of variability in the probabilities associated to a pixel. The lower the variability, the lower the entropy. Let $P_k(i)$ be the probability associated to class $k$ for pixel $i$. The entropy is calculated as 
+$$
+\theta_{E} = \frac{-\sum_{k=1}^K P_k(i) * log_2(P_k(i))}{log_2{n}}
+$$
+
+The parameters for `sits_uncertainty()` are: `cube`, a probability data cube; `type`, the uncertainty measure (default is `least`). In the case of entropy, it also requires the parameters  `window_size`, size of neighborhood to calculate entropy (default is 5) and `window_fn`, function to be applied in entropy calculation (default is `median`). As with other processing functions, users can specify `multicores` as the number of cores to run the function and `memsize`, maximum overall memory (in GB) to run the function. Optional parameters include `output_dir` (output directory for image files) and `version` (version of result).
+
+## Using uncertainty measures for active learning{-}
+
+The following case study shows how uncertainty measures can be used in the context of active learning. The study area is subset of one Sentinel-2 tile in the state of Rondonia, Brazil. The aim of the work is to detect deforestation in the Brazilian Amazonia. The first step is to produce a regular data cube for the chosen area rom the period 2020-06-01 to 2021-09-01. To reduce processing time and storage, we use only three bands ("B02", "B8A", "B11") plus the cloud band, and take a small area inside the tile. 
+
+```{r, tidy = "styler", out.width = "80%", fig.align="center", fig.cap="Area in Rondonia near Samuel dam (source: authors)"}
+# create a directory to store files
+if (!file.exists("./tempdir/chp11"))
+    dir.create("./tempdir/chp11")
+# select a S2 tile
+s2_cube_ro <- sits_cube(
+      source = "MPC",
+      collection = "sentinel-2-l2a",
+      tiles = "20LMR",
+      bands = c("B02", "B8A", "B11", "SCL"),
+      start_date = as.Date("2020-06-01"),
+      end_date = as.Date("2021-09-01")
+)
+# select a small area inside the tile
+
+roi = c(lon_max = -63.25790, lon_min = -63.6078, 
+        lat_max = -8.72290, lat_min = -8.95630)
+
+# regularize the small area cube
+
+s2_reg_cube_ro <- sits_regularize(
+  cube = s2_cube_ro,
+  output_dir = "./tempdir/chp11/",
+  res = 20,
+  roi = roi,
+  period = "P16D",
+  multicores = 4
+)
+plot(s2_reg_cube_ro, red = "B11", green = "B8A", blue = "B02")
+```
+The study is located close to the Samuel Hydroelectric Dam, close to  Porto Velho, Rondônia, Brazil. The dam project was controversial since it had a major environmental impact. The next step is to classify this study area using a dataset containing a tibble with 480 times series collected over the state of Rondonia (Brasil) for detecting deforestation. Each time series contains 8 bands ("B02", "B03", "B04", "B08", "B8A", "B11", "B12") and three indices ("NDVI", "EVI", "NBR") and 4 classes ("Burned_Area", "Forest", "Highly_Degraded" and "Cleared_Area"). The cube is classified using a LightTAE model, post-processed by a Bayesian smoothing, and then labelled.
+
+```{r, tidy = "styler", out.width = "90%", out.height = "70%", fig.align="center", fig.cap="Classified map for area in Rondonia near Samuel dam (source: authors)"}
+library(sitsdata)
+# load the traning set
+data("samples_prodes_4classes")
+# select the same three bands used in the data cube
+samples_4classes_3bands <- sits_select(
+    data = samples_prodes_4classes, 
+    bands = c("B02", "B8A", "B11")
+)
+# Train a lightTAE model 
+ltae_model <- sits_train(
+    samples = samples_4classes_3bands, 
+    ml_method = sits_lighttae()
+)
+# classify the small area cube
+s2_cube_probs <- sits_classify(
+    data = s2_reg_cube_ro,
+    ml_model = ltae_model,
+    output_dir = "./tempdir/chp11/",
+    memsize = 15,
+    multicores = 5
+)
+# post-process the probability cube
+s2_cube_bayes <- sits_smooth(
+    cube = s2_cube_probs,
+    output_dir = "./tempdir/chp11/",
+    memsize = 16,
+    multicores = 4
+)
+# label the post-processed  probability cube
+s2_cube_label <- sits_label_classification(
+    cube = s2_cube_bayes,
+    output_dir = "./tempdir/chp11/",
+    memsize = 16,
+    multicores = 4  
+)
+plot(s2_cube_label)
+```
+The resulting map correctly identifies the forest area and the deforestation. However, it wrongly classifies the area covered by the Samuel hydroelectric dam. The reason is the lack of samples for classes related to surface water and wetlands. To improve the classification, we need to improve our samples. To do that, the first step is calculate the uncertainty of the classification.
+
+```{r, tidy = "styler", out.width = "70%", out.height = "70%", fig.align="center", fig.cap= "Uncertainty map for classification in Rondonia near Samuel dam (source: authors)"}
+# calculate the uncertainty cube
+s2_cube_uncert <- sits_uncertainty(
+    cube = s2_cube_bayes,
+    type = "entropy",
+    output_dir = "./tempdir/chp11/",
+    memsize = 16,
+    multicores = 4  
+)
+plot(s2_cube_uncert)
+```
+As expected, the places of highest uncertainty are those covered by surface water or associated to wetlands. These places are likely to be misclassified. For this reason, `sits` provides the function `sits_uncertainty_sampling()` which takes the uncertainty cube as its input and produces a tibble with locations in WGS84 that have high uncertainty. The function has three parameters: `n`, number of uncertain points to be included; `min_uncert`, minimum value of uncertainty for pixels to be included in the list; and `sampling_window`, to improve the spatial distribution of the new samples by avoiding points in the same neighborhood to be included. After running the function, we can use `sits_view()` to visualize the location of the samples.
+
+```{r, tidy = "styler", echo = TRUE, eval = FALSE}
+# calculate the uncertainty cube
+new_samples <- sits_uncertainty_sampling(
+    uncert_cube = s2_cube_uncert,
+    n = 20,
+    min_uncert = 0.5,
+    sampling_window = 10
+)
+# view the location of the samples
+sits_view(new_samples)
+```
+
+
+
+```{r, tidy = "styler", echo = FALSE, eval = TRUE, out.width = "70%", out.height = "70%", fig.align="center", fig.cap= "Location of uncertain pixel for classification in Rondonia near Samuel dam (source: authors)"}
+# calculate the uncertainty cube
+new_samples <- sits_uncertainty_sampling(
+    uncert_cube = s2_cube_uncert,
+    n = 20,
+    min_uncert = 0.5,
+    sampling_window = 10
+)
+knitr::include_graphics("images/uncertain_pixels.png")
+```
+
+The visualization shows that the samples are located in the areas covered by the Samuel data. As a first approximation, one can use the label "Wetlands" to designate these samples. A more detailed evaluation, which is recommended in practices, requires analysing these samples with an exploration software such as QGIS and individually labelling each sample. In our case, we will take a direct approach for illustration purposes.
+
+```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap= "New land classification in Rondonia near Samuel dam (source: authors)"}
+# label the new samples
+new_samples$label <- "Wetland"
+# obtain the time series from the regularized cube 
+new_samples_ts <- sits_get_data(
+    cube = s2_reg_cube,
+    samples = new_samples
+)
+# join the new samples with the original ones with 4 classes
+samples_4classes_3bands_round_2 <- dplyr::bind_rows(
+    samples_4classes_3bands,
+    new_samples_ts
+)
+# train a lightTAE model with the new sample set
+ltae_model_v2 <- sits_train(
+    samples = samples_4classes_3bands_round_2, 
+    ml_method = sits_lighttae()
+)
+# classify the small area cube
+s2_cube_probs_v2 <- sits_classify(
+    data = s2_reg_cube,
+    ml_model = ltae_model_v2,
+    output_dir = "./tempdir/chp11/",
+    version = "v2",
+    memsize = 16,
+    multicores = 4
+)
+# post-process the probability cube
+s2_cube_bayes_v2 <- sits_smooth(
+    cube = s2_cube_probs_v2,
+    output_dir = "./tempdir/chp11/",
+    version = "v2",
+    memsize = 16,
+    multicores = 4
+)
+# label the post-processed  probability cube
+s2_cube_label_v2 <- sits_label_classification(
+    cube = s2_cube_bayes_v2,
+    output_dir = "./tempdir/chp11/",
+    version = "v2",
+    memsize = 16,
+    multicores = 4  
+)
+# plot the second version of the classified cube
+plot(s2_cube_label_v2)
+```
+
+The results shows a significant quality gain over the earlier classification. In general, the combination of uncertainty measurements with active learning is a recommended practice for improving classification results. 

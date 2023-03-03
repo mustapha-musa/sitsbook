@@ -1,0 +1,84 @@
+# Design and extensibility considerations{-}
+
+```{r, include = FALSE}
+source("common.R")
+```
+
+This section is intended for programmers and experts that would like to extend the capabilities of `sits`, either by including new data sources, ML algorithms, exporting data to be used in Python or QGIS, or including new display colors. 
+
+## Data structures{-}
+
+The `sits` package uses primarily two data structures: a data cube and a time series table. Most operations in sits use them for input and output. Data cubes are R tibbles where each row contains metadata related to one tile of the reference system used by the satellite operator, as shown in the example below. 
+
+```{r, tidy = "styler"}
+# create a data cube for Sentinel-2/2A images 
+s2_20LKP_cube_MPC <- sits_cube(
+      source = "MPC",
+      collection = "SENTINEL-2-L2A",
+      tiles = "20LKP",
+      bands = c("B05", "B8A", "B11", "CLOUD"),
+      start_date = "2019-07-01",
+      end_date = "2019-07-28"
+      
+)
+# print information on the first 5 columns
+s2_20LKP_cube_MPC[,1:5]
+```
+```{r, tidy = "styler"}
+# print information on the other columns
+s2_20LKP_cube_MPC[,6:11]
+```
+
+The data cube tibble contains typical information (including satellite, sensor, tile, bounding box, crs). The last column, named `file_info`, contains a nested tibble with information on the individual files that are part of the data cube. The most important columns are `date`, `band` and `path`. 
+```{r, tidy = "styler"}
+# print the file information for the cube
+s2_20LKP_cube_MPC$file_info[[1]][, c("date", "band", "path")]
+```
+
+The time series tibble contains data and metadata. The first six columns contain spatial and temporal information, the label assigned to the sample, and the data cube from where the data has been extracted. The `time_series` column contains the time series data for each spatiotemporal location. This data is also organized as a tibble, with a column with the dates and the other columns with the values for each spectral band. 
+
+```{r, tidy = "styler"}
+# print the first 6 columns of a time series tibble
+library(sitsdata)
+samples_cerrado_mod13q1[,1:6]
+```
+```{r, tidy = "styler"}
+# print the time series associated to the first location of a tibble
+samples_cerrado_mod13q1$time_series[[1]]
+```
+
+Both the data cube and the time series tibble can be exported to exchange formats such as JSON.
+
+```{r, tidy = "styler", eval = FALSE}
+library(jsonlite)
+# export the data cube to JSON
+jsonlite::write_json(
+  x = s2_20LKP_cube_MPC,
+  path = "./data_cube.json",
+  pretty = TRUE
+)
+# export the time series to JSON
+jsonlite::write_json(
+  x = samples_prodes_4classes,
+  path = "./time_series.json",
+  pretty = TRUE
+)
+```
+
+
+## Extending the color table{-}
+
+In examples provided in the book, the color legend is taken for the predefined color table provided by `sits`. The options for defining labels and colors include:
+
+1.  Predefined color table: `sits` has a default color table, that can be shown using the command `sits_config_show(colors = TRUE)`. This color definition file assigns colors to about 250 class names, including the IPCC and IGBP land use classes, the UMD GLAD classification scheme, the FAO LCC1 and LCCS2 land use layers, and the LCCS3 surface hydrology layer.
+2.  User-defined defined color table: users can set the legend they prefer with a YAML user-defined configuration file. This file should defined by the environmental variable `SITS_CONFIG_USER_FILE`. Create an YAML file, and then set the path to it with `Sys.setenv(SITS_CONFIG_USER_FILE="path_to_myfile")`. An example of an YAML file with user-defined legend is shown below.
+3. User-defined legend: users may define their own legends and pass them as parameters to to the `plot` function.
+
+```{yaml}
+colors:
+    Cropland:           "khaki"
+    Deforestation:      "sienna"
+    Forest :            "darkgreen"
+    Grassland :         "lightgreen"
+    NonForest:          "lightsteelblue1"
+```

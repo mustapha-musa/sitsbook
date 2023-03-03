@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Technical Annex | sits: Satellite Image Time Series Analysis on Earth Observation Data Cubes</title>
+<meta name="author" content="Gilberto Camara">
+<meta name="author" content="Rolf Simoes">
+<meta name="author" content="Felipe Souza">
+<meta name="author" content="Charlotte Pelletier">
+<meta name="author" content="Alber Sanchez">
+<meta name="author" content="Pedro Ribeiro Andrade">
+<meta name="author" content="Karine Ferreira">
+<meta name="author" content="Gilberto Queiroz">
+<meta name="description" content="This chapter contains technical details on the algorithms available in sits. It is intended to support those that want to understand how the package works and also want to contribute to its...">
+<meta name="generator" content="bookdown 0.32 with bs4_book()">
+<meta property="og:title" content="Technical Annex | sits: Satellite Image Time Series Analysis on Earth Observation Data Cubes">
+<meta property="og:type" content="book">
+<meta property="og:image" content="/images/cover_sits_book.png">
+<meta property="og:description" content="This chapter contains technical details on the algorithms available in sits. It is intended to support those that want to understand how the package works and also want to contribute to its...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Technical Annex | sits: Satellite Image Time Series Analysis on Earth Observation Data Cubes">
+<meta name="twitter:description" content="This chapter contains technical details on the algorithms available in sits. It is intended to support those that want to understand how the package works and also want to contribute to its...">
+<meta name="twitter:image" content="/images/cover_sits_book.png">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.5/font.css" rel="stylesheet">
+<link href="libs/IBM_Plex_Mono-0.4.5/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title=""><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">Preface</a></li>
+<li><a class="" href="setup.html">Setup</a></li>
+<li><a class="" href="acknowledgements.html">Acknowledgements</a></li>
+<li><a class="" href="introduction-to-sits.html">Introduction to SITS</a></li>
+<li><a class="" href="earth-observation-data-cubes.html">Earth observation data cubes</a></li>
+<li><a class="" href="operations-on-data-cubes.html">Operations on Data Cubes</a></li>
+<li><a class="" href="working-with-time-series.html">Working with time series</a></li>
+<li><a class="" href="improving-the-quality-of-training-samples.html">Improving the Quality of Training Samples</a></li>
+<li><a class="" href="machine-learning-for-data-cubes.html">Machine Learning for Data Cubes</a></li>
+<li><a class="" href="image-classification-in-data-cubes.html">Image Classification in Data Cubes</a></li>
+<li><a class="" href="validation-and-accuracy-measurements.html">Validation and accuracy measurements</a></li>
+<li><a class="" href="uncertainty-and-active-learning.html">Uncertainty and active learning</a></li>
+<li><a class="" href="design-and-extensibility-considerations.html">Design and extensibility considerations</a></li>
+<li><a class="active" href="technical-annex.html">Technical Annex</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="technical-annex" class="section level1 unnumbered">
+<h1>Technical Annex<a class="anchor" aria-label="anchor" href="#technical-annex"><i class="fas fa-link"></i></a>
+</h1>
+<p>This chapter contains technical details on the algorithms available in <code>sits</code>. It is intended to support those that want to understand how the package works and also want to contribute to its development.</p>
+<div id="bayesian-smoothing-1" class="section level2 unnumbered">
+<h2>Bayesian smoothing<a class="anchor" aria-label="anchor" href="#bayesian-smoothing-1"><i class="fas fa-link"></i></a>
+</h2>
+<p>Doing post-processing using Bayesian smoothing in SITS is straightforward. The result of the <code>sits_classify</code> function applied to a data cube is set of probability images, one per class. The next step is to apply the <code>sits_smooth</code> function. By default, this function selects the most likely class for each pixel considering only the probabilities of each class for each pixel. For continuous probability distributions, Bayesian inference is expressed by the rule:</p>
+<p><span class="math display">\[
+\pi(\theta|x) \propto \pi(x|\theta)\pi(\theta)
+\]</span></p>
+<p>Bayesian inference involves the estimation of an unknown parameter <span class="math inline">\(\theta\)</span>, which is the random variable that describe what we are trying to measure. In the case of smoothing of image classification, <span class="math inline">\(\theta\)</span> is the class probability for a given pixel, conditioned by the probability values of that pixel. We model our initial belief about this value by a probability distribution, <span class="math inline">\(\pi(\theta)\)</span>, called the distribution. It represents what we know about <span class="math inline">\(\theta\)</span> observing the data. The distribution <span class="math inline">\(\pi(x|\theta)\)</span>, called the , is estimated based on the observed data. It represents the added information provided by our observations. The distribution <span class="math inline">\(\pi(\theta|x)\)</span> is our improved belief of <span class="math inline">\(\theta\)</span> seeing the data. Bayes’s rule states that the probability is proportional to the product of the and the probability.</p>
+<div id="derivation-of-bayesian-parameters-for-spatiotemporal-smoothing" class="section level3 unnumbered">
+<h3>Derivation of bayesian parameters for spatiotemporal smoothing<a class="anchor" aria-label="anchor" href="#derivation-of-bayesian-parameters-for-spatiotemporal-smoothing"><i class="fas fa-link"></i></a>
+</h3>
+<p>In our post-classification smoothing model, we consider the output of a machine learning algorithm that provides the probabilities of each pixel in the image to belong to target classes. More formally, consider a set of <span class="math inline">\(K\)</span> classes that are candidates for labelling each pixel. Let <span class="math inline">\(p_{i,t,k}\)</span> be the probability of pixel <span class="math inline">\(i\)</span> belonging to class <span class="math inline">\(k\)</span>, <span class="math inline">\(k = 1, \dots, K\)</span>. We have
+<span class="math display">\[
+\sum_{k=1}^K p_{i,k} = 1, p_{i,k} &gt; 0
+\]</span>
+We label a pixel <span class="math inline">\(p_i\)</span> as being of class <span class="math inline">\(k\)</span> if
+<span class="math display">\[
+    p_{i, k} &gt; p_{i,m}, \forall m = 1, \dots, K, m \neq k
+\]</span></p>
+<p>For each pixel <span class="math inline">\(i\)</span>, we take the odds of the classification for class <span class="math inline">\(k\)</span>, expressed as
+<span class="math display">\[
+    O_{i,k} = p_{i,k} / (1-p_{i,k})
+\]</span>
+where <span class="math inline">\(p_{i, k}\)</span> is the probability of class <span class="math inline">\(k\)</span>. We have more confidence in pixels with higher odds since their class assignment is stronger. There are situations, such as border pixels or mixed ones, where the odds of different classes are similar in magnitude. We take them as cases of low confidence in the classification result. To assess and correct these cases, Bayesian smoothing methods borrow strength from the neighbors and reduces the variance of the estimated class for each pixel.</p>
+<p>We further make the transformation
+<span class="math display">\[
+    x_{i,k} = \log [O_{i,k}]
+\]</span>
+which measures the <em>logit</em> (log of the odds) associated to classifying the pixel <span class="math inline">\(i\)</span> as being of class <span class="math inline">\(k\)</span>. The support of <span class="math inline">\(x_{i, k}\)</span> is <span class="math inline">\(\mathbb{R}\)</span>. We can express the pixel data as a <span class="math inline">\(K\)</span>-dimensional multivariate logit vector</p>
+<p><span class="math display">\[
+\mathbf{x}_{i}=(x_{i,k_{0}},x_{i,k_{1}},\dots{},x_{i,k_{K}})
+\]</span></p>
+<p>For each pixel, the random variable that describes the class probability <span class="math inline">\(k\)</span> is denoted by <span class="math inline">\(\theta_{i,k}\)</span>. This formulation allows uses to use the class covariance matrix in our formulations. We can express Bayes’ rule for all combinations of pixel and classes for a time interval as</p>
+<p><span class="math display">\[
+\pi(\boldsymbol\theta_{i}|\mathbf{x}_{i}) \propto \pi(\mathbf{x}_{i}|\boldsymbol\theta_{i})\pi(\boldsymbol\theta_{i}).  
+\]</span></p>
+<p>We assume the conditional distribution <span class="math inline">\(\mathbf{x}_{i}|\boldsymbol\theta_{i}\)</span> follows a multivariate normal distribution</p>
+<p><span class="math display">\[
+    [\mathbf{x}_{i}|\boldsymbol\theta_{i}]\sim\mathcal{N}_{K}(\boldsymbol\theta_{i},\boldsymbol\Sigma_{i}),
+\]</span></p>
+<p>where <span class="math inline">\(\boldsymbol\theta_{i}\)</span> is the mean parameter vector for the pixel <span class="math inline">\(i\)</span>, and <span class="math inline">\(\boldsymbol\Sigma_{i}\)</span> is a known <span class="math inline">\(k\times{}k\)</span> covariance matrix that we will use as a parameter to control the level of smoothness effect. We will discuss later on how to estimate <span class="math inline">\(\boldsymbol\Sigma_{i}\)</span>. To model our uncertainty about the parameter <span class="math inline">\(\boldsymbol\theta_{i}\)</span>, we will assume it also follows a multivariate normal distribution with hyper-parameters <span class="math inline">\(\mathbf{m}_{i}\)</span> for the mean vector, and <span class="math inline">\(\mathbf{S}_{i}\)</span> for the covariance matrix.</p>
+<p><span class="math display">\[
+    [\boldsymbol\theta_{i}]\sim\mathcal{N}_{K}(\mathbf{m}_{i}, \mathbf{S}_{i}).
+\]</span></p>
+<p>The above equation defines our prior distribution. The hyper-parameters <span class="math inline">\(\mathbf{m}_{i}\)</span> and <span class="math inline">\(\mathbf{S}_{i}\)</span> are obtained using the neighboring pixels of pixel <span class="math inline">\(i\)</span>. The neighborhood can be defined as any graph scheme (e.g. a given Chebyshev distance on the time-space lattice) and can include the referencing pixel <span class="math inline">\(i\)</span> as a neighbor. More formally, let</p>
+<p><span class="math display">\[
+    \mathbf{V}_{i}=\{\mathbf{x}_{i_{j}}\}_{j=1}^{N},
+\]</span>
+denote the <span class="math inline">\(N\)</span> logit vectors of a spatiotemporal neighborhood <span class="math inline">\(N\)</span> of pixel <span class="math inline">\(i\)</span>. Then the prior mean is calculated by</p>
+<p><span class="math display">\[
+    \mathbf{m}_{i}=\operatorname{E}[\mathbf{V}_{i}],
+\]</span></p>
+<p>and the prior covariance matrix by</p>
+<p><span class="math display">\[
+    \mathbf{S}_{i}=\operatorname{E}\left[
+      \left(\mathbf{V}_{i}-\mathbf{m}_{i}\right)
+      \left(\mathbf{V}_{i}-\mathbf{m}_{i}\right)^\intercal
+    \right].
+\]</span>
+The <span class="math inline">\(\boldsymbol\theta_{i}\)</span> parameter model is our initial belief about a pixel vector using the neighborhood information in the prior distribution. It represents what we know about the probable value of <span class="math inline">\(\mathbf{x}_{i}\)</span> (and hence, about the class probabilities as the logit function is a monotonically increasing function) observing it. The function <span class="math inline">\(P[\mathbf{x}_{i,t}|\boldsymbol\theta_{i,t}]\)</span> represents the added information provided by our observation of <span class="math inline">\(\mathbf{x}_{i,t}\)</span>. The probability density function <span class="math inline">\(P[\boldsymbol\theta_{i,t}|\mathbf{x}_{i,t}]\)</span> is our improved belief of the pixel vector seeing <span class="math inline">\(\mathbf{x}_{i,t}\)</span>.</p>
+<p>Since the likelihood and prior are multivariate normal distributions, the posterior will also be a multivariate normal distribution, whose updated parameters can be derived by applying the density functions associated to the above equations. The posterior distribution is given by</p>
+<p><span class="math display">\[
+    [\boldsymbol\theta_{i}|\mathbf{x}_{i}]\sim\mathcal{N}_{K}\left(
+    (\mathbf{S}_{i}^{-1} + \boldsymbol\Sigma^{-1})^{-1}( \mathbf{S}_{i}^{-1}\mathbf{m}_{i} + \boldsymbol\Sigma^{-1} \mathbf{x}_{i}),
+    (\mathbf{S}_{i}^{-1} + \boldsymbol\Sigma^{-1})^{-1}
+    \right).
+\]</span>
+At this point, we are able to infer the estimator <span class="math inline">\(\hat{\boldsymbol\theta}_{i}\)</span> for the <span class="math inline">\(\boldsymbol\theta_{i}|\mathbf{x}_{i}\)</span> parameter. For the multivariate normal distribution, the posterior mean minimizes the quadratic loss but the absolute and zero-one loss functions. It can be taken from the updated mean parameter of the posterior distribution which, after some algebra, can be expressed as</p>
+<p><span class="math display">\[
+    \hat{\boldsymbol{\theta}}_{i}=\operatorname{E}[\boldsymbol\theta_{i}|\mathbf{x}_{i}]=\boldsymbol\Sigma_{i}\left(\boldsymbol\Sigma_{i}+\mathbf{S}_{i}\right)^{-1}\mathbf{m}_{i} +
+    \mathbf{S}_{i}\left(\boldsymbol\Sigma_{i}+\mathbf{S}_{i}\right)^{-1}\mathbf{x}_{i}.
+\]</span></p>
+<p>The estimator value for the logit vector <span class="math inline">\(\hat{\boldsymbol\theta}_{i}\)</span> is a weighted average of the original logit vector <span class="math inline">\(\mathbf{x}_{i}\)</span> and the neighborhood mean vector <span class="math inline">\(\mathbf{m}_{i}\)</span>. The weights are given by the covariance matrix <span class="math inline">\(\mathbf{S}_{i}\)</span> of the prior distribution and the covariance matrix of the conditional distribution. The matrix <span class="math inline">\(\mathbf{S}_{i}\)</span> is calculated considering the neighbors and the matrix <span class="math inline">\(\boldsymbol\Sigma_{i}\)</span> is the smoothing factor provided as prior belief by the user.</p>
+<p>When the values of local class covariance <span class="math inline">\(\mathbf{S}_{i}\)</span> are higher than those the conditional covariance <span class="math inline">\(\boldsymbol\Sigma_{i}\)</span>, our confidence on the influence of the neighbors is low, and the smoothing algorithm gives more weight to the original pixel value <span class="math inline">\(x_{i,k}\)</span>. When the local class covariance <span class="math inline">\(\mathbf{S}_{i}\)</span> decreases relative to the smoothness factor <span class="math inline">\(\boldsymbol\Sigma_{i}\)</span>, our confidence on the influence of the neighborhood increases. The smoothing procedure will be most relevant in situations where the original classification odds ratio is low, showing a low level of separability between classes. In these cases, the updated values of the classes will be influenced by the local class variances.</p>
+<p>In practice, <span class="math inline">\(\boldsymbol\Sigma_{i}\)</span> is a user-controlled covariance matrix parameter that will be set by users based on their knowledge of the region to be classified. In the simplest case, users can associate the conditional covariance <span class="math inline">\(\boldsymbol\Sigma_{i}\)</span> to a diagonal matrix, using only one hyperparameter <span class="math inline">\(\sigma^2_k\)</span> to set the level of smoothness. Higher values of <span class="math inline">\(\sigma^2_k\)</span> will cause the assignment of the local mean to the pixel updated probability. In our case, after some classification tests, we decided to use <span class="math inline">\(\sigma^2_k=20\)</span> by default for all <span class="math inline">\(k\)</span>.</p>
+<p>The version implemented in <code>sits</code> includes the following parameters</p>
+<ul>
+<li>
+<code>smoothness</code>: user-controlled parameter that controls the influence of the neighborhood values on the probabibility value of each class of a pixel. Can be defined as a unique value for all classes, or a matrix whose size of size <span class="math inline">\(num_classes * num_classes\)</span>. The default value is 20, but users are encouraged define <code>smoothness</code> as a diagonal matrix whose values reflect the relative importance of each class in the output product.</li>
+<li>
+<code>window_size</code>: size of <span class="math inline">\(n*n\)</span> window used to define the neighborhood.</li>
+<li>
+<code>neigh_fraction</code>: percentage of pixels per window used to calculate local class statistics. The aim is to use only those pixels in the window that are likely to be part of the same class as the central pixel. For example, for a <code>window_size</code> of size 9 and <code>neigh_fraction</code> of 0.5, half of the pixels of the 9 x 9 window (those with higher class probabibility) will be used to estimate the local class statistics <span class="math inline">\(\mathbf{m}_{i,t}\)</span> and <span class="math inline">\(\mathbf{S}_{i,t}\)</span> which represent the mean and standard deviation of the classes associated to prox</li>
+</ul>
+</div>
+</div>
+<div id="bilateral-smoothing-1" class="section level2 unnumbered">
+<h2>Bilateral smoothing<a class="anchor" aria-label="anchor" href="#bilateral-smoothing-1"><i class="fas fa-link"></i></a>
+</h2>
+<p>Bilateral smoothing combines proximity (combining pixels which are close) and similarity (comparing the values of the pixels) <span class="citation"><a href="references.html#ref-Tomasi1998" role="doc-biblioref">[81]</a></span>. If most of the pixels in a neighborhood have similar values, it is easy to identify outliers and noisy pixels. In contrast, there is a strong difference between the values of pixels in a if neighborhood, it is possible that the pixel is located in a class boundary. Bilateral filtering combines domain filtering with range filtering. In domain filtering, the weights used to combine pixels decrease with distance. In range filtering, the weights are computed considering value similarity.</p>
+<p>The combination of domain and range filtering is mathematically expressed as:</p>
+<p><span class="math display">\[
+S(x_i) = \frac{1}{W_{i}} \sum_{x_k \in \theta} I(x_k)\mathcal{N}_{\tau}(\|I(x_k) - I(x_i)\|)\mathcal{N}_{\sigma}(\|x_k - x_i\|),
+\]</span>
+where</p>
+<ul>
+<li>
+<span class="math inline">\(S(x_i)\)</span> is the smoothed value of pixel <span class="math inline">\(i\)</span>;</li>
+<li>
+<span class="math inline">\(I\)</span> is the original probability image to be filtered;</li>
+<li>
+<span class="math inline">\(I(x_i)\)</span> is the value of pixel <span class="math inline">\(i\)</span>;</li>
+<li>
+<span class="math inline">\(\theta\)</span> is the neighborhood centered in <span class="math inline">\(x_i\)</span>;</li>
+<li>
+<span class="math inline">\(x_k\)</span> is a pixel <span class="math inline">\(k\)</span> which belongs to neighborhood <span class="math inline">\(\theta\)</span>;</li>
+<li>
+<span class="math inline">\(I(x_k)\)</span> is the value of a pixel <span class="math inline">\(k\)</span> in the neighborhood of pixel <span class="math inline">\(i\)</span>;</li>
+<li>
+<span class="math inline">\(\|I(x_k) - I(x_i)\|\)</span> is the absolute difference between the values of the pixel <span class="math inline">\(k\)</span> and pixel <span class="math inline">\(i\)</span>;</li>
+<li>
+<span class="math inline">\(\|x_k - x_i\|\)</span> is the distance between pixel <span class="math inline">\(k\)</span> and pixel <span class="math inline">\(i\)</span>;</li>
+<li>
+<span class="math inline">\(\mathcal{N}_{\tau}\)</span> is the Gaussian range kernel for smoothing differences in intensities;</li>
+<li>
+<span class="math inline">\(\mathcal{N}_{\sigma}\)</span>is the Gaussian spatial kernel for smoothing differences based on proximity.</li>
+<li>
+<span class="math inline">\(\tau\)</span> is the variance of the Gaussian range kernel;</li>
+<li>
+<span class="math inline">\(\sigma\)</span> is the variance of the Gaussian spatial kernel.</li>
+</ul>
+<p>The normalization term to be applied to compute the smoothed values of pixel <span class="math inline">\(i\)</span> is defined as</p>
+<p><span class="math display">\[
+W_{i} = \sum_{x_k \in \theta}{\mathcal{N}_{\tau}(\|I(x_k) - I(x_i)\|)\mathcal{N}_{\sigma}(\|x_k - x_i\|)}
+\]</span>
+## How parallel processing works{-}</p>
+<p>This section provides an overview of how the functions <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>, <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code> and <code><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification()</a></code> process images in parallel. To achieve efficiency, <code>sits</code> implements a fault tolerant multitasking procedure for big EO data classification. Users are not burdened with the need to learn how to do multiprocessing. Thus, their learning curve is shortened. Image classification in <code>sits</code> is done by a cluster of independent workers linked to a virtual machine. To avoid communication overhead, all large payloads are read and stored independently; direct interaction between the main process and the workers is kept at a minimum.</p>
+<p>The classification procedure benefits from the fact that most images available in cloud collections are stored as COGs (cloud-optimized Geotiff). COGs are a regular GeoTIFF files organized in regular square blocks to improve visualization and access for large data sets. Thus, data requests can be optimized to access only portions of the images. All cloud services supported by <code>sits</code> use COG files. The classification algorithm in <code>sits</code> uses COGs to ensure optimal data access, reducing I/O demand as much as possible.</p>
+<p>The approach for parallel processing in <code>sits</code>, depicted in the figure below, has the following steps:</p>
+<ol style="list-style-type: decimal">
+<li>Based on the block size of individual COG files, calculate the size of each chunk that has to be loaded in memory, considering the number of bands and the length of the timeline. Chunk access is optimized for efficient transfer of data blocks.</li>
+<li>Divide the total memory available by the chunk size to find out how many processes can be run in parallel.</li>
+<li>Each core processes a chunk and produces a subset of the result.</li>
+<li>Repeat the process until all chunks in the cube have been processed.</li>
+<li>Check that subimages have been produced correctly. If there is a problem with one or more subimages, run a failure recovery procedure to ensure all data is processed.</li>
+<li>After all subimages are generated, join them to obtain the result.</li>
+</ol>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-155"></span>
+<img src="images/sits_parallel.png" alt="Parallel processing in sits (source: Simoes et al.,2021)." width="90%" height="90%"><p class="caption">
+Figure 82: Parallel processing in sits (source: Simoes et al.,2021).
+</p>
+</div>
+<p>This approach has many advantages. It works in any virtual machine that supports R and has no dependencies on proprietary software. Processing is done in a concurrent and independent way, with no communication between workers. Failure of one worker does not cause failure of the big data processing. The software is prepared to resume classification processing from the last processed chunk, preventing against failures such as memory exhaustion, power supply interruption, or network breakdown.</p>
+<p>To reduce processing time, it is necessary to adjust <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>, <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code>, and <code><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification()</a></code> according to the capabilities of the host environment. The <code>memsize</code> parameter controls the size of the main memory (in GBytes) to be used for classification. A practical approach is to set <code>memsize</code> to the maximum memory available in the virtual machine for classification and to chose <code>multicores</code> as the largest number of cores available. Based on the memory available and the size of blocks in COG files, <code>sits</code> will access the images in an optimized way. In this way, <code>sits</code> tries to ensure best possible use of the available resources.</p>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="design-and-extensibility-considerations.html">Design and extensibility considerations</a></div>
+<div class="next"><a href="references.html">References</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#technical-annex">Technical Annex</a></li>
+<li>
+<a class="nav-link" href="#bayesian-smoothing-1">Bayesian smoothing</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#derivation-of-bayesian-parameters-for-spatiotemporal-smoothing">Derivation of bayesian parameters for spatiotemporal smoothing</a></li></ul>
+</li>
+<li><a class="nav-link" href="#bilateral-smoothing-1">Bilateral smoothing</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-02-15.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>
