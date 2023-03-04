@@ -162,7 +162,7 @@ The visualization shows that the samples are located in the areas covered by the
 new_samples$label <- "Wetland"
 # obtain the time series from the regularized cube 
 new_samples_ts <- sits_get_data(
-    cube = s2_reg_cube,
+    cube = s2_reg_cube_ro,
     samples = new_samples
 )
 # join the new samples with the original ones with 4 classes
@@ -177,7 +177,7 @@ ltae_model_v2 <- sits_train(
 )
 # classify the small area cube
 s2_cube_probs_v2 <- sits_classify(
-    data = s2_reg_cube,
+    data = s2_reg_cube_ro,
     ml_model = ltae_model_v2,
     output_dir = "./tempdir/chp11/",
     version = "v2",

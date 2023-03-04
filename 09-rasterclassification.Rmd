@@ -210,15 +210,11 @@ The reclassified map has been split into deforestation prior to mid-2020 (using 
 The `sits_reclassify()` operation is not restricted to the comparison between deforestation maps. It can be used in any case that requires masking of a result based on a reference map. 
 
 
-## Post-classification smoothing{-}
+## Bayesian smoothing{-}
 
-Smoothing methods are an important complement to machine learning algorithms for image classification. Since these methods are mostly pixel-based, it is useful to complement them with post-processing smoothing to include spatial information in the result. For each pixel, machine learning and other statistical algorithms provide the probabilities of that pixel belonging to each of the classes. As a first step in obtaining a result, each pixel is assigned to the class whose probability is higher. After this step, smoothing methods use class probabilities to detect and correct outliers or misclassified pixels. 
+The `sits` package uses a *time-first, space-later* approach. After machine learning classifiers are used to obtain class probabilities for each pixel, it is recommended that users apply a Bayesian smoothing method to include spatial information from the neighborhodd of each pixel. 
 
-Image classification post-processing has been defined as "a refinement of the labelling in a classified image in order to enhance its classification accuracy" [@Huang2014]. In remote sensing image analysis, these procedures are used  to combine pixel-based classification methods with a spatial post-processing method to remove outliers and misclassified pixels. For pixel-based classifiers, post-processing methods enable the inclusion of spatial information in the final results. 
-
-Post-processing is a desirable step in any classification process. To offset these problems, most post-processing methods use the "smoothness assumption" [@Schindler2012]: nearby pixels tend to have the same label. To put this assumption in practice, smoothing methods use the neighborhood information to remove outliers and enhance consistency in the resulting product. The spatial smoothing methods are available in `sits` are bayesian smoothing and bilinear smoothing. These methods are called using the `sits_smooth()` function, as shown in the examples below.
-
-### Bayesian smoothing{-}
+Since machine learning classifiers in `sits` are mostly pixel-based, it is necessary to complement them with post-processing smoothing to include spatial information. For each pixel, machine learning and other statistical algorithms provide the probabilities of that pixel belonging to each of the classes. As a first step in obtaining a result, each pixel is assigned to the class whose probability is higher. After this step, smoothing methods use class probabilities to detect and correct outliers or misclassified pixels. 
 
 The assumption of all spatial smoothing methods is the existence of a spatial autocorrelation effect between a pixel and its neighbors. Spatial autocorrelation describes the degree of similarity between pixels that are located close to each other. In land use classification, class probabilities of pixels in a neighborhood are mostly similar. Pixels with high probabilities of being labelled "Forest" should be surrounded by pixels with similar class probabilities. However, sometimes a pixel with high probability for a given class (e.g., "Crops") has neighbors with which have low to moderate probabilities for this class. Bayesian smoothing uses the class probability to estimate if this is a classification error. 
 
@@ -284,8 +280,6 @@ plot(cube_smooth_w13_s80, palette = "YlGn")
 ```
 
 
-Comparing the two maps, it is apparent that the smoothing procedure has reduced a lot of the noise in the original classification and produced a more homogeneous result. Although more pleasing to the eye, this map may not be be more accurate than the previous one, since much spatial details has been lost.  
-
 ```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Final classification map after Bayesian smoothing with 9 x 9 size."}
 # generate thematic map
 defor_map_smooth_w13_s80 <- sits_label_classification(
@@ -297,71 +291,8 @@ defor_map_smooth_w13_s80 <- sits_label_classification(
 )
 plot(defor_map_smooth_w13_s80, palette = "YlGn")
 ```
-## Bilateral smoothing{-} 
 
-One of the problems with post-classification smoothing is that we would like to remove noisy pixels (e.g., a pixel with high probability of being labeled "Forest" in the midst of pixels likely to be labeled "Cerrado"), but would also like to preserve the edges between areas. Because of its design, bilateral filter has proven to be a useful method for post-classification processing since it preserves edges while removing noisy pixels [@Schindler2012].
-
-Bilateral smoothing combines proximity (combining pixels which are close) and similarity (comparing the values of the pixels) [@Tomasi1998]. If most of the pixels in a neighborhood have similar values, it is easy to identify outliers and noisy pixels. In contrast, there is a strong difference between the values of pixels in a  neighborhood, it is possible that the pixel is located in a class boundary. The method takes a considers two factors: the distance between the pixel and its neighbors, and the difference in class probabilities between them. Each of the values contributes according to a Gaussian kernel. These factors are calculated independently. Big difference between class probability values reduce the influence of the neighbor in the smoothed pixel. Big distances between pixels also reduce the impact of neighbors.
-
-To run bilateral smoothing, the parameter of `sits_smooth()` are: (a) `cube`, a probability cube produced by `sits_classify()`; (b) `type` should be `bilateral`; (c) `window_size`, the local window to compute the neighborhood probabilities; (d) `sigma`, an estimate of the variance of the Gaussian kernel based on distances (see Technical Annex for details); (e) `tau`, an estimate of the variance of the Gaussian kernel based on local probabilities; (f) `multicores`, number of CPU cores that will be used for processing; (g) `memsize`, memory available for classification; (h) `output_dir`, directory where results will be stored; (v) `version`, for version control. The resulting cube can be visualized with `plot()`. 
-
-The bigger one sets the `window_size`, the stronger the adjustments will be.  The `sigma` parameter controls the effects of distance; larger values will reduce the influence of the neighbors. The `tau` parameter controls the influence of the class probabilities of the neighbors.  Larger values of `sigma` will increase the influence of the neighbors. To achieve a satisfactory result, we need to balance the `sigma` and `tau`. As a general rule, the values of `tau` should range from 0.05 to 0.50, while the values of `sigma` should vary between 4 and 16[@Paris2007]. The default values adopted in `sits` are `tau = 0.1` and `sigma = 8`. As the best values of `sigma` and `tau` depend on the variance of the noisy pixels, users are encouraged to experiment and find parameter values that best fit their requirements.
-
-The following example shows the behavior of the bilateral smoother and its impact on the classification map. The results show only a moderate reduction of classification noise. 
-
-```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Classified image with bilateral smoothing"}
-# smooth the result with a bilateral filter
-cube_smooth_bil_1 <- sits_smooth(
-    cube = ro_cube_20LKP_probs, 
-    type = "bilateral",
-    window_size = 5,
-    sigma = 8,
-    tau = 0.1,
-    multicores = 4,
-    memsize = 12,
-    version = "bil_w5_s8_t01",
-    output_dir = "./tempdir/chp8"
-)
-
-# label the smoothed probability images
-map_bil_1 <- sits_label_classification(
-    cube = cube_smooth_bil_1,
-    multicores = 4,
-    memsize = 12,
-    version = "bil_w5_s8_t01",
-    output_dir = "./tempdir/chp8")
-# plot the result
-plot(map_bil_1, palette = "YlGn")
-```
-
-For a stronger reduction in classification noise, we can increase the window size, while reducing the variance of the Gaussian kernels by decreasing `sigma` and `tau`. 
-
-```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Classified image with bilateral smoothing"}
-# smooth the result with a bilateral filter
-cube_smooth_bil_2 <- sits_smooth(
-    cube = ro_cube_20LKP_probs, 
-    type = "bilateral",
-    window_size = 9,
-    sigma = 16,
-    tau = 0.5,
-    multicores = 4,
-    memsize = 12,
-    version = "bil_w9_s16_t05",
-    output_dir = "./tempdir/chp8"
-)
-
-# label the smoothed probability images
-map_bil_2 <- sits_label_classification(
-    cube = cube_smooth_bil_2,
-    multicores = 4,
-    memsize = 12,
-    version = "bil_w9_s16_t05",
-    output_dir = "./tempdir/chp8")
-# plot the result
-plot(map_bil_2, palette = "YlGn")
-```
-
-Bayesian smoothing tends to produce more homogeneous labeled images than bilateral smoothing. However, some spatial details and some edges are better preserved by the bilateral method. Choosing between the methods depends on user needs and requirements. Since Bayesian smoothing is based on class probabilities and is simpler to parameterize than bilateral smoothing, we recommend the former rather than the latter.  In any case, as stated by Schindler [@Schindler2012], smoothing improves the quality of classified images and thus should be applied in most situations.
+Comparing the two maps, it is apparent that the smoothing procedure has reduced a lot of the noise in the original classification and produced a more homogeneous result. Although more pleasing to the eye, this map may not be be more accurate than the previous one, since much spatial details has been lost. In general, Bayesian smoothing improves the quality of the final labelled maps and thus should be applied in most situations.
 
 
 

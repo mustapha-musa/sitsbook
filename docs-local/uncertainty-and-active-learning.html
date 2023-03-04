@@ -136,7 +136,7 @@ Ratio of confidence is the measure of the ratio between the two most confident p
 <h2>Using uncertainty measures for active learning<a class="anchor" aria-label="anchor" href="#using-uncertainty-measures-for-active-learning"><i class="fas fa-link"></i></a>
 </h2>
 <p>The following case study shows how uncertainty measures can be used in the context of active learning. The study area is subset of one Sentinel-2 tile in the state of Rondonia, Brazil. The aim of the work is to detect deforestation in the Brazilian Amazonia. The first step is to produce a regular data cube for the chosen area rom the period 2020-06-01 to 2021-09-01. To reduce processing time and storage, we use only three bands (“B02”, “B8A”, “B11”) plus the cloud band, and take a small area inside the tile.</p>
-<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create a directory to store files</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="st">"./tempdir/chp11"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="st">"./tempdir/chp11"</span><span class="op">)</span></span>
@@ -175,7 +175,7 @@ Figure 77: Area in Rondonia near Samuel dam (source: authors)
 </p>
 </div>
 <p>The study is located close to the Samuel Hydroelectric Dam, close to Porto Velho, Rondônia, Brazil. The dam project was controversial since it had a major environmental impact. The next step is to classify this study area using a dataset containing a tibble with 480 times series collected over the state of Rondonia (Brasil) for detecting deforestation. Each time series contains 8 bands (“B02”, “B03”, “B04”, “B08”, “B8A”, “B11”, “B12”) and three indices (“NDVI”, “EVI”, “NBR”) and 4 classes (“Burned_Area”, “Forest”, “Highly_Degraded” and “Cleared_Area”). The cube is classified using a LightTAE model, post-processed by a Bayesian smoothing, and then labelled.</p>
-<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/e-sensing/sitsdata/">sitsdata</a></span><span class="op">)</span></span>
 <span><span class="co"># load the traning set</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"samples_prodes_4classes"</span><span class="op">)</span></span>
@@ -191,15 +191,13 @@ Figure 77: Area in Rondonia near Samuel dam (source: authors)
 <span><span class="op">)</span></span>
 <span><span class="co"># classify the small area cube</span></span>
 <span><span class="va">s2_cube_probs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">s2_reg_cube</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">s2_reg_cube_ro</span>,</span>
 <span>  ml_model <span class="op">=</span> <span class="va">ltae_model</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp11/"</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-
-<div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># post-process the probability cube</span></span>
+<span>  memsize <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>  multicores <span class="op">=</span> <span class="fl">5</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># post-process the probability cube</span></span>
 <span><span class="va">s2_cube_bayes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">s2_cube_probs</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp11/"</span>,</span>
@@ -221,7 +219,7 @@ Figure 78: Classified map for area in Rondonia near Samuel dam (source: authors)
 </p>
 </div>
 <p>The resulting map correctly identifies the forest area and the deforestation. However, it wrongly classifies the area covered by the Samuel hydroelectric dam. The reason is the lack of samples for classes related to surface water and wetlands. To improve the classification, we need to improve our samples. To do that, the first step is calculate the uncertainty of the classification.</p>
-<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># calculate the uncertainty cube</span></span>
 <span><span class="va">s2_cube_uncert</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_uncertainty.html">sits_uncertainty</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">s2_cube_bayes</span>,</span>
@@ -238,7 +236,7 @@ Figure 79: Uncertainty map for classification in Rondonia near Samuel dam (sourc
 </p>
 </div>
 <p>As expected, the places of highest uncertainty are those covered by surface water or associated to wetlands. These places are likely to be misclassified. For this reason, <code>sits</code> provides the function <code><a href="https://rdrr.io/pkg/sits/man/sits_uncertainty_sampling.html">sits_uncertainty_sampling()</a></code> which takes the uncertainty cube as its input and produces a tibble with locations in WGS84 that have high uncertainty. The function has three parameters: <code>n</code>, number of uncertain points to be included; <code>min_uncert</code>, minimum value of uncertainty for pixels to be included in the list; and <code>sampling_window</code>, to improve the spatial distribution of the new samples by avoiding points in the same neighborhood to be included. After running the function, we can use <code><a href="https://rdrr.io/pkg/sits/man/sits_view.html">sits_view()</a></code> to visualize the location of the samples.</p>
-<div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># calculate the uncertainty cube</span></span>
 <span><span class="va">new_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_uncertainty_sampling.html">sits_uncertainty_sampling</a></span><span class="op">(</span></span>
 <span>  uncert_cube <span class="op">=</span> <span class="va">s2_cube_uncert</span>,</span>
@@ -255,12 +253,12 @@ Figure 80: Location of uncertain pixel for classification in Rondonia near Samue
 </p>
 </div>
 <p>The visualization shows that the samples are located in the areas covered by the Samuel data. As a first approximation, one can use the label “Wetlands” to designate these samples. A more detailed evaluation, which is recommended in practices, requires analysing these samples with an exploration software such as QGIS and individually labelling each sample. In our case, we will take a direct approach for illustration purposes.</p>
-<div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># label the new samples</span></span>
-<span><span class="va">new_samples</span><span class="op">$</span><span class="va">label</span> <span class="op">&lt;-</span> <span class="st">"Wetlands"</span></span>
+<span><span class="va">new_samples</span><span class="op">$</span><span class="va">label</span> <span class="op">&lt;-</span> <span class="st">"Wetland"</span></span>
 <span><span class="co"># obtain the time series from the regularized cube</span></span>
 <span><span class="va">new_samples_ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_get_data.html">sits_get_data</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">s2_reg_cube</span>,</span>
+<span>  cube <span class="op">=</span> <span class="va">s2_reg_cube_ro</span>,</span>
 <span>  samples <span class="op">=</span> <span class="va">new_samples</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># join the new samples with the original ones with 4 classes</span></span>
@@ -275,16 +273,14 @@ Figure 80: Location of uncertain pixel for classification in Rondonia near Samue
 <span><span class="op">)</span></span>
 <span><span class="co"># classify the small area cube</span></span>
 <span><span class="va">s2_cube_probs_v2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">s2_reg_cube</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">s2_reg_cube_ro</span>,</span>
 <span>  ml_model <span class="op">=</span> <span class="va">ltae_model_v2</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp11/"</span>,</span>
 <span>  version <span class="op">=</span> <span class="st">"v2"</span>,</span>
 <span>  memsize <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  multicores <span class="op">=</span> <span class="fl">4</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-
-<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># post-process the probability cube</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># post-process the probability cube</span></span>
 <span><span class="va">s2_cube_bayes_v2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">s2_cube_probs_v2</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp11/"</span>,</span>
@@ -302,10 +298,6 @@ Figure 80: Location of uncertain pixel for classification in Rondonia near Samue
 <span><span class="op">)</span></span>
 <span><span class="co"># plot the second version of the classified cube</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">s2_cube_label_v2</span><span class="op">)</span></span></code></pre></div>
-<pre><code>#&gt; Warning in .colors_get(labels = labels, legend = legend, palette
-#&gt; = palette): missing colors for labels Wetlands</code></pre>
-<pre><code>#&gt; Warning in .colors_get(labels = labels, legend = legend, palette
-#&gt; = palette): using palette Spectral for missing colors</code></pre>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-146"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-146-1.png" alt="New land classification in Rondonia near Samuel dam (source: authors)" width="100%"><p class="caption">
@@ -341,7 +333,7 @@ Figure 81: New land classification in Rondonia near Samuel dam (source: authors)
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-02-15.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-03.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

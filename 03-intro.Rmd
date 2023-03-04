@@ -13,9 +13,21 @@ dir.create("./tempdir/chp3")
 
 <a href="https://www.kaggle.com/esensing/introduction-to-sits" target="_blank"><img src="https://kaggle.com/static/images/open-in-kaggle.svg"/></a>
 
+## Why work with satellite image time series? 
+
+Satellite images are the most comprehensive source of data about our environment.  Covering a large area of the Earth's surface, images allow researchers to study regional and global changes. Sensors capture data in multiple spectral bands to measure the physical, chemical, and biological properties of the Earth's surface. Covering the same location multiple times, satellites provide data on changes in the environment and survey areas that are difficult to observe from the ground. Given its unique features, images provide essential information for many application, including deforestation, crop production, food security, urban footprints, water scarcity, and land degradation.
+
+A time series is a set of data points collected at regular intervals over time. The data can be collected at any frequency, such as daily, weekly, monthly, or yearly, depending on the context of the data. Time series data is used to analyze trends, patterns, and changes in the data over time. Satellite image time series refer to time series obtained from a collection of images captured by a satellite over a period of time, typically months or years. Using time series, experts  improve their understanding of ecological patterns and processes. Instead of selecting individual images from specific dates and comparing them, researchers track change continuously [@Woodcock2020]. 
+
+## Time-first, space-later{-}
+
+"Time-first, space-later" is a concept in satellite image classification that takes time series analysis as the first step for analyzing remote sensing data, with spatial information being considered after all time series are classified. The *time-first* approach brings a better understanding of changes in landscapes. Detecting and tracking trends in the data, including seasonal and long-term trends becomes feasible, as well as identifying anomalous events or patterns in the data, such as wildfires, floods, or droughts.
+
+The *space-later* part requires spatial data analysis that use the neighborhood of each pixel. The classification assigned to each pixel by time series classification is taken as a prior probability information. Using additional data from the pixel's neighborhood, users obtain the posterior probability distribution per pixel. This Bayesian inference method allows combining the spatial with the temporal information for each pixel.  
+
 ## How `sits` works {.unnumbered}
 
-The `sits` package uses satellite image time series to for land classification. These time series are extracted from collections of big Earth observation images organized as data cubes. The package adopts a *time-first, space-later* approach. Each spatial location is associated to a time series. Locations with known labels train a machine learning classifier, which classifies all time series of a data cube, as shown in Figure 1.
+The `sits` package uses satellite image time series to for land classification, using  a *time-first, space-later* approach. In the data preparation part, collections of big Earth observation images are organized as data cubes. Each spatial location of a data cube is associated to a time series. Locations with known labels train a machine learning classifier, which classifies all time series of a data cube, as shown in Figure 1.
 
 ```{r, echo = FALSE, out.width = "70%", out.height = "70%", fig.align="center", fig.cap="Using time series for land classification (source: authors)"}
 knitr::include_graphics("images/sits_general_view.png")
@@ -154,7 +166,7 @@ plot(samples_forest_ndvi)
 
 ## Training a machine learning model {.unnumbered}
 
-The next step is to train a machine learning (ML) model using `sits_train()`. It takes two inputs, `samples` (a time series table) and `ml_method` (a function that implements a ML algorithm). The result is a model that is used classification. Each algorithm requires specific parameters that are user-controllable. For novice users, `sits` provides default parameters which produces a good result. For more details, please see the "Machine Learning for Data Cubes" chapter. 
+The next step is to train a machine learning (ML) model using `sits_train()`. It takes two inputs, `samples` (a time series table) and `ml_method` (a function that implements a machine learning algorithm). The result is a model that is used for classification. Each ML algorithm requires specific parameters that are user-controllable. For novice users, `sits` provides default parameters which produce a good result. For more details, please see the "Machine Learning for Data Cubes" chapter. 
 
 Since the time series data has four attributes ("EVI", "NDVI", "NIR", "MIR") and the data cube images only two, we select the "NDVI" and "EVI" values and use the resulting data for training. To build the classification model, we use a random forest model called by the `sits_rfor()` function.
 
@@ -195,7 +207,7 @@ After classification has been completed, we plot the probability maps for class 
 
 ## Spatial smoothing {.unnumbered}
 
-When working with big EO data, there is much variability in each class. As a result, some pixels will be misclassified. These errors are more likely to occur in transition areas between classes. To address these problems, `sits_smooth()` takes a probability cube as input and  uses the class probabilities of each pixel's neighborhood to reduce labeling uncertainty. Plotting the smoothed probability map for class "Forest" shows that some outliers have been removed.
+When working with big EO data, there is much variability in each class. As a result, some pixels will be misclassified. These errors are more likely to occur in transition areas between classes. To address these problems, `sits_smooth()` takes a probability cube as input and  uses the class probabilities of each pixel's neighborhood to reduce labeling uncertainty. Plotting the smoothed probability map for class "Forest" shows that most outliers have been removed.
 
 ```{r, out.width = "90%",  tidy="styler", fig.align = 'center', fig.cap = "Smoothed probability map for class Forest."}
 # perform spatial smoothing
