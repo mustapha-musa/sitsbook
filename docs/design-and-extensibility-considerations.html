@@ -88,6 +88,7 @@
 <li><a class="" href="image-classification-in-data-cubes.html">Image Classification in Data Cubes</a></li>
 <li><a class="" href="validation-and-accuracy-measurements.html">Validation and accuracy measurements</a></li>
 <li><a class="" href="uncertainty-and-active-learning.html">Uncertainty and active learning</a></li>
+<li><a class="" href="ensemble-prediction-from-multiple-models.html">Ensemble Prediction from Multiple Models</a></li>
 <li><a class="active" href="design-and-extensibility-considerations.html">Design and extensibility considerations</a></li>
 <li><a class="" href="technical-annex.html">Technical Annex</a></li>
 <li><a class="" href="references.html">References</a></li>
@@ -102,98 +103,11 @@
 <h1>Design and extensibility considerations<a class="anchor" aria-label="anchor" href="#design-and-extensibility-considerations"><i class="fas fa-link"></i></a>
 </h1>
 <p>This section is intended for programmers and experts that would like to extend the capabilities of <code>sits</code>, either by including new data sources, ML algorithms, exporting data to be used in Python or QGIS, or including new display colors.</p>
-<div id="data-structures" class="section level2 unnumbered">
-<h2>Data structures<a class="anchor" aria-label="anchor" href="#data-structures"><i class="fas fa-link"></i></a>
-</h2>
-<p>The <code>sits</code> package uses primarily two data structures: a data cube and a time series table. Most operations in sits use them for input and output. Data cubes are R tibbles where each row contains metadata related to one tile of the reference system used by the satellite operator, as shown in the example below.</p>
-<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># create a data cube for Sentinel-2/2A images</span></span>
-<span><span class="va">s2_20LKP_cube_MPC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
-<span>  source <span class="op">=</span> <span class="st">"MPC"</span>,</span>
-<span>  collection <span class="op">=</span> <span class="st">"SENTINEL-2-L2A"</span>,</span>
-<span>  tiles <span class="op">=</span> <span class="st">"20LKP"</span>,</span>
-<span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"B05"</span>, <span class="st">"B8A"</span>, <span class="st">"B11"</span>, <span class="st">"CLOUD"</span><span class="op">)</span>,</span>
-<span>  start_date <span class="op">=</span> <span class="st">"2019-07-01"</span>,</span>
-<span>  end_date <span class="op">=</span> <span class="st">"2019-07-28"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># print information on the first 5 columns</span></span>
-<span><span class="va">s2_20LKP_cube_MPC</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></code></pre></div>
-<pre class="sourceCode"><code>#&gt; # A tibble: 1 × 5
-#&gt;   source collection     satellite  sensor tile 
-#&gt;   &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;  &lt;chr&gt;
-#&gt; 1 MPC    SENTINEL-2-L2A SENTINEL-2 MSI    20LKP</code></pre>
-<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># print information on the other columns</span></span>
-<span><span class="va">s2_20LKP_cube_MPC</span><span class="op">[</span>, <span class="fl">6</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span></span></code></pre></div>
-<pre class="sourceCode"><code>#&gt; # A tibble: 1 × 6
-#&gt;     xmin   xmax    ymin    ymax crs        file_info         
-#&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;      &lt;list&gt;            
-#&gt; 1 199980 309780 8790220 8900020 EPSG:32720 &lt;tibble [20 × 13]&gt;</code></pre>
-<p>The data cube tibble contains typical information (including satellite, sensor, tile, bounding box, crs). The last column, named <code>file_info</code>, contains a nested tibble with information on the individual files that are part of the data cube. The most important columns are <code>date</code>, <code>band</code> and <code>path</code>.</p>
-<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># print the file information for the cube</span></span>
-<span><span class="va">s2_20LKP_cube_MPC</span><span class="op">$</span><span class="va">file_info</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"date"</span>, <span class="st">"band"</span>, <span class="st">"path"</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<pre class="sourceCode"><code>#&gt; # A tibble: 20 × 3
-#&gt;    date       band  path                                                      
-#&gt;    &lt;date&gt;     &lt;chr&gt; &lt;chr&gt;                                                     
-#&gt;  1 2019-07-03 B05   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt;  2 2019-07-03 B11   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt;  3 2019-07-03 B8A   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt;  4 2019-07-03 CLOUD /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt;  5 2019-07-08 B05   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt;  6 2019-07-08 B11   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt;  7 2019-07-08 B8A   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt;  8 2019-07-08 CLOUD /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt;  9 2019-07-13 B05   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt; 10 2019-07-13 B11   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt; 11 2019-07-13 B8A   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt; 12 2019-07-13 CLOUD /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt; 13 2019-07-18 B05   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt; 14 2019-07-18 B11   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt; 15 2019-07-18 B8A   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt; 16 2019-07-18 CLOUD /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt; 17 2019-07-23 B05   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt; 18 2019-07-23 B11   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt; 19 2019-07-23 B8A   /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…
-#&gt; 20 2019-07-23 CLOUD /vsicurl/https://sentinel2l2a01.blob.core.windows.net/sen…</code></pre>
-<p>The time series tibble contains data and metadata. The first six columns contain spatial and temporal information, the label assigned to the sample, and the data cube from where the data has been extracted. The <code>time_series</code> column contains the time series data for each spatiotemporal location. This data is also organized as a tibble, with a column with the dates and the other columns with the values for each spectral band.</p>
-<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># print the first 6 columns of a time series tibble</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/e-sensing/sitsdata/">sitsdata</a></span><span class="op">)</span></span>
-<span><span class="va">samples_cerrado_mod13q1</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></code></pre></div>
-<pre class="sourceCode"><code>#&gt; # A tibble: 50,160 × 6
-#&gt;    latitude longitude start_date end_date   label   cube   
-#&gt;       &lt;dbl&gt;     &lt;dbl&gt; &lt;date&gt;     &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt;  
-#&gt;  1    -16.2     -54.5 2018-09-01 2019-09-01 Pasture MOD13Q1
-#&gt;  2    -16.2     -54.5 2018-09-01 2019-09-01 Pasture MOD13Q1
-#&gt;  3    -16.2     -54.5 2018-09-01 2019-09-01 Pasture MOD13Q1
-#&gt;  4    -16.2     -54.5 2018-09-01 2019-09-01 Pasture MOD13Q1
-#&gt;  5    -16.2     -54.5 2018-09-01 2019-09-01 Pasture MOD13Q1
-#&gt;  6    -16.2     -54.5 2018-09-01 2019-09-01 Pasture MOD13Q1
-#&gt;  7    -16.2     -54.4 2018-09-01 2019-09-01 Pasture MOD13Q1
-#&gt;  8    -16.2     -54.5 2018-09-01 2019-09-01 Pasture MOD13Q1
-#&gt;  9    -16.1     -54.7 2018-09-01 2019-09-01 Pasture MOD13Q1
-#&gt; 10    -16.2     -54.7 2018-09-01 2019-09-01 Pasture MOD13Q1
-#&gt; # … with 50,150 more rows</code></pre>
-<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># print the time series associated to the first location of a tibble</span></span>
-<span><span class="va">samples_cerrado_mod13q1</span><span class="op">$</span><span class="va">time_series</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
-<pre class="sourceCode"><code>#&gt; # A tibble: 23 × 5
-#&gt;    Index       NDVI   EVI   NIR    MIR
-#&gt;    &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
-#&gt;  1 2018-09-14 0.500 0.293 0.263 0.212 
-#&gt;  2 2018-09-30 0.506 0.284 0.262 0.173 
-#&gt;  3 2018-10-16 0.508 0.385 0.386 0.218 
-#&gt;  4 2018-11-01 0.714 0.532 0.410 0.142 
-#&gt;  5 2018-11-17 0.426 0.344 0.420 0.237 
-#&gt;  6 2018-12-03 0.668 0.412 0.300 0.117 
-#&gt;  7 2018-12-19 0.684 0.440 0.323 0.152 
-#&gt;  8 2019-01-01 0.719 0.462 0.325 0.0874
-#&gt;  9 2019-01-17 0.610 0.430 0.374 0.146 
-#&gt; 10 2019-02-02 0.664 0.381 0.276 0.0936
-#&gt; # … with 13 more rows</code></pre>
+<div id="exporting-data-to-json" class="section level3 unnumbered">
+<h3>Exporting data to JSON<a class="anchor" aria-label="anchor" href="#exporting-data-to-json"><i class="fas fa-link"></i></a>
+</h3>
 <p>Both the data cube and the time series tibble can be exported to exchange formats such as JSON.</p>
-<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://arxiv.org/abs/1403.2805">jsonlite</a></span><span class="op">)</span></span>
 <span><span class="co"># export the data cube to JSON</span></span>
 <span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/read_json.html">write_json</a></span><span class="op">(</span></span>
@@ -211,29 +125,70 @@
 <div id="extending-the-color-table" class="section level2 unnumbered">
 <h2>Extending the color table<a class="anchor" aria-label="anchor" href="#extending-the-color-table"><i class="fas fa-link"></i></a>
 </h2>
-<p>In examples provided in the book, the color legend is taken for the predefined color table provided by <code>sits</code>. The options for defining labels and colors include:</p>
-<ol style="list-style-type: decimal">
-<li>Predefined color table: <code>sits</code> has a default color table, that can be shown using the command <code>sits_config_show(colors = TRUE)</code>. This color definition file assigns colors to about 250 class names, including the IPCC and IGBP land use classes, the UMD GLAD classification scheme, the FAO LCC1 and LCCS2 land use layers, and the LCCS3 surface hydrology layer.</li>
-<li>User-defined defined color table: users can set the legend they prefer with a YAML user-defined configuration file. This file should defined by the environmental variable <code>SITS_CONFIG_USER_FILE</code>. Create an YAML file, and then set the path to it with <code>Sys.setenv(SITS_CONFIG_USER_FILE="path_to_myfile")</code>. An example of an YAML file with user-defined legend is shown below.</li>
-<li>User-defined legend: users may define their own legends and pass them as parameters to to the <code>plot</code> function.</li>
-</ol>
-<div class="sourceCode" id="cb151"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb151-1"><a href="design-and-extensibility-considerations.html#cb151-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colors</span><span class="kw">:</span></span>
-<span id="cb151-2"><a href="design-and-extensibility-considerations.html#cb151-2" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Cropland</span><span class="kw">:</span><span class="at">           </span><span class="st">"khaki"</span></span>
-<span id="cb151-3"><a href="design-and-extensibility-considerations.html#cb151-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Deforestation</span><span class="kw">:</span><span class="at">      </span><span class="st">"sienna"</span></span>
-<span id="cb151-4"><a href="design-and-extensibility-considerations.html#cb151-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Forest </span><span class="kw">:</span><span class="at">            </span><span class="st">"darkgreen"</span></span>
-<span id="cb151-5"><a href="design-and-extensibility-considerations.html#cb151-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Grassland </span><span class="kw">:</span><span class="at">         </span><span class="st">"lightgreen"</span></span>
-<span id="cb151-6"><a href="design-and-extensibility-considerations.html#cb151-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">NonForest</span><span class="kw">:</span><span class="at">          </span><span class="st">"lightsteelblue1"</span></span></code></pre></div>
+<p>In examples provided in the book, the color legend is taken for the predefined color table provided by <code>sits</code>. This default color table is displayed using the command <code>sits_colors_show</code>. This color definition file assigns colors to 99 class names, including the IPCC and IGBP land use classes.</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-158"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-158-1.png" alt="Default colors used in the sits package" width="100%" height="100%"><p class="caption">
+Figure 91: Default colors used in the sits package
+</p>
+</div>
+<p>The color table can be extended or adjusted by accessing and modifying the default color table, using the commands <code><a href="https://rdrr.io/pkg/sits/man/sits_colors.html">sits_colors()</a></code> to retrieve the table and <code><a href="https://rdrr.io/pkg/sits/man/sits_colors_set.html">sits_colors_set()</a></code> to update the table according to user choices, as shown in the example below.</p>
+<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># retrieve the color table</span></span>
+<span><span class="va">color_tb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_colors.html">sits_colors</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># show the color table</span></span>
+<span><span class="va">color_tb</span></span></code></pre></div>
+<pre class="sourceCode"><code>#&gt; # A tibble: 99 × 3
+#&gt;    name                       color   group          
+#&gt;    &lt;chr&gt;                      &lt;chr&gt;   &lt;chr&gt;          
+#&gt;  1 Evergreen_Broadleaf_Forest #1E8449 Tropical_Forest
+#&gt;  2 Forest                     #1E8449 Tropical_Forest
+#&gt;  3 Closed_Forest              #1E8449 Tropical_Forest
+#&gt;  4 Woodland                   #27AE60 Tropical_Forest
+#&gt;  5 Dense_Woodland             #27AE60 Tropical_Forest
+#&gt;  6 Woody_Savanna              #27AE60 Tropical_Forest
+#&gt;  7 Open_Forest                #27AE60 Tropical_Forest
+#&gt;  8 Cerradao                   #27AE60 Tropical_Forest
+#&gt;  9 Mixed_Forest               #27AE60 Tropical_Forest
+#&gt; 10 Sparse_Forest              #27AE60 Tropical_Forest
+#&gt; # … with 89 more rows</code></pre>
+<p>As an example of a user-defined color table, consider a definition that covers level 1 of the Anderson Classification System used in the US National Land Cover Data, obtained by defining a new color table, as shown below. The colors can be defined by HEX values or by names accepted as R color codes.</p>
+<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># define a color table based on the Anderson Land Classification System</span></span>
+<span><span class="va">us_nlcd</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">us_nlcd</span> <span class="op">&lt;-</span> <span class="va">us_nlcd</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Urban Built Up"</span>, color <span class="op">=</span> <span class="st">"#85929E"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Agricultural Land"</span>, color <span class="op">=</span> <span class="st">"#F0B27A"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Rangeland"</span>, color <span class="op">=</span> <span class="st">"#F1C40F"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Forest Land"</span>, color <span class="op">=</span> <span class="st">"#27AE60"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Water"</span>, color <span class="op">=</span> <span class="st">"#2980B9"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Wetland"</span>, color <span class="op">=</span> <span class="st">"#D4E6F1"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Barren Land"</span>, color <span class="op">=</span> <span class="st">"#FDEBD0"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Tundra"</span>, color <span class="op">=</span> <span class="st">"#EBDEF0"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Snow and Ice"</span>, color <span class="op">=</span> <span class="st">"#F7F9F9"</span><span class="op">)</span></span>
+<span><span class="co"># load the color table into `sits`</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_colors_set.html">sits_colors_set</a></span><span class="op">(</span><span class="va">us_nlcd</span><span class="op">)</span></span>
+<span><span class="co"># show the new color table used by sits</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_colors_show.html">sits_colors_show</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-160"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-160-1.png" alt="Example of Anderson Land Classification Scheme use in sits" width="80%" height="80%"><p class="caption">
+Figure 92: Example of Anderson Land Classification Scheme use in sits
+</p>
+</div>
+<p>As an alternative, users may define their own legends and pass them as parameters to to the <code>plot</code> function. Please see the example provided in Section “Map Reclassification” on Chapter “Image Classification in Data Cubes”.</p>
 
 </div>
 </div>
   <div class="chapter-nav">
-<div class="prev"><a href="uncertainty-and-active-learning.html">Uncertainty and active learning</a></div>
+<div class="prev"><a href="ensemble-prediction-from-multiple-models.html">Ensemble Prediction from Multiple Models</a></div>
 <div class="next"><a href="technical-annex.html">Technical Annex</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#design-and-extensibility-considerations">Design and extensibility considerations</a></li>
-<li><a class="nav-link" href="#data-structures">Data structures</a></li>
+<li>
+<a class="nav-link" href="#design-and-extensibility-considerations">Design and extensibility considerations</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#exporting-data-to-json">Exporting data to JSON</a></li></ul>
+</li>
 <li><a class="nav-link" href="#extending-the-color-table">Extending the color table</a></li>
 </ul>
 
@@ -251,7 +206,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-01-23.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-05.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -25,8 +25,8 @@
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.5/font.css" rel="stylesheet">
-<link href="libs/IBM_Plex_Mono-0.4.5/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.4/font.css" rel="stylesheet">
+<link href="libs/IBM_Plex_Mono-0.4.4/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
@@ -88,7 +88,8 @@
 <li><a class="active" href="image-classification-in-data-cubes.html">Image Classification in Data Cubes</a></li>
 <li><a class="" href="validation-and-accuracy-measurements.html">Validation and accuracy measurements</a></li>
 <li><a class="" href="uncertainty-and-active-learning.html">Uncertainty and active learning</a></li>
-<li><a class="" href="design-and-extensibility-considerations.html">Design and extensibility considerations</a></li>
+<li><a class="" href="ensemble-prediction-from-multiple-models.html">Ensemble Prediction from Multiple Models</a></li>
+<li><a class="" href="visualising-and-exporting-data.html">Visualising and Exporting data</a></li>
 <li><a class="" href="technical-annex.html">Technical Annex</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
@@ -102,12 +103,12 @@
 <h1>Image Classification in Data Cubes<a class="anchor" aria-label="anchor" href="#image-classification-in-data-cubes"><i class="fas fa-link"></i></a>
 </h1>
 <p><a href="https://www.kaggle.com/esensing/raster-classification-in-sits" target="_blank"><img src="https://kaggle.com/static/images/open-in-kaggle.svg"></a></p>
-<p>In this chapter, we discuss how to classify data cubes by providing a step-by-step example. Our study area is the state of Rondonia, Brazil, that underwent substantial deforestation in the last decades. According to surveys done by Brazil’s National Institute for Space Research (INPE) using satellite images, from 1988 to 2021 more than 6.46 million hectares of natural tropical forest been cut for selected a study area located in the Bahia state. The objective of the case study is to detect deforested areas.</p>
+<p>In this chapter, we discuss how to classify data cubes by providing a step-by-step example. Our study area is the state of Rondonia, Brazil, that underwent substantial deforestation in the last decades. The objective of the case study is to detect deforested areas.</p>
 <div id="training-the-classification-model" class="section level2 unnumbered">
 <h2>Training the classification model<a class="anchor" aria-label="anchor" href="#training-the-classification-model"><i class="fas fa-link"></i></a>
 </h2>
 <p>The case study uses the training data set <code>samples_prodes_4bands</code>, available in package <code>sitsdata</code>. This data set consists of 480 samples collected from Sentinel-2 images covering the state of Rondonia. The samples are intended to detect deforestation events, and include four classes: “Forest”, “Burned_Area”, “Cleared_Area”, and “Highly_Degraded”. The time series cover a set of 29 dates with a period of 16 days, ranging from “2020-06-04” to “2021-08-26”. The data has 12 attributes, including original bands (“B02”, “B03”, “B04”, “B05”, “B08”, “B8A”, “B11”, and “B12”) and indices (“NDVI”, “EVI” and “NBR”).</p>
-<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/e-sensing/sitsdata/">sitsdata</a></span><span class="op">)</span></span>
 <span><span class="co"># obtain the samples</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"samples_prodes_4classes"</span><span class="op">)</span></span>
@@ -120,12 +121,26 @@
 #&gt; 2 Cleared_Area      115 0.293
 #&gt; 3 Forest            107 0.272
 #&gt; 4 Highly_Degraded    75 0.191</code></pre>
+<p>To better understand the training set, its is useful to plot the basic patterns associated to the samples. The function <code><a href="https://rdrr.io/pkg/sits/man/sits_patterns.html">sits_patterns()</a></code> uses a generalized additive model (GAM) to predict a smooth, idealized approximation to the time series associated to the each label, for all bands. Since the data cube used in the classification has only three bands (“B02”, “B8A”, and “B11”), we filter the samples for these bands before showing the patterns.</p>
+<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">samples_3bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">samples_prodes_4classes</span>,</span>
+<span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"B02"</span>, <span class="st">"B8A"</span>, <span class="st">"B11"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_patterns.html">sits_patterns</a></span><span class="op">(</span><span class="va">samples_3bands</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-108"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-108-1.png" alt="Patterns associated to the training samples" width="90%"><p class="caption">
+Figure 61: Patterns associated to the training samples
+</p>
+</div>
+<p>The patterns show different temporal responses for the selected classes. They match the typical behavior of deforestation in the Amazon. First, the forest is cut at the start of the dry season (June/July). At the end of the dry season, some clear-cut areas are burned to clean the remains; this action is reflected in the steep fall of the response of “B8A” values of burned area samples after July. In areas that are cleared but not burned, response in the middle infra-red band “B11” increases significantly at the end of the dry season, while “B8A” values remain high. This is a sign of mixed pixels which combine forest remains with bare soil. Forest areas show a constant spectral response during the year. Degraded areas show an increase in values of middle infra-red band “B11” compared to native forests, showing a mixed response of vegetation and soil.</p>
 </div>
 <div id="building-a-data-cube" class="section level2 unnumbered">
 <h2>Building a data cube<a class="anchor" aria-label="anchor" href="#building-a-data-cube"><i class="fas fa-link"></i></a>
 </h2>
-<p>We now build a data cube from the Sentinel-2 images available in the package <code>sitsdata</code>. These images were downloaded from the <code>SENTINEL-2-L2A</code> collection in Microsoft Planetary Computer (<code>MPC</code>). We have chosen bands “BO2”, “B8A” and “B11” images in a small area of 1000 x 1000 pixels the state of Rondonia to serve as examples. As explained in the “Earth observation data cubes” chapter, we need to inform <code>sits</code> how to parse these file names to obtain tile, date and band information. Image files are named according to the convention “cube_tile_band_date” (e.g., <code>cube_20LKP_BO2_2020_06_04.tif</code>).</p>
-<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
+<p>We now build a data cube from the Sentinel-2 images available in the package <code>sitsdata</code>. These images were downloaded from the <code>SENTINEL-2-L2A</code> collection in Microsoft Planetary Computer (<code>MPC</code>). We have chosen bands “BO2”, “B8A” and “B11” images in a small area of 1000 x 1000 pixels the state of Rondonia. As explained in the “Earth observation data cubes” chapter, we need to inform <code>sits</code> how to parse these file names to obtain tile, date and band information. Image files are named according to the convention “cube_tile_band_date” (e.g., <code>cube_20LKP_BO2_2020_06_04.tif</code>).</p>
+<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># files are available in a local directory</span></span>
 <span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/Rondonia-20LKP/"</span>, package <span class="op">=</span> <span class="st">"sitsdata"</span><span class="op">)</span></span>
 <span><span class="co"># read data cube</span></span>
@@ -139,17 +154,17 @@
 <span><span class="co"># plot the cube</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_cube_20LKP</span>, dates <span class="op">=</span> <span class="st">"2021-07-25"</span>, red <span class="op">=</span> <span class="st">"B11"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>, blue <span class="op">=</span> <span class="st">"B02"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-107"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-107-1.png" alt="Color composite image of the cube for date 2021-07-25" width="90%"><p class="caption">
-Figure 60: Color composite image of the cube for date 2021-07-25
+<span style="display:block;" id="fig:unnamed-chunk-109"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-109-1.png" alt="Color composite image of the cube for date 2021-07-25" width="90%"><p class="caption">
+Figure 62: Color composite image of the cube for date 2021-07-25
 </p>
 </div>
 </div>
 <div id="training-a-deep-learning-model" class="section level2 unnumbered">
 <h2>Training a deep learning model<a class="anchor" aria-label="anchor" href="#training-a-deep-learning-model"><i class="fas fa-link"></i></a>
 </h2>
-<p>The next step is to train a LighTAE model, using the <code>adamw</code> optimizer and a learning rate of 0.001. Since the images only have bands <code>BO2</code>, <code>B8A</code> and <code>B11</code>, we select these bands from the training data.</p>
-<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
+<p>The next step is to train a Lightweigth Temporal Attentiona Enconder model model, using the <code>adamw</code> optimizer and a learning rate of 0.001. Since the data cube to be classified has bands <code>BO2</code>, <code>B8A</code> and <code>B11</code>, we select these bands from the training data.</p>
+<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># use only the bands available in the cube</span></span>
 <span><span class="va">samples_3bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">samples_prodes_4classes</span>,</span>
@@ -166,9 +181,9 @@ Figure 60: Color composite image of the cube for date 2021-07-25
 <span><span class="co"># plot the evolution of the model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ltae_model</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-108"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-108-1.png" alt="Training evolution of LightTAE model." width="80%"><p class="caption">
-Figure 61: Training evolution of LightTAE model.
+<span style="display:block;" id="fig:unnamed-chunk-110"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-110-1.png" alt="Training evolution of LightTAE model." width="80%"><p class="caption">
+Figure 63: Training evolution of LightTAE model.
 </p>
 </div>
 </div>
@@ -176,7 +191,7 @@ Figure 61: Training evolution of LightTAE model.
 <h2>Classification using parallel processing<a class="anchor" aria-label="anchor" href="#classification-using-parallel-processing"><i class="fas fa-link"></i></a>
 </h2>
 <p>To classify both data cubes and sets of time series, use the function <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>, which uses parallel processing for speed up performance, as described in the end of this Chapter. Its most relevant parameters are: (a) <code>data</code>, either a data cube or a set of time series; (b) <code>ml_model</code>, a trained model using one of the machine learning methods provided; (c) <code>multicores</code>, number of CPU cores that will be used for processing; (d) <code>memsize</code>, memory available for classification; (e) <code>output_dir</code>, directory where results will be stored; (f) <code>version</code>, for version control. If users want to follow the processing steps, they should turn on the parameters <code>verbose</code> to print information and <code>progress</code> to get a progress bar. The result of the classification is a data cube with a set of probability layers, one for each output class. Each probability layer contains the model’s assessment of how likely is each pixel to belong to the related class. The probability cube can be visualized with <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code>.</p>
-<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># classify data cube</span></span>
 <span><span class="va">ro_cube_20LKP_probs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">ro_cube_20LKP</span>,</span>
@@ -188,13 +203,13 @@ Figure 61: Training evolution of LightTAE model.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_cube_20LKP_probs</span>, palette <span class="op">=</span> <span class="st">"YlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-109"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-109-1.png" alt="Probability maps produced by LightTAE model." width="80%"><p class="caption">
-Figure 62: Probability maps produced by LightTAE model.
+<span style="display:block;" id="fig:unnamed-chunk-111"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-111-1.png" alt="Probability maps produced by LightTAE model." width="80%"><p class="caption">
+Figure 64: Probability maps produced by LightTAE model.
 </p>
 </div>
 <p>The probability cube is a useful tool for data analysis. It is used for post-processing smoothing, as described in this Chapter, but also in uncertainty estimates and active learning, as described in the “Uncertainty and Active Learning” Chapter.</p>
-<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># generate thematic map</span></span>
 <span><span class="va">defor_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">ro_cube_20LKP_probs</span>,</span>
@@ -205,19 +220,106 @@ Figure 62: Probability maps produced by LightTAE model.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">defor_map</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-110"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-110-1.png" alt="Final classification map." width="100%"><p class="caption">
-Figure 63: Final classification map.
+<span style="display:block;" id="fig:unnamed-chunk-112"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-112-1.png" alt="Final classification map." width="100%"><p class="caption">
+Figure 65: Final classification map.
 </p>
 </div>
-<p>The resulting labelled map shows a number of likely misclassified pixels which are shown as small patches surrounded by a different class. These outliers are a side-effect of pixel-based time series classification. Images contain many mixed pixels irrespective of the resolution, and there is a considerable degree of data variability in each class. These effects lead to outliers whose chance of misclassification is significant. To improve this result, <code>sits</code> includes post-processing smoothing methods that use spatial context of the probability cubes.</p>
+<p>The labelled map generated from the pixel-based time series classification method exhibits a number of misclassified pixels, which are depicted as small patches that appear surrounded by a different class. This occurrence of outliers is a common issue that arises due to the inherent nature of this classification approach. Mixed pixels are prevalent in images, regardless of their resolution, and each class exhibits a considerable degree of data variability. As a result, these factors can lead to outliers that have a higher probability of being misclassified. To overcome this limitation, <code>sits</code> employs post-processing smoothing techniques that leverage the spatial context of the probability cubes to refine the results.</p>
+</div>
+<div id="bayesian-smoothing" class="section level2 unnumbered">
+<h2>Bayesian smoothing<a class="anchor" aria-label="anchor" href="#bayesian-smoothing"><i class="fas fa-link"></i></a>
+</h2>
+<p>The <code>sits</code> package uses a <em>time-first, space-later</em> approach. Since machine learning classifiers in <code>sits</code> are mostly pixel-based, it is necessary to complement them with smooth labeling methods. These methods improve the accuracy of land-cover classification by incorporating spatial and contextual information into the classification process. Smoothing methods use the neighborhood information to remove outliers and enhance consistency in the resulting product. The smoothing method available in <code>sits</code> uses Bayesian inference.</p>
+<p>Bayesian inference can be thought of as way of coherently updating our uncertainty in the light of new evidence. It allows the inclusion of expert knowledge on the derivation of probabilities. Bayesian smoothing works by considering the combination of two elements: (a) our prior belief on class probabilities; (b) the estimated probabilities for a given pixel. To estimate prior distribution to the class probabilities for each pixel, we use the values for its neighbors. The assumption is that, at local level, class probabilities should be similar and provide the baseline for comparison with the pixel values produced by the classifier. Based on these two elements, Bayesian smoothing adjusts the probabilities for the pixel based on our prior beliefs.</p>
+<p>The intuition for Bayesian smoothing is that homogeneous neighborhoods should have the same class. These situations occur when there is a high average probability for a single class, associated with a low variance. In this case, local effects dominate. Pixels which have been assigned to a different class are updated to the one that dominates the neighborhood. In these cases, the prior probability is said to be informative. By contrast, in neighborhoods where the average probability for the most frequent class is not high and that have a high variance in its values, it is likely that the pixel has been misclassified. Bayesian smoothing improves the classification results by removing pixels where the classifier has low confidence.</p>
+<p>One expected consequence of Bayesian smoothing is to improve the borders between the objects created by the classification. In pixel-based classification, mixed pixels at the limits between areas with different classes pose a problem for classification. These pixels contain signatures of two classes. To account for these cases, Bayesian smoothing in <code>sits</code> uses a special definition of a neighborhood. Each pixel in a probability map of a class is associated to a neighborhood with half of the size of the local window. The pixels in this neighborhood are those having the highest probability of belonging to the class.</p>
+<p>To run Bayesian smoothing, the parameter of <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code> are: (a) <code>cube</code>, a probability cube produced by <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>; (b) <code>type</code> should be <code>bayes</code> (the default); (c) <code>window_size</code>, the local window to compute the neighborhood probabilities; (d) <code>neigh_fraction</code>, fraction of local neighbors used to calculate local statistics; (e) <code>smoothness</code>, an estimate of the local variance (see Technical Annex for details); (f) <code>multicores</code>, number of CPU cores that will be used for processing; (g) <code>memsize</code>, memory available for classification; (h) <code>output_dir</code>, directory where results will be stored; (i) <code>version</code>, for version control. The resulting cube can be visualized with <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code>. The bigger one sets the <code>window_size</code> and <code>smoothness</code> parameters, the stronger the adjustments will be. In what follows, we compare two situations of smoothing effects, by varying the <code>window_size</code> and <code>smoothness</code> parameters.</p>
+<p>As explained above, the <code>window_size</code> parameter controls the size of the neighborhood. However, not all pixels inside the window will be included in the Bayesian estimator. To be reliable, local class statistics should only include pixels that are likely to belong to such class. Windows centered on border pixels contain only some pixels belonging to same class as the central pixel; the others belongs to a different class. Consider a window of size 9 x 9 around a pixel in the probability map of class “Forest”. It will contain the central pixel and 80 neighbors. Instead of using all those neighbors to compute the local statistics, <code>sits</code> uses only some of them. The number of neighbors used to calculate the local statistics is set by the taking those with the highest probability of belonging to class “Forest”. The percentage of pixel per window used to calculate local class statistics is set by the <code>neigh_fraction</code> parameter.</p>
+<p>Together, the parameters <code>window_size</code> and <code>neigh_fraction</code> control how many pixels in a neighborhood are used to calculate the local statistics used by the Bayesian estimator. Since the estimator is based on Gaussian distributions, it needs at least 30 samples to produce statistical significant values. For example, setting <code>window size</code> to 9 and <code>neigh_fraction</code> to 0.5 (the defaults) ensures that at least 40 samples are used to estimate the local statistics.</p>
+<div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># compute Bayesian smoothing</span></span>
+<span><span class="va">cube_smooth_w9_s20</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth</a></span><span class="op">(</span></span>
+<span>  cube <span class="op">=</span> <span class="va">ro_cube_20LKP_probs</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"bayes"</span>,</span>
+<span>  window_size <span class="op">=</span> <span class="fl">9</span>,</span>
+<span>  neigh_fraction <span class="op">=</span> <span class="fl">0.50</span>,</span>
+<span>  smoothness <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  version <span class="op">=</span> <span class="st">"bayes_w9_s20"</span>,</span>
+<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp9"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># plot the result</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">cube_smooth_w9_s20</span>, palette <span class="op">=</span> <span class="st">"YlGn"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-113"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-113-1.png" alt="Probability maps after bayesian smoothing." width="90%"><p class="caption">
+Figure 66: Probability maps after bayesian smoothing.
+</p>
+</div>
+<p>Bayesian smoothing has removed some of local variability associated to misclassified pixels which are different from their neighbors. The impact of smoothing is best appreciated comparing the labelled map produced without smoothing to the one that follows the procedure, as shown below.</p>
+<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># generate thematic map</span></span>
+<span><span class="va">defor_map_smooth_w9_20</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
+<span>  cube <span class="op">=</span> <span class="va">cube_smooth_w9_s20</span>,</span>
+<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp8"</span>,</span>
+<span>  version <span class="op">=</span> <span class="st">"bayes_w9_s20"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">defor_map_smooth_w9_20</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-114"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-114-1.png" alt="Final classification map after Bayesian smoothing with 5 x 5 window and smoothness = 30." width="90%"><p class="caption">
+Figure 67: Final classification map after Bayesian smoothing with 5 x 5 window and smoothness = 30.
+</p>
+</div>
+<p>To produce an even stronger smoothing effect, the example below uses bigger values for <code>window_size</code> and <code>smoothness</code>.</p>
+<div class="sourceCode" id="cb116"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># compute Bayesian smoothing</span></span>
+<span><span class="va">cube_smooth_w13_s80</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth</a></span><span class="op">(</span></span>
+<span>  cube <span class="op">=</span> <span class="va">ro_cube_20LKP_probs</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"bayes"</span>,</span>
+<span>  window_size <span class="op">=</span> <span class="fl">13</span>,</span>
+<span>  smoothness <span class="op">=</span> <span class="fl">80</span>,</span>
+<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  version <span class="op">=</span> <span class="st">"bayes_w13_s80"</span>,</span>
+<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp8"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># plot the result</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">cube_smooth_w13_s80</span>, palette <span class="op">=</span> <span class="st">"YlGn"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-115"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-115-1.png" alt="Probability maps after bayesian smoothing with 9 x 9 window smoothness = 80." width="90%"><p class="caption">
+Figure 68: Probability maps after bayesian smoothing with 9 x 9 window smoothness = 80.
+</p>
+</div>
+<div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># generate thematic map</span></span>
+<span><span class="va">defor_map_smooth_w13_s80</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
+<span>  cube <span class="op">=</span> <span class="va">cube_smooth_w13_s80</span>,</span>
+<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp8"</span>,</span>
+<span>  version <span class="op">=</span> <span class="st">"bayes_w13_s80"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">defor_map_smooth_w13_s80</span>, palette <span class="op">=</span> <span class="st">"YlGn"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-116"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-116-1.png" alt="Final classification map after Bayesian smoothing with 9 x 9 size." width="90%"><p class="caption">
+Figure 69: Final classification map after Bayesian smoothing with 9 x 9 size.
+</p>
+</div>
+<p>Comparing the two maps, it is apparent that the smoothing procedure has reduced a lot of the noise in the original classification and produced a more homogeneous result. Although more pleasing to the eye, this map may not be be more accurate than the previous one, since much spatial details has been lost. In general, Bayesian smoothing improves the quality of the final labelled maps and thus should be applied in most situations.</p>
 </div>
 <div id="map-reclassification" class="section level2 unnumbered">
 <h2>Map Reclassification<a class="anchor" aria-label="anchor" href="#map-reclassification"><i class="fas fa-link"></i></a>
 </h2>
 <p>Reclassification of a remote sensing map refers to the process of changing the classes assigned to different pixels in the image. The purpose of reclassification is to modify the information contained in the image to better suit a specific use case. In <code>sits</code>, reclassification involves assigning new class labels to pixels based on additional information provided a reference map. Based on the labels of the classification and the reference map, the users defines rules based on the desired outcome. These rules are then applied to the classified map. The result is a new map with updated labels.</p>
 <p>To illustrate the reclassification operation in <code>sits</code>, we take a classified data cube, stored in the <code>sitsdata</code> package. As discussed in the “Earth observation data cubes” chapter, <code>sits</code> can create a data cube from a classified image file. Users need to provide the original data source and collection, the directory where data is stored (<code>data_dir</code>), the information on how to retrieve data cube parameters from file names (<code>parse_info</code>), and the labels associated to the classified image.</p>
-<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb118"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Open classification map</span></span>
 <span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/Rondonia-Class"</span>, package <span class="op">=</span> <span class="st">"sitsdata"</span><span class="op">)</span></span>
 <span><span class="va">ro_class</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
@@ -236,14 +338,14 @@ Figure 63: Final classification map.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_class</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-111"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-111-1.png" alt="original classification map." width="100%"><p class="caption">
-Figure 64: original classification map.
+<span style="display:block;" id="fig:unnamed-chunk-117"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-117-1.png" alt="original classification map." width="100%"><p class="caption">
+Figure 70: original classification map.
 </p>
 </div>
 <p>The above map shows the total extent of deforestation by clear cuts estimated by the <code>sits</code> random forest algorithm in an area in Rondonia, Brasil, based on an time series of Sentinel-2 images for the period <code>2020-06-04</code> to <code>2021-08-26</code>. Suppose we want to estimate the deforestation that ocurred period from June 2020 to August 2021. We need a reference map that contains information on forest cuts prior to 2020.</p>
 <p>In this example, we the PRODES deforestation map of Amazonia created by Brazil’s National Institute for Space Research (INPE) as our refence. This map is produced by visual interpretation. PRODES measures deforestation on an yearly basis, starting from August of one year to July of the following year. The contains classes that represent the natural world (“Forest”, “Water”, “NonForest”, and “NonForest2”) and classes that capture the yearly deforestation increments. These classes are labelled “dYYYY” and “rYYYY”; the first label refers to deforestation on a given year (e.g., “d2008” for deforestation for August 2007 to July 2008); the second to places where the satellite data is not sufficient to determine the land cover (e.g, “r2010” for 2010). This map is available on package “sitsdata”, as shown below.</p>
-<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb119"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/PRODES"</span>, package <span class="op">=</span> <span class="st">"sitsdata"</span><span class="op">)</span></span>
 <span><span class="va">prodes2021</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"USGS"</span>,</span>
@@ -254,6 +356,7 @@ Figure 64: original classification map.
 <span>    <span class="st">"band"</span>, <span class="st">"version"</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  bands <span class="op">=</span> <span class="st">"class"</span>,</span>
+<span>  version <span class="op">=</span> <span class="st">"v20220606"</span>,</span>
 <span>  labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Forest"</span>, <span class="st">"Water"</span>, <span class="st">"NonForest"</span>,</span>
 <span>    <span class="st">"NonForest2"</span>, <span class="st">"NoClass"</span>, <span class="st">"d2007"</span>, <span class="st">"d2008"</span>,</span>
@@ -267,7 +370,7 @@ Figure 64: original classification map.
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Since the labels of the deforestation map are specialized and are not part of the default <code>sits</code> color table, we define a legend for better visualisation of the different deforestation classes. Using this new legend, we can plot the PRODES deforestation map.</p>
-<div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># use the RColorBrewer pallete "YlOrBr" for the deforestation years</span></span>
 <span><span class="va">colors</span> <span class="op">&lt;-</span> <span class="fu">grDevices</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html">hcl.colors</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">15</span>, palette <span class="op">=</span> <span class="st">"YlOrBr"</span><span class="op">)</span></span>
 <span><span class="co"># define the legend for the deforestation map</span></span>
@@ -292,16 +395,16 @@ Figure 64: original classification map.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">prodes2021</span>, legend <span class="op">=</span> <span class="va">def_legend</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-113"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-113-1.png" alt="Deforestation map produced by PRODES." width="100%"><p class="caption">
-Figure 65: Deforestation map produced by PRODES.
+<span style="display:block;" id="fig:unnamed-chunk-119"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-119-1.png" alt="Deforestation map produced by PRODES." width="100%"><p class="caption">
+Figure 71: Deforestation map produced by PRODES.
 </p>
 </div>
 <p>Taking the PRODES map as our refence, we can include new labels in the classified map produced by <code>sits</code> using <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code>. The new label “Defor_2020” will be applied to all pixels that PRODES considers that have been deforested prior to July 2020. We also include a new label “Non_Forest” to include all pixels that PRODES takes as not covered by native vegetation, such as wetlands and rocky areas. The PRODES classes will be used as a mask over the <code>sits</code> deforestation map.</p>
 <p>The <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code> operation requires the parameters: (a) <code>cube</code>, the classified data cube whose pixels will be reclassified; (b) <code>mask</code>, the reference data cube used as a mask; (c) <code>rules</code>, a named list. The names of the <code>rules</code> list will be the new labels of the classified cube. Each new label is associated to a <code>mask</code> vector that includes the labels of the reference map that will be joined. <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code> then compares the original and reference map pixel by pixel. For each pixel of the reference map whose labels in one of the <code>rules</code>, the algorithm relabels the original map. The result will be a reclassified map that has the original labels plus the new labels that have been masked using the reference map.</p>
-<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Reclassify cube</span></span>
-<span><span class="va">ro_def_2021</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify</a></span><span class="op">(</span></span>
+<span><span class="va">ro_def_202021</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">ro_class</span>,</span>
 <span>  mask <span class="op">=</span> <span class="va">prodes2021</span>,</span>
 <span>  rules <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
@@ -310,196 +413,54 @@ Figure 65: Deforestation map produced by PRODES.
 <span>      <span class="st">"d2010"</span>, <span class="st">"d2011"</span>, <span class="st">"d2012"</span>,</span>
 <span>      <span class="st">"d2013"</span>, <span class="st">"d2014"</span>, <span class="st">"d2015"</span>,</span>
 <span>      <span class="st">"d2016"</span>, <span class="st">"d2017"</span>, <span class="st">"d2018"</span>,</span>
+<span>      <span class="st">"d2019"</span>, <span class="st">"d2020"</span>,</span>
 <span>      <span class="st">"r2010"</span>, <span class="st">"r2011"</span>, <span class="st">"r2012"</span>,</span>
 <span>      <span class="st">"r2013"</span>, <span class="st">"r2014"</span>, <span class="st">"r2015"</span>,</span>
 <span>      <span class="st">"r2016"</span>, <span class="st">"r2017"</span>, <span class="st">"r2018"</span>,</span>
-<span>      <span class="st">"d2019"</span>, <span class="st">"r2019"</span>, <span class="st">"d2020"</span>,</span>
-<span>      <span class="st">"r2020"</span>, <span class="st">"r2021"</span></span>
+<span>      <span class="st">"r2019"</span>, <span class="st">"r2020"</span>, <span class="st">"r2021"</span></span>
 <span>    <span class="op">)</span>,</span>
 <span>    <span class="st">"Water"</span> <span class="op">=</span> <span class="va">mask</span> <span class="op">==</span> <span class="st">"Water"</span>,</span>
 <span>    <span class="st">"Non_Forest"</span> <span class="op">=</span> <span class="va">mask</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NonForest"</span>, <span class="st">"NonForest2"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  memsize <span class="op">=</span> <span class="fl">8</span>,</span>
 <span>  multicores <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp9"</span></span>
+<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp9"</span>,</span>
+<span>  version <span class="op">=</span> <span class="st">"defor-reclass"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># plot the reclassified map</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_def_2021</span><span class="op">)</span></span></code></pre></div>
-<pre><code>#&gt; Warning: palette colors names missing for 8, 9. Therefore,
-#&gt; palette color names will be ignored</code></pre>
+<pre><code>#&gt; Warning: palette colors names missing for 8, 9. Therefore, palette color names will be ignored</code></pre>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-114"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-114-1.png" alt="Deforestation map by sits masked by PRODES map." width="100%"><p class="caption">
-Figure 66: Deforestation map by sits masked by PRODES map.
+<span style="display:block;" id="fig:unnamed-chunk-120"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-120-1.png" alt="Deforestation map by sits masked by PRODES map." width="100%"><p class="caption">
+Figure 72: Deforestation map by sits masked by PRODES map.
 </p>
 </div>
 <p>The reclassified map has been split into deforestation prior to mid-2020 (using the PRODES map) and the areas classified by <code>sits</code> that are taken as being deforested on the period mid-2020 to mid-2021. This allows the experts to measure how much deforestation occurred in this period according to <code>sits</code> and compare the result with that of the PRODES visual interpretation map.</p>
 <p>The <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code> operation is not restricted to the comparison between deforestation maps. It can be used in any case that requires masking of a result based on a reference map.</p>
 </div>
-<div id="post-classification-smoothing" class="section level2 unnumbered">
-<h2>Post-classification smoothing<a class="anchor" aria-label="anchor" href="#post-classification-smoothing"><i class="fas fa-link"></i></a>
+<div id="how-parallel-processing-works" class="section level2 unnumbered">
+<h2>How parallel processing works<a class="anchor" aria-label="anchor" href="#how-parallel-processing-works"><i class="fas fa-link"></i></a>
 </h2>
-<p>Smoothing methods are an important complement to machine learning algorithms for image classification. Since these methods are mostly pixel-based, it is useful to complement them with post-processing smoothing to include spatial information in the result. For each pixel, machine learning and other statistical algorithms provide the probabilities of that pixel belonging to each of the classes. As a first step in obtaining a result, each pixel is assigned to the class whose probability is higher. After this step, smoothing methods use class probabilities to detect and correct outliers or misclassified pixels.</p>
-<p>Image classification post-processing has been defined as “a refinement of the labelling in a classified image in order to enhance its classification accuracy” <span class="citation"><a href="references.html#ref-Huang2014" role="doc-biblioref">[79]</a></span>. In remote sensing image analysis, these procedures are used to combine pixel-based classification methods with a spatial post-processing method to remove outliers and misclassified pixels. For pixel-based classifiers, post-processing methods enable the inclusion of spatial information in the final results.</p>
-<p>Post-processing is a desirable step in any classification process. To offset these problems, most post-processing methods use the “smoothness assumption” <span class="citation"><a href="references.html#ref-Schindler2012" role="doc-biblioref">[80]</a></span>: nearby pixels tend to have the same label. To put this assumption in practice, smoothing methods use the neighborhood information to remove outliers and enhance consistency in the resulting product. The spatial smoothing methods are available in <code>sits</code> are bayesian smoothing and bilinear smoothing. These methods are called using the <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code> function, as shown in the examples below.</p>
-<div id="bayesian-smoothing" class="section level3 unnumbered">
-<h3>Bayesian smoothing<a class="anchor" aria-label="anchor" href="#bayesian-smoothing"><i class="fas fa-link"></i></a>
-</h3>
-<p>The assumption of all spatial smoothing methods is the existence of a spatial autocorrelation effect between a pixel and its neighbors. Spatial autocorrelation describes the degree of similarity between pixels that are located close to each other. In land use classification, class probabilities of pixels in a neighborhood are mostly similar. Pixels with high probabilities of being labelled “Forest” should be surrounded by pixels with similar class probabilities. However, sometimes a pixel with high probability for a given class (e.g., “Crops”) has neighbors with which have low to moderate probabilities for this class. Bayesian smoothing uses the class probability to estimate if this is a classification error.</p>
-<p>Bayesian inference can be thought of as way of coherently updating our uncertainty in the light of new evidence. It allows the inclusion of expert knowledge on the derivation of probabilities. Bayesian smoothing works by considering the combination of two elements: (a) our prior belief on class probabilities; (b) the estimated probabilities for a given pixel. To estimate prior distribution to the class probabilities for each pixel, we use the values for its neighbors. The assumption is that, at local level, class probabilities should be similar and provide the baseline for comparison with the pixel values produced by the classifier. Based on these two elements, Bayesian smoothing adjusts the probabilities for the pixel based on our prior beliefs.</p>
-<p>The intuition for Bayesian smoothing is that homogeneous neighborhoods should have the same class. These situations occur when there is a high average probability for a single class, associated with a low variance. In this case, local effects dominate. Pixels which have been assigned to a different class are updated to the one that dominates the neighborhood. In these case, the prior probability is said to be informative. By contrast, in neighborhoods where the average probability for the most frequent class is not high and that have a high variance in its values, the pixel’s assigned class is likely not to be updated.</p>
-<p>One expected consequence of Bayesian smoothing is to improve the borders between the objects created by the classification. In pixel-based classification, mixed pixels at the limits between areas with different classes pose a problem for classification. These pixels contain signatures of two classes. To account for these cases, Bayesian smoothing in <code>sits</code> uses a special definition of a neighborhood. Each pixel in a probability map of a class is associated to a neighborhood with half of the size of the local window. The pixels in this neighborhood are those having the highest probability of beloging to the class.</p>
-<p>To run Bayesian smoothing, the parameter of <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code> are: (a) <code>cube</code>, a probability cube produced by <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>; (b) <code>type</code> should be <code>bayes</code> (the default); (c) <code>window_size</code>, the local window to compute the neighborhood probabilities; (d) <code>neigh_fraction</code>, fraction of local neighbors used to calculate local statistics; (e) <code>smoothness</code>, an estimate of the local variance (see Technical Annex for details); (f) <code>multicores</code>, number of CPU cores that will be used for processing; (g) <code>memsize</code>, memory available for classification; (h) <code>output_dir</code>, directory where results will be stored; (i) <code>version</code>, for version control. The resulting cube can be visualized with <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code>. The bigger one sets the <code>window_size</code> and <code>smoothness</code> parameters, the stronger the adjustments will be. In what follows, we compare two situations of smoothing effects, by varying the <code>window_size</code> and <code>smoothness</code> parameters.</p>
-<p>As explained above, the <code>window_size</code> parameter controls the size of the neighborhood. However, not all pixels inside the window will be included in the Bayesian estimator. To be reliable, local class statistics should only include pixels that are likely to belong to such class. Windows centered on border pixels contain only some pixels belonging to same class as the central pixel; the others belongs to a different class. Consider a window of size 9 x 9 around a pixel in the probability map of class “Forest”. It will contain the central pixel and 80 neighbors. Instead of using all those neighbors to compute the local statistics, <code>sits</code> uses only some of them. The number of neighbors used to calculate the local statistics is set by the taking those with the highest probability of belonging to class “Forest”. The percentage of pixel per window used to calculate local class statistics is set by the <code>neigh_fraction</code> parameter.</p>
-<p>Together, the parameters <code>window_size</code> and <code>neigh_fraction</code> control how many pixels in a neighborhood are used to calculate the local statistics used by the Bayesian estimator. Since the estimator is based on Gaussian distributions, it needs at least 30 samples to produce statistical significant values. For example, setting <code>window size</code> to 9 and <code>neigh_fraction</code> to 0.5 (the defaults) ensures that at least 40 samples are used to estimate the local statistics.</p>
-<div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># compute Bayesian smoothing</span></span>
-<span><span class="va">cube_smooth_w9_s20</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">ro_cube_20LKP_probs</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">"bayes"</span>,</span>
-<span>  window_size <span class="op">=</span> <span class="fl">9</span>,</span>
-<span>  neigh_fraction <span class="op">=</span> <span class="fl">0.50</span>,</span>
-<span>  smoothness <span class="op">=</span> <span class="fl">20</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"bayes_w9_s20"</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp9"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># plot the result</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">cube_smooth_w9_s20</span>, palette <span class="op">=</span> <span class="st">"YlGn"</span><span class="op">)</span></span></code></pre></div>
+<p>This section provides an overview of how the functions <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>, <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code> and <code><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification()</a></code> process images in parallel. To achieve efficiency, <code>sits</code> implements a fault tolerant multitasking procedure for big EO data classification. Users are not burdened with the need to learn how to do multiprocessing. Thus, their learning curve is shortened. Image classification in <code>sits</code> is done by a cluster of independent workers linked to a virtual machine. To avoid communication overhead, all large payloads are read and stored independently; direct interaction between the main process and the workers is kept at a minimum.</p>
+<p>The classification procedure benefits from the fact that most images available in cloud collections are stored as COGs (cloud-optimized Geotiff). COGs are a regular GeoTIFF files organized in regular square blocks to improve visualization and access for large data sets. Thus, data requests can be optimized to access only portions of the images. All cloud services supported by <code>sits</code> use COG files. The classification algorithm in <code>sits</code> uses COGs to ensure optimal data access, reducing I/O demand as much as possible.</p>
+<p>The approach for parallel processing in <code>sits</code>, depicted in the figure below, has the following steps:</p>
+<ol style="list-style-type: decimal">
+<li>Based on the block size of individual COG files, calculate the size of each chunk that has to be loaded in memory, considering the number of bands and the length of the timeline. Chunk access is optimized for efficient transfer of data blocks.</li>
+<li>Divide the total memory available by the chunk size to find out how many processes can be run in parallel.</li>
+<li>Each core processes a chunk and produces a subset of the result.</li>
+<li>Repeat the process until all chunks in the cube have been processed.</li>
+<li>Check that subimages have been produced correctly. If there is a problem with one or more subimages, run a failure recovery procedure to ensure all data is processed.</li>
+<li>After all subimages are generated, join them to obtain the result.</li>
+</ol>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-115"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-115-1.png" alt="Probability maps after bayesian smoothing." width="90%"><p class="caption">
-Figure 67: Probability maps after bayesian smoothing.
+<span style="display:block;" id="fig:unnamed-chunk-121"></span>
+<img src="images/sits_parallel.png" alt="Parallel processing in sits (source: Simoes et al.,2021)." width="90%" height="90%"><p class="caption">
+Figure 73: Parallel processing in sits (source: Simoes et al.,2021).
 </p>
 </div>
-<p>Bayesian smoothing has removed some of local variability associated to misclassified pixels which are different from their neighbors. The impact of smoothing is best appreciated comparing the labelled map produced without smoothing to the one that follows the procedure, as shown below.</p>
-<div class="sourceCode" id="cb118"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># generate thematic map</span></span>
-<span><span class="va">defor_map_smooth_w9_20</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">cube_smooth_w9_s20</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp8"</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"bayes_w9_s20"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">defor_map_smooth_w9_20</span><span class="op">)</span></span></code></pre></div>
-<div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-116"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-116-1.png" alt="Final classification map after Bayesian smoothing with 5 x 5 window and smoothness = 30." width="90%"><p class="caption">
-Figure 68: Final classification map after Bayesian smoothing with 5 x 5 window and smoothness = 30.
-</p>
-</div>
-<p>To produce an even stronger smoothing effect, the example below uses bigger values for <code>window_size</code> and <code>smoothness</code>.</p>
-<div class="sourceCode" id="cb119"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># compute Bayesian smoothing</span></span>
-<span><span class="va">cube_smooth_w13_s80</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">ro_cube_20LKP_probs</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">"bayes"</span>,</span>
-<span>  window_size <span class="op">=</span> <span class="fl">13</span>,</span>
-<span>  smoothness <span class="op">=</span> <span class="fl">80</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"bayes_w13_s80"</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp8"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># plot the result</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">cube_smooth_w13_s80</span>, palette <span class="op">=</span> <span class="st">"YlGn"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-117"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-117-1.png" alt="Probability maps after bayesian smoothing with 9 x 9 window smoothness = 80." width="90%"><p class="caption">
-Figure 69: Probability maps after bayesian smoothing with 9 x 9 window smoothness = 80.
-</p>
-</div>
-<p>Comparing the two maps, it is apparent that the smoothing procedure has reduced a lot of the noise in the original classification and produced a more homogeneous result. Although more pleasing to the eye, this map may not be be more accurate than the previous one, since much spatial details has been lost.</p>
-<div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># generate thematic map</span></span>
-<span><span class="va">defor_map_smooth_w13_s80</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">cube_smooth_w13_s80</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp8"</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"bayes_w13_s80"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">defor_map_smooth_w13_s80</span>, palette <span class="op">=</span> <span class="st">"YlGn"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-118"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-118-1.png" alt="Final classification map after Bayesian smoothing with 9 x 9 size." width="90%"><p class="caption">
-Figure 70: Final classification map after Bayesian smoothing with 9 x 9 size.
-</p>
-</div>
-</div>
-</div>
-<div id="bilateral-smoothing" class="section level2 unnumbered">
-<h2>Bilateral smoothing<a class="anchor" aria-label="anchor" href="#bilateral-smoothing"><i class="fas fa-link"></i></a>
-</h2>
-<p>One of the problems with post-classification smoothing is that we would like to remove noisy pixels (e.g., a pixel with high probability of being labeled “Forest” in the midst of pixels likely to be labeled “Cerrado”), but would also like to preserve the edges between areas. Because of its design, bilateral filter has proven to be a useful method for post-classification processing since it preserves edges while removing noisy pixels <span class="citation"><a href="references.html#ref-Schindler2012" role="doc-biblioref">[80]</a></span>.</p>
-<p>Bilateral smoothing combines proximity (combining pixels which are close) and similarity (comparing the values of the pixels) <span class="citation"><a href="references.html#ref-Tomasi1998" role="doc-biblioref">[81]</a></span>. If most of the pixels in a neighborhood have similar values, it is easy to identify outliers and noisy pixels. In contrast, there is a strong difference between the values of pixels in a neighborhood, it is possible that the pixel is located in a class boundary. The method takes a considers two factors: the distance between the pixel and its neighbors, and the difference in class probabilities between them. Each of the values contributes according to a Gaussian kernel. These factors are calculated independently. Big difference between class probability values reduce the influence of the neighbor in the smoothed pixel. Big distances between pixels also reduce the impact of neighbors.</p>
-<p>To run bilateral smoothing, the parameter of <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code> are: (a) <code>cube</code>, a probability cube produced by <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>; (b) <code>type</code> should be <code>bilateral</code>; (c) <code>window_size</code>, the local window to compute the neighborhood probabilities; (d) <code>sigma</code>, an estimate of the variance of the Gaussian kernel based on distances (see Technical Annex for details); (e) <code>tau</code>, an estimate of the variance of the Gaussian kernel based on local probabilities; (f) <code>multicores</code>, number of CPU cores that will be used for processing; (g) <code>memsize</code>, memory available for classification; (h) <code>output_dir</code>, directory where results will be stored; (v) <code>version</code>, for version control. The resulting cube can be visualized with <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code>.</p>
-<p>The bigger one sets the <code>window_size</code>, the stronger the adjustments will be. The <code>sigma</code> parameter controls the effects of distance; larger values will reduce the influence of the neighbors. The <code>tau</code> parameter controls the influence of the class probabilities of the neighbors. Larger values of <code>sigma</code> will increase the influence of the neighbors. To achieve a satisfactory result, we need to balance the <code>sigma</code> and <code>tau</code>. As a general rule, the values of <code>tau</code> should range from 0.05 to 0.50, while the values of <code>sigma</code> should vary between 4 and 16<span class="citation"><a href="references.html#ref-Paris2007" role="doc-biblioref">[82]</a></span>. The default values adopted in <code>sits</code> are <code>tau = 0.1</code> and <code>sigma = 8</code>. As the best values of <code>sigma</code> and <code>tau</code> depend on the variance of the noisy pixels, users are encouraged to experiment and find parameter values that best fit their requirements.</p>
-<p>The following example shows the behavior of the bilateral smoother and its impact on the classification map. The results show only a moderate reduction of classification noise.</p>
-<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># smooth the result with a bilateral filter</span></span>
-<span><span class="va">cube_smooth_bil_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">ro_cube_20LKP_probs</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">"bilateral"</span>,</span>
-<span>  window_size <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  sigma <span class="op">=</span> <span class="fl">8</span>,</span>
-<span>  tau <span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"bil_w5_s8_t01"</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp8"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># label the smoothed probability images</span></span>
-<span><span class="va">map_bil_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">cube_smooth_bil_1</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"bil_w5_s8_t01"</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp8"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># plot the result</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">map_bil_1</span>, palette <span class="op">=</span> <span class="st">"YlGn"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-119"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-119-1.png" alt="Classified image with bilateral smoothing" width="90%"><p class="caption">
-Figure 71: Classified image with bilateral smoothing
-</p>
-</div>
-<p>For a stronger reduction in classification noise, we can increase the window size, while reducing the variance of the Gaussian kernels by decreasing <code>sigma</code> and <code>tau</code>.</p>
-<div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># smooth the result with a bilateral filter</span></span>
-<span><span class="va">cube_smooth_bil_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">ro_cube_20LKP_probs</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">"bilateral"</span>,</span>
-<span>  window_size <span class="op">=</span> <span class="fl">9</span>,</span>
-<span>  sigma <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  tau <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"bil_w9_s16_t05"</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp8"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># label the smoothed probability images</span></span>
-<span><span class="va">map_bil_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">cube_smooth_bil_2</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"bil_w9_s16_t05"</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp8"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># plot the result</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">map_bil_2</span>, palette <span class="op">=</span> <span class="st">"YlGn"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-120"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-120-1.png" alt="Classified image with bilateral smoothing" width="90%"><p class="caption">
-Figure 72: Classified image with bilateral smoothing
-</p>
-</div>
-<p>Bayesian smoothing tends to produce more homogeneous labeled images than bilateral smoothing. However, some spatial details and some edges are better preserved by the bilateral method. Choosing between the methods depends on user needs and requirements. Since Bayesian smoothing is based on class probabilities and is simpler to parameterize than bilateral smoothing, we recommend the former rather than the latter. In any case, as stated by Schindler <span class="citation"><a href="references.html#ref-Schindler2012" role="doc-biblioref">[80]</a></span>, smoothing improves the quality of classified images and thus should be applied in most situations.</p>
+<p>This approach has many advantages. It works in any virtual machine that supports R and has no dependencies on proprietary software. Processing is done in a concurrent and independent way, with no communication between workers. Failure of one worker does not cause failure of the big data processing. The software is prepared to resume classification processing from the last processed chunk, preventing against failures such as memory exhaustion, power supply interruption, or network breakdown.</p>
+<p>To reduce processing time, it is necessary to adjust <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>, <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code>, and <code><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification()</a></code> according to the capabilities of the host environment. The <code>memsize</code> parameter controls the size of the main memory (in GBytes) to be used for classification. A practical approach is to set <code>memsize</code> to the maximum memory available in the virtual machine for classification and to chose <code>multicores</code> as the largest number of cores available. Based on the memory available and the size of blocks in COG files, <code>sits</code> will access the images in an optimized way. In this way, <code>sits</code> tries to ensure best possible use of the available resources.</p>
 
 </div>
 </div>
@@ -514,11 +475,9 @@ Figure 72: Classified image with bilateral smoothing
 <li><a class="nav-link" href="#building-a-data-cube">Building a data cube</a></li>
 <li><a class="nav-link" href="#training-a-deep-learning-model">Training a deep learning model</a></li>
 <li><a class="nav-link" href="#classification-using-parallel-processing">Classification using parallel processing</a></li>
+<li><a class="nav-link" href="#bayesian-smoothing">Bayesian smoothing</a></li>
 <li><a class="nav-link" href="#map-reclassification">Map Reclassification</a></li>
-<li>
-<a class="nav-link" href="#post-classification-smoothing">Post-classification smoothing</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#bayesian-smoothing">Bayesian smoothing</a></li></ul>
-</li>
-<li><a class="nav-link" href="#bilateral-smoothing">Bilateral smoothing</a></li>
+<li><a class="nav-link" href="#how-parallel-processing-works">How parallel processing works</a></li>
 </ul>
 
       <div class="book-extra">
@@ -535,7 +494,7 @@ Figure 72: Classified image with bilateral smoothing
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-03.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-05.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

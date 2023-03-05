@@ -7,9 +7,14 @@ library(sits)
 
 ## Pixel-based and neighborhood-based operations{-}
 
-Many remote sensing applications use attributes and indexes produced by operations on one or multiple bands. Using the  `sits_apply()` function, users specify the desired mathematical operation as function of the bands available on the cube using any valid R expression to compute the new indices. Then, `sits_apply()` computes the operation for all tiles and all temporal intervals. Besides arithmetic operators, the function also accepts vectorized R function that can be applied to a matrix (e.g., `sqrt()`, `log()`, and `sin()`. There are two types of operations in `sits_apply()`: 
+Pixel-based operations in remote sensing images refer to image processing techniques that operate on individual pixels or cells in an image, without taking into account their spatial relationships with neighboring pixels. These operations are typically applied to each pixel in the image independently and can be used to extract information on spectral, radiometric, or spatial properties of the image. Pixel-based operations produce spectral indexes which combine information from multiple bands.
 
-1. Pixel-based operations that produce an index, based on individual pixels of existing bands. The input bands and indexes should be part of the input data cube and should have the same names as used in the cube. The new index will be computed for every pixel of all images in the time series. 
+Neighborhood-based operations are operations that are applied to a group of pixels in an image. The neighborhood is typically defined as a rectangular or circular region centered on a given pixel. These operations can be used for removing noise from images, detecting edges, and sharpening, among other uses.
+
+Using the  `sits_apply()` function, users specify the desired mathematical operation as function of the bands available on the cube using any valid R expression to compute the new indices. Then, `sits_apply()` computes the operation for all tiles and all temporal intervals. There are two types of operations in `sits_apply()`: 
+
+1. Pixel-based operations that produce an index based on individual pixels of existing bands. The input bands and indexes should be part of the input data cube and should have the same names as used in the cube. The new index will be computed for every pixel of all images in the time series. Besides arithmetic operators, the function also accepts vectorized R functions that can be applied to matrices (e.g., `sqrt()`, `log()`, and `sin()`.
+
 2. Neighborhood-based operations that produce a derived value based on a window centered around each individual pixel. The available functions  are `w_median()`, `w_sum()`, `w_mean()`, `w_min()`, `w_max()`, `w_sd()` (standard deviation) and `w_var()` (variance). Users set the size of the window (only odd values are allowed).
 
 The following examples show how to use the `sits_apply()` function.
@@ -30,7 +35,10 @@ s2_cube <- sits_cube(
     source = "MPC",
     collection = "SENTINEL-2-L2A",
     tiles = c("20LKP"),
-    bands = c("B02", "B03", "B04", "B05", "B06", "B07", "B08", "B8A", "B11", "B12","CLOUD"),
+    bands = c("B02", "B03", "B04", 
+              "B05", "B06", "B07", 
+              "B08", "B8A", "B11", 
+              "B12","CLOUD"),
     start_date = as.Date("2018-07-01"),
     end_date = as.Date("2018-08-31")
 )
@@ -48,7 +56,7 @@ There are many options for calculating NDVI-related indexes for Sentinel-2 bands
 
 We first calculate the NDVI in the usual way, using bands B08 and B04.
 
-```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="NDVI using bands B08 and B04 of Sentinel-2"}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NDVI using bands B08 and B04 of Sentinel-2"}
 
 # calculate new indexes
 reg_cube <- sits_apply(reg_cube,
@@ -61,7 +69,7 @@ plot(reg_cube, band = "NDVI", palette = "RdYlGn")
 ```
 We now compare the traditional NDVI with other vegetation indexes computed using red-edge bands. We first compute the NDRE1 using bands "B06" and "B05". 
 
-```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="NDRE1 using bands B06 and B05 of Sentinel-2"}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NDRE1 using bands B06 and B05 of Sentinel-2"}
 
 # calculate new indexes
 # NDRE1 using bands B06 and B05
@@ -76,7 +84,7 @@ plot(reg_cube, band = "NDRE1",  palette = "RdYlGn")
 ```
 You can notice that the contrast between forests and deforested areas is stronger in the NDRE1 index than with NDVI. We can also compare this index with other red-edge based indexes as shown below. We first calculate NDRE2 using bands "B07" and "B05". 
 
-```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="NDRE2 using bands B07 and B05 of Sentinel-2"}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NDRE2 using bands B07 and B05 of Sentinel-2"}
 
 # calculate new index
 # NDRE2 using bands B07 and B05
@@ -109,7 +117,7 @@ plot(reg_cube, band = "NDRE3", palette = "RdYlGn")
 
 Another relevant use of band combination is the creation of spectral indexes for detection of degradation by fires, which are an important element in environmental degradation. Forest fires have a significant impact on emissions and impoverish natural ecosystems[@Nepstad1999]. Fires open the canopy, make the microclimate drier and increase the amount of dry fuel[@Gao2020]. One well-established technique for detecting burned areas with remote sensing images is the normalized burn ratio (NBR) as the difference between the near infrared and the short wave infrared band, here calculated using the `B8A` and `B12` bands.
 
-```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP"}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP"}
 # calculate the normalized burn ratio 
 reg_cube <- sits_apply(reg_cube,
     NBR = (B12 - B8A)/(B12 + B8A),
@@ -134,7 +142,7 @@ To run the mixture model in `sits`, it is necessary to inform the values of pixe
 
 In `sits`, spectral mixture analysis is done by the `sits_mixture_model()` function, which has two mandatory parameters: `cube` (a data cube) and `endmembers`, a named table (or equivalent) defines the defines the pure pixels. The `endmembers` table should name the following named columns: (a) `type`, that defines the class associated to an endmember; (b) names, the names of the bands. Each line of the table should contain the value of each endmember for all bands (see example). To improve readability, we suggest that the `endmembers` parameters be defined as a `tribble`. A `tribble` is a `tibble` with an easier to read row-by-row layout. In the example below, we define three endmmembers for classes "forest", "soil", "water".  Note that the values for each band are expressed as integers ranging from 0 to 10,000. 
 
-```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="Percentage of forest per pixel estimated by mixture model"}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Percentage of forest per pixel estimated by mixture model"}
 # define the endmembers for three classes and six bands
 em <- tibble::tribble(
     ~type,    ~B02, ~B03, ~B04, ~B8A, ~B11, ~B12,
@@ -154,13 +162,13 @@ reg_cube <- sits_mixture_model(
 plot(reg_cube, band = "FOREST", palette = "Greens")
 ```
 
-```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="Percentage of water per pixel estimated by mixture model"}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Percentage of water per pixel estimated by mixture model"}
 
 # plot the water endmember for the first date using the water palette
 plot(reg_cube, band = "WATER", palette = "Blues")
 ```
 
-```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="Percentage of soil per pixel estimated by mixture model"}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Percentage of soil per pixel estimated by mixture model"}
 # plot the SOIL endmember for the first date using the "soil" palette 
 plot(reg_cube, band = "SOIL", palette = "OrRd")
 ```

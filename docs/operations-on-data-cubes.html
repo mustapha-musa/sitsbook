@@ -13,15 +13,15 @@
 <meta name="author" content="Pedro Ribeiro Andrade">
 <meta name="author" content="Karine Ferreira">
 <meta name="author" content="Gilberto Queiroz">
-<meta name="description" content="Pixel-based and neighborhood-based operations Many remote sensing applications use attributes and indexes produced by operations on one or multiple bands. Using the sits_apply() function, users...">
+<meta name="description" content="Pixel-based and neighborhood-based operations Pixel-based operations in remote sensing images refer to image processing techniques that operate on individual pixels or cells in an image, without...">
 <meta name="generator" content="bookdown 0.32 with bs4_book()">
 <meta property="og:title" content="Operations on Data Cubes | sits: Satellite Image Time Series Analysis on Earth Observation Data Cubes">
 <meta property="og:type" content="book">
 <meta property="og:image" content="/images/cover_sits_book.png">
-<meta property="og:description" content="Pixel-based and neighborhood-based operations Many remote sensing applications use attributes and indexes produced by operations on one or multiple bands. Using the sits_apply() function, users...">
+<meta property="og:description" content="Pixel-based and neighborhood-based operations Pixel-based operations in remote sensing images refer to image processing techniques that operate on individual pixels or cells in an image, without...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Operations on Data Cubes | sits: Satellite Image Time Series Analysis on Earth Observation Data Cubes">
-<meta name="twitter:description" content="Pixel-based and neighborhood-based operations Many remote sensing applications use attributes and indexes produced by operations on one or multiple bands. Using the sits_apply() function, users...">
+<meta name="twitter:description" content="Pixel-based and neighborhood-based operations Pixel-based operations in remote sensing images refer to image processing techniques that operate on individual pixels or cells in an image, without...">
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -88,7 +88,8 @@
 <li><a class="" href="image-classification-in-data-cubes.html">Image Classification in Data Cubes</a></li>
 <li><a class="" href="validation-and-accuracy-measurements.html">Validation and accuracy measurements</a></li>
 <li><a class="" href="uncertainty-and-active-learning.html">Uncertainty and active learning</a></li>
-<li><a class="" href="design-and-extensibility-considerations.html">Design and extensibility considerations</a></li>
+<li><a class="" href="ensemble-prediction-from-multiple-models.html">Ensemble Prediction from Multiple Models</a></li>
+<li><a class="" href="visualising-and-exporting-data.html">Visualising and Exporting data</a></li>
 <li><a class="" href="technical-annex.html">Technical Annex</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
@@ -104,17 +105,19 @@
 <div id="pixel-based-and-neighborhood-based-operations" class="section level2 unnumbered">
 <h2>Pixel-based and neighborhood-based operations<a class="anchor" aria-label="anchor" href="#pixel-based-and-neighborhood-based-operations"><i class="fas fa-link"></i></a>
 </h2>
-<p>Many remote sensing applications use attributes and indexes produced by operations on one or multiple bands. Using the <code><a href="https://rdrr.io/pkg/sits/man/sits_apply.html">sits_apply()</a></code> function, users specify the desired mathematical operation as function of the bands available on the cube. The function then performs the operation for all tiles and all temporal interval, using any valid R expression to compute the new indices. Besides arithmetic operators, the function also accepts vectorized R function that can be applied to a matrix (e.g., <code><a href="https://rdrr.io/r/base/MathFun.html">sqrt()</a></code>, <code><a href="https://rdrr.io/r/base/Log.html">log()</a></code>, and <code><a href="https://rdrr.io/r/base/Trig.html">sin()</a></code>. There are two types of operations in <code><a href="https://rdrr.io/pkg/sits/man/sits_apply.html">sits_apply()</a></code>:</p>
+<p>Pixel-based operations in remote sensing images refer to image processing techniques that operate on individual pixels or cells in an image, without taking into account their spatial relationships with neighboring pixels. These operations are typically applied to each pixel in the image independently and can be used to extract information on spectral, radiometric, or spatial properties of the image. Pixel-based operations produce spectral indexes which combine information from multiple bands.</p>
+<p>Neighborhood-based operations are operations that are applied to a group of pixels in an image. The neighborhood is typically defined as a rectangular or circular region centered on a given pixel. These operations can be used for removing noise from images, detecting edges, and sharpening, among other uses.</p>
+<p>Using the <code><a href="https://rdrr.io/pkg/sits/man/sits_apply.html">sits_apply()</a></code> function, users specify the desired mathematical operation as function of the bands available on the cube using any valid R expression to compute the new indices. Then, <code><a href="https://rdrr.io/pkg/sits/man/sits_apply.html">sits_apply()</a></code> computes the operation for all tiles and all temporal intervals. There are two types of operations in <code><a href="https://rdrr.io/pkg/sits/man/sits_apply.html">sits_apply()</a></code>:</p>
 <ol style="list-style-type: decimal">
-<li>Pixel-based operations that produce an index, based on individual pixels of existing bands. The input bands and indexes should be part of the input data cube and should have the same names as used in the cube. The new index will be computed for every pixel of all images in the time series.</li>
-<li>Neighborhood-based operations that produce a derived value based on a window centered around each individual pixel. The available functions are <code>w_median()</code>, <code>w_sum()</code>, <code>w_mean()</code>, <code>w_min()</code>, <code>w_max()</code>, <code>w_sd()</code> (standard deviation) and <code>w_var()</code> (variance). Users set the size of the window (only odd values are allowed).</li>
+<li><p>Pixel-based operations that produce an index based on individual pixels of existing bands. The input bands and indexes should be part of the input data cube and should have the same names as used in the cube. The new index will be computed for every pixel of all images in the time series. Besides arithmetic operators, the function also accepts vectorized R functions that can be applied to matrices (e.g., <code><a href="https://rdrr.io/r/base/MathFun.html">sqrt()</a></code>, <code><a href="https://rdrr.io/r/base/Log.html">log()</a></code>, and <code><a href="https://rdrr.io/r/base/Trig.html">sin()</a></code>.</p></li>
+<li><p>Neighborhood-based operations that produce a derived value based on a window centered around each individual pixel. The available functions are <code>w_median()</code>, <code>w_sum()</code>, <code>w_mean()</code>, <code>w_min()</code>, <code>w_max()</code>, <code>w_sd()</code> (standard deviation) and <code>w_var()</code> (variance). Users set the size of the window (only odd values are allowed).</p></li>
 </ol>
 <p>The following examples show how to use the <code><a href="https://rdrr.io/pkg/sits/man/sits_apply.html">sits_apply()</a></code> function.</p>
 </div>
 <div id="computing-ndvi-and-its-variations" class="section level2 unnumbered">
 <h2>Computing NDVI and its variations<a class="anchor" aria-label="anchor" href="#computing-ndvi-and-its-variations"><i class="fas fa-link"></i></a>
 </h2>
-<p>Using vegetation indexes is an established practice on remote sensing. These indexes aim to improve discrimination of vegetation structure by combining two wavebands, one where leaf pigments reflect incoming light with another where leaves absorb incoming radiation. Green leaves from natural vegetation such as forests have a strong emissivity rate in the near infrared bands and low emissivity rates on the red bands of the electromagnetic spectrum. These spectral properties are used to calculate the NDVI (Normalized Difference Vegetation Index), a widely used index which is computed as the normalized difference between the values of infra-red and red bands. The inclusion of red-edge bands in Sentinel-2 images has broadened the scope of the bands used to calculate these indices[<span class="citation"><a href="references.html#ref-Xie2019" role="doc-biblioref">[3]</a></span>]<span class="citation"><a href="references.html#ref-Sun2020a" role="doc-biblioref">[4]</a></span>. In what follows, we show examples of vegetation index calculation, using a Sentinel-2 data cube.</p>
+<p>Using vegetation indexes is an established practice on remote sensing. These indexes aim to improve discrimination of vegetation structure by combining two wavebands, one where leaf pigments reflect incoming light with another where leaves absorb incoming radiation. Green leaves from natural vegetation such as forests have a strong emissivity rate in the near infrared bands and low emissivity rates on the red bands of the electromagnetic spectrum. These spectral properties are used to calculate the NDVI (Normalized Difference Vegetation Index), a widely used index which is computed as the normalized difference between the values of infra-red and red bands. The inclusion of red-edge bands in Sentinel-2 images has broadened the scope of the bands used to calculate these indices[<span class="citation"><a href="references.html#ref-Xie2019" role="doc-biblioref">[4]</a></span>]<span class="citation"><a href="references.html#ref-Sun2020a" role="doc-biblioref">[5]</a></span>. In what follows, we show examples of vegetation index calculation, using a Sentinel-2 data cube.</p>
 <p>First, we define a data cube for a tile in the Amazon region in the state of Rondonia, Brazil, including bands used to compute different vegetation indexes. We regularize the a cube using a target resolution of 60 meters to reduce processing time.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create a directory to store files</span></span>
@@ -127,7 +130,12 @@
 <span>  source <span class="op">=</span> <span class="st">"MPC"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"SENTINEL-2-L2A"</span>,</span>
 <span>  tiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"20LKP"</span><span class="op">)</span>,</span>
-<span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"B02"</span>, <span class="st">"B03"</span>, <span class="st">"B04"</span>, <span class="st">"B05"</span>, <span class="st">"B06"</span>, <span class="st">"B07"</span>, <span class="st">"B08"</span>, <span class="st">"B8A"</span>, <span class="st">"B11"</span>, <span class="st">"B12"</span>, <span class="st">"CLOUD"</span><span class="op">)</span>,</span>
+<span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"B02"</span>, <span class="st">"B03"</span>, <span class="st">"B04"</span>,</span>
+<span>    <span class="st">"B05"</span>, <span class="st">"B06"</span>, <span class="st">"B07"</span>,</span>
+<span>    <span class="st">"B08"</span>, <span class="st">"B8A"</span>, <span class="st">"B11"</span>,</span>
+<span>    <span class="st">"B12"</span>, <span class="st">"CLOUD"</span></span>
+<span>  <span class="op">)</span>,</span>
 <span>  start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2018-07-01"</span><span class="op">)</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2018-08-31"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -139,7 +147,7 @@
 <span>  period     <span class="op">=</span> <span class="st">"P15D"</span>,</span>
 <span>  multicores <span class="op">=</span> <span class="fl">4</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>There are many options for calculating NDVI-related indexes for Sentinel-2 bands. The most widely used method combines band “B08” (785-899 nm) and band “B04” (650-680 nm). Recent works in the literature propose the use of the red-edge bands “B05” (698-713 nm), “B06” (733-748 nm) and “B07” (773-793 nm) for capturing subtle variations in chlorophyll absorption producing indexes which are called Normalized Difference Vegetation Red-edge indexes (NDRE) <span class="citation"><a href="references.html#ref-Xie2019" role="doc-biblioref">[3]</a></span>. In recent paper, Sun et al.<span class="citation"><a href="references.html#ref-Sun2020a" role="doc-biblioref">[4]</a></span> argue that a vegetation index built using bands “B06” and “B07” provide a better approximation to leaf area index estimates. In a recent review, Chaves et al.<span class="citation"><a href="references.html#ref-Chaves2020" role="doc-biblioref">[5]</a></span> argues that red-edge bands are important for distinguishing leaf structure and chlorophyll content of different vegetation species. In the example below, we show how to include additional indexes in the regular data cube which has the Sentinel-2 spectral bands.</p>
+<p>There are many options for calculating NDVI-related indexes for Sentinel-2 bands. The most widely used method combines band “B08” (785-899 nm) and band “B04” (650-680 nm). Recent works in the literature propose the use of the red-edge bands “B05” (698-713 nm), “B06” (733-748 nm) and “B07” (773-793 nm) for capturing subtle variations in chlorophyll absorption producing indexes which are called Normalized Difference Vegetation Red-edge indexes (NDRE) <span class="citation"><a href="references.html#ref-Xie2019" role="doc-biblioref">[4]</a></span>. In recent paper, Sun et al.<span class="citation"><a href="references.html#ref-Sun2020a" role="doc-biblioref">[5]</a></span> argue that a vegetation index built using bands “B06” and “B07” provide a better approximation to leaf area index estimates. In a recent review, Chaves et al.<span class="citation"><a href="references.html#ref-Chaves2020" role="doc-biblioref">[6]</a></span> argues that red-edge bands are important for distinguishing leaf structure and chlorophyll content of different vegetation species. In the example below, we show how to include additional indexes in the regular data cube which has the Sentinel-2 spectral bands.</p>
 <p>We first calculate the NDVI in the usual way, using bands B08 and B04.</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># calculate new indexes</span></span>
@@ -151,8 +159,8 @@
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NDVI"</span>, palette <span class="op">=</span> <span class="st">"RdYlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-39"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-39-1.png" alt="NDVI using bands B08 and B04 of Sentinel-2" width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-36"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-36-1.png" alt="NDVI using bands B08 and B04 of Sentinel-2" width="100%"><p class="caption">
 Figure 21: NDVI using bands B08 and B04 of Sentinel-2
 </p>
 </div>
@@ -169,8 +177,8 @@ Figure 21: NDVI using bands B08 and B04 of Sentinel-2
 <span><span class="co"># plot NDRE1 index</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NDRE1"</span>, palette <span class="op">=</span> <span class="st">"RdYlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-40"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-40-1.png" alt="NDRE1 using bands B06 and B05 of Sentinel-2" width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-37"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-37-1.png" alt="NDRE1 using bands B06 and B05 of Sentinel-2" width="100%"><p class="caption">
 Figure 22: NDRE1 using bands B06 and B05 of Sentinel-2
 </p>
 </div>
@@ -187,8 +195,8 @@ Figure 22: NDRE1 using bands B06 and B05 of Sentinel-2
 <span><span class="co"># plot NDRE2 index</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NDRE2"</span>, palette <span class="op">=</span> <span class="st">"RdYlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-41"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-41-1.png" alt="NDRE2 using bands B07 and B05 of Sentinel-2" width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-38"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-38-1.png" alt="NDRE2 using bands B07 and B05 of Sentinel-2" width="100%"><p class="caption">
 Figure 23: NDRE2 using bands B07 and B05 of Sentinel-2
 </p>
 </div>
@@ -205,8 +213,8 @@ Figure 23: NDRE2 using bands B07 and B05 of Sentinel-2
 <span><span class="co"># plot NDRE3 index</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NDRE3"</span>, palette <span class="op">=</span> <span class="st">"RdYlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-42"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-42-1.png" alt="NDVI using bands B08 and B04 of Sentinel-2" width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-39"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-39-1.png" alt="NDVI using bands B08 and B04 of Sentinel-2" width="90%"><p class="caption">
 Figure 24: NDVI using bands B08 and B04 of Sentinel-2
 </p>
 </div>
@@ -214,7 +222,7 @@ Figure 24: NDVI using bands B08 and B04 of Sentinel-2
 <div id="spectral-indexes-for-identification-of-burned-areas" class="section level2 unnumbered">
 <h2>Spectral indexes for identification of burned areas<a class="anchor" aria-label="anchor" href="#spectral-indexes-for-identification-of-burned-areas"><i class="fas fa-link"></i></a>
 </h2>
-<p>Another relevant use of band combination is the creation of spectral indexes for detection of degradation by fires, which are an important element in environmental degradation. Forest fires have a significant impact on emissions and impoverish natural ecosystems<span class="citation"><a href="references.html#ref-Nepstad1999" role="doc-biblioref">[6]</a></span>. Fires open the canopy, make the microclimate drier and increase the amount of dry fuel<span class="citation"><a href="references.html#ref-Gao2020" role="doc-biblioref">[7]</a></span>. One well-established technique for detecting burned areas with remote sensing images is the normalized burn ratio (NBR) as the difference between the near infrared and the short wave infrared band, here calculated using the <code>B8A</code> and <code>B12</code> bands.</p>
+<p>Another relevant use of band combination is the creation of spectral indexes for detection of degradation by fires, which are an important element in environmental degradation. Forest fires have a significant impact on emissions and impoverish natural ecosystems<span class="citation"><a href="references.html#ref-Nepstad1999" role="doc-biblioref">[7]</a></span>. Fires open the canopy, make the microclimate drier and increase the amount of dry fuel<span class="citation"><a href="references.html#ref-Gao2020" role="doc-biblioref">[8]</a></span>. One well-established technique for detecting burned areas with remote sensing images is the normalized burn ratio (NBR) as the difference between the near infrared and the short wave infrared band, here calculated using the <code>B8A</code> and <code>B12</code> bands.</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># calculate the normalized burn ratio</span></span>
 <span><span class="va">reg_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_apply.html">sits_apply</a></span><span class="op">(</span><span class="va">reg_cube</span>,</span>
@@ -226,8 +234,8 @@ Figure 24: NDVI using bands B08 and B04 of Sentinel-2
 <span><span class="co"># plot the NBR for the first date"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NBR"</span>, palette <span class="op">=</span> <span class="st">"Reds"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-43"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-43-1.png" alt="NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP" width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-40"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-40-1.png" alt="NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP" width="100%"><p class="caption">
 Figure 25: NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP
 </p>
 </div>
@@ -235,12 +243,12 @@ Figure 25: NBR ratio for a regular data cube built using Sentinel-2 tiles and 20
 <div id="spectral-mixture-analysis" class="section level2 unnumbered">
 <h2>Spectral mixture analysis<a class="anchor" aria-label="anchor" href="#spectral-mixture-analysis"><i class="fas fa-link"></i></a>
 </h2>
-<p>One of most useful tools for analysis of land remote sensing images is the use of spectral mixture models<span class="citation"><a href="references.html#ref-Souza2005" role="doc-biblioref">[10]</a></span>. The rationale for mixture models arises due to the spatial resolution associated to pixels of medium-resolution images. In general, the values for these pixels contain a mixture of spectral responses of different types of land cover contained inside a resolution element <span class="citation"><a href="references.html#ref-Shimabukuro2019" role="doc-biblioref">[11]</a></span>. Assuming that the set of land cover classes (called endmembers) is known, the goal of spectral mixture analysis is to derive a set of new bands, each containing the proportion of each endmember. The most used method for spectral mixture analysis is the linear model <span class="citation"><a href="references.html#ref-Shimabukuro2019" role="doc-biblioref">[11]</a></span>, expressed as</p>
+<p>One of most useful tools for analysis of land remote sensing images is the use of spectral mixture models<span class="citation"><a href="references.html#ref-Souza2005" role="doc-biblioref">[11]</a></span>. The rationale for mixture models arises due to the spatial resolution associated to pixels of medium-resolution images. In general, the values for these pixels contain a mixture of spectral responses of different types of land cover contained inside a resolution element <span class="citation"><a href="references.html#ref-Shimabukuro2019" role="doc-biblioref">[12]</a></span>. Assuming that the set of land cover classes (called endmembers) is known, the goal of spectral mixture analysis is to derive a set of new bands, each containing the proportion of each endmember. The most used method for spectral mixture analysis is the linear model <span class="citation"><a href="references.html#ref-Shimabukuro2019" role="doc-biblioref">[12]</a></span>, expressed as</p>
 <p><span class="math display">\[
 R_i = \sum_{j=1}^N a_{i,j}*x_j + \epsilon_i, i \in {1,...M}, M &gt; N
 \]</span>
-where <span class="math inline">\(i=1,..M\)</span> is the set of spectral bands and <span class="math inline">\(j=1,..N\)</span> is the set of land cover types. For each pixel, <span class="math inline">\(R_i\)</span> is the reflectance in the i-th spectral band, <span class="math inline">\(x_j\)</span> is the value of the reflectance due to the j-th endmember, <span class="math inline">\(a_{i,j}\)</span> is the proportion between the j-th endmember and the i-th spectral band. The model includes an error term <span class="math inline">\(e_i\)</span>. The linear model can be interpreted as system of equations where the spectral response of the pixel is a linear combination of the spectral response of the endmembers<span class="citation"><a href="references.html#ref-Shimabukuro2019" role="doc-biblioref">[11]</a></span>. To solve this system of equations and obtain the proportion of each endmember, <code>sits</code> uses a non-negative least squares (NNLS) regression algorithm which is available in the R package <code>RStoolbox</code> and was developed by Jakob Schwalb-Willmann, based on the sequential coordinate-wise algorithm (SCA) proposed on Franc et al. <span class="citation"><a href="references.html#ref-Franc2005" role="doc-biblioref">[12]</a></span>.</p>
-<p>To run the mixture model in <code>sits</code>, it is necessary to inform the values of pixels which are covered entirely by a single class. These are the so-called “pure” pixels. These pixels should be chosen carefully and based on expert knowledge of the area. The quality of the resulting endmember images depends on the quality of the pure pixels. Since <code>sits</code> supports multiple endmember spectral mixture analysis<span class="citation"><a href="references.html#ref-Roberts1998" role="doc-biblioref">[13]</a></span>, users can specify more than one pure pixel per endmember to account for natural variability.</p>
+where <span class="math inline">\(i=1,..M\)</span> is the set of spectral bands and <span class="math inline">\(j=1,..N\)</span> is the set of land cover types. For each pixel, <span class="math inline">\(R_i\)</span> is the reflectance in the i-th spectral band, <span class="math inline">\(x_j\)</span> is the value of the reflectance due to the j-th endmember, <span class="math inline">\(a_{i,j}\)</span> is the proportion between the j-th endmember and the i-th spectral band. The model includes an error term <span class="math inline">\(e_i\)</span>. The linear model can be interpreted as system of equations where the spectral response of the pixel is a linear combination of the spectral response of the endmembers<span class="citation"><a href="references.html#ref-Shimabukuro2019" role="doc-biblioref">[12]</a></span>. To solve this system of equations and obtain the proportion of each endmember, <code>sits</code> uses a non-negative least squares (NNLS) regression algorithm which is available in the R package <code>RStoolbox</code> and was developed by Jakob Schwalb-Willmann, based on the sequential coordinate-wise algorithm (SCA) proposed on Franc et al. <span class="citation"><a href="references.html#ref-Franc2005" role="doc-biblioref">[13]</a></span>.</p>
+<p>To run the mixture model in <code>sits</code>, it is necessary to inform the values of pixels which are covered entirely by a single class. These are the so-called “pure” pixels. These pixels should be chosen carefully and based on expert knowledge of the area. The quality of the resulting endmember images depends on the quality of the pure pixels. Since <code>sits</code> supports multiple endmember spectral mixture analysis<span class="citation"><a href="references.html#ref-Roberts1998" role="doc-biblioref">[14]</a></span>, users can specify more than one pure pixel per endmember to account for natural variability.</p>
 <p>In <code>sits</code>, spectral mixture analysis is done by the <code><a href="https://rdrr.io/pkg/sits/man/sits_mixture_model.html">sits_mixture_model()</a></code> function, which has two mandatory parameters: <code>cube</code> (a data cube) and <code>endmembers</code>, a named table (or equivalent) defines the defines the pure pixels. The <code>endmembers</code> table should name the following named columns: (a) <code>type</code>, that defines the class associated to an endmember; (b) names, the names of the bands. Each line of the table should contain the value of each endmember for all bands (see example). To improve readability, we suggest that the <code>endmembers</code> parameters be defined as a <code>tribble</code>. A <code>tribble</code> is a <code>tibble</code> with an easier to read row-by-row layout. In the example below, we define three endmmembers for classes “forest”, “soil”, “water”. Note that the values for each band are expressed as integers ranging from 0 to 10,000.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define the endmembers for three classes and six bands</span></span>
@@ -261,8 +269,8 @@ where <span class="math inline">\(i=1,..M\)</span> is the set of spectral bands 
 <span><span class="co"># plot the FOREST for the first date using the "forest" palette</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"FOREST"</span>, palette <span class="op">=</span> <span class="st">"Greens"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-44"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-44-1.png" alt="Percentage of forest per pixel estimated by mixture model" width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-41"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-41-1.png" alt="Percentage of forest per pixel estimated by mixture model" width="100%"><p class="caption">
 Figure 26: Percentage of forest per pixel estimated by mixture model
 </p>
 </div>
@@ -270,8 +278,8 @@ Figure 26: Percentage of forest per pixel estimated by mixture model
 <code class="sourceCode R"><span><span class="co"># plot the water endmember for the first date using the water palette</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"WATER"</span>, palette <span class="op">=</span> <span class="st">"Blues"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-45"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-45-1.png" alt="Percentage of water per pixel estimated by mixture model" width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-42"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-42-1.png" alt="Percentage of water per pixel estimated by mixture model" width="100%"><p class="caption">
 Figure 27: Percentage of water per pixel estimated by mixture model
 </p>
 </div>
@@ -279,12 +287,12 @@ Figure 27: Percentage of water per pixel estimated by mixture model
 <code class="sourceCode R"><span><span class="co"># plot the SOIL endmember for the first date using the "soil" palette</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"SOIL"</span>, palette <span class="op">=</span> <span class="st">"OrRd"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-46"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-46-1.png" alt="Percentage of soil per pixel estimated by mixture model" width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-43"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-43-1.png" alt="Percentage of soil per pixel estimated by mixture model" width="100%"><p class="caption">
 Figure 28: Percentage of soil per pixel estimated by mixture model
 </p>
 </div>
-<p>Spectral mixture analysis methods have many application on remote sensing, including forest degradation<span class="citation"><a href="references.html#ref-Chen2021" role="doc-biblioref">[16]</a></span>, wetland surface dynamics <span class="citation"><a href="references.html#ref-Halabisky2016" role="doc-biblioref">[17]</a></span> and urban area characterization <span class="citation"><a href="references.html#ref-Wu2003" role="doc-biblioref">[18]</a></span>. Their use in <code>sits</code> allows a unique combination of mixture models and time series analysis.</p>
+<p>Spectral mixture analysis methods have many application on remote sensing, including forest degradation<span class="citation"><a href="references.html#ref-Chen2021" role="doc-biblioref">[17]</a></span>, wetland surface dynamics <span class="citation"><a href="references.html#ref-Halabisky2016" role="doc-biblioref">[18]</a></span> and urban area characterization <span class="citation"><a href="references.html#ref-Wu2003" role="doc-biblioref">[19]</a></span>. Their use in <code>sits</code> allows a unique combination of mixture models and time series analysis.</p>
 
 </div>
 </div>
@@ -315,7 +323,7 @@ Figure 28: Percentage of soil per pixel estimated by mixture model
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-01-23.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-05.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

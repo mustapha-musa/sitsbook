@@ -25,8 +25,8 @@
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.5/font.css" rel="stylesheet">
-<link href="libs/IBM_Plex_Mono-0.4.5/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.4/font.css" rel="stylesheet">
+<link href="libs/IBM_Plex_Mono-0.4.4/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
@@ -88,7 +88,8 @@
 <li><a class="" href="image-classification-in-data-cubes.html">Image Classification in Data Cubes</a></li>
 <li><a class="" href="validation-and-accuracy-measurements.html">Validation and accuracy measurements</a></li>
 <li><a class="" href="uncertainty-and-active-learning.html">Uncertainty and active learning</a></li>
-<li><a class="" href="design-and-extensibility-considerations.html">Design and extensibility considerations</a></li>
+<li><a class="" href="ensemble-prediction-from-multiple-models.html">Ensemble Prediction from Multiple Models</a></li>
+<li><a class="" href="visualising-and-exporting-data.html">Visualising and Exporting data</a></li>
 <li><a class="" href="technical-annex.html">Technical Annex</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
@@ -118,7 +119,7 @@
 <div id="community-contributions" class="section level2 unnumbered">
 <h2>Community Contributions<a class="anchor" aria-label="anchor" href="#community-contributions"><i class="fas fa-link"></i></a>
 </h2>
-<p>The authors thank the R-spatial community for their foundational work, including Marius Appel, Tim Appelhans, Robert Hijmans, Edzer Pebesma, Martijn Tennekes for their R packages <code>gdalcubes</code>, <code>leafem</code>, <code>terra</code>, <code>sf</code>/<code>stars</code>, and <code>tmap</code>. We acknowledge the work of Dirk Eddelbuettel on <code>Rcpp</code> and <code>RcppArmadillo</code> and Ron Wehrens in package <code>kohonen</code>. We are much indebted to Hadley Wickham for the <code>tidyverse</code>, to Daniel Falbel for the <code>torch</code> and <code>luz</code> packages, and the RStudio team for packages <code>leaflet</code>. The multiple authors of machine learning packages <code>randomForest</code>, <code>e1071</code> and <code>xgboost</code> provided robust algorithms. We would like to thank Python developers that shared their deep learning algorithms for image time series classification: Vivien Sainte Fare Garnot, Zhiguang Wang, Maja Schneider, and Marc Rußwurm.</p>
+<p>The authors thank the R-spatial community for their foundational work, including Marius Appel, Tim Appelhans, Robert Hijmans, Edzer Pebesma, Martijn Tennekes for their R packages <code>gdalcubes</code>, <code>leafem</code>, <code>terra</code>, <code>sf</code>/<code>stars</code>, and <code>tmap</code>. We are greateful for the work of Dirk Eddelbuettel on <code>Rcpp</code> and <code>RcppArmadillo</code> and Ron Wehrens in package <code>kohonen</code>. We are much indebted to Hadley Wickham for the <code>tidyverse</code>, to Daniel Falbel for the <code>torch</code> and <code>luz</code> packages, and the RStudio team for package <code>leaflet</code>. The multiple authors of machine learning packages <code>randomForest</code>, <code>e1071</code> and <code>xgboost</code> provided robust algorithms. We would like to thank Python developers that shared their deep learning algorithms for image time series classification: Vivien Sainte Fare Garnot, Zhiguang Wang, Maja Schneider, and Marc Rußwurm. The first author also thanks Roger Bivand for his benign influence in all things related to <strong>R</strong>.</p>
 </div>
 <div id="reproducible-papers-used-in-building-sits" class="section level2 unnumbered">
 <h2>Reproducible papers used in building sits<a class="anchor" aria-label="anchor" href="#reproducible-papers-used-in-building-sits"><i class="fas fa-link"></i></a>
@@ -135,7 +136,6 @@
 <li><p>Vivien Garnot, Loic Landrieu, “Lightweight Temporal Self-Attention for Classifying Satellite Images Time Series”, 2020. &lt;arXiv:2007.00586&gt;.</p></li>
 <li><p>Maja Schneider, Marco Körner, “[Re] Satellite Image Time Series Classification with Pixel-Set Encoders and Temporal Self-Attention.” ReScience C 7 (2), 2021. <a href="doi:10.5281/zenodo.4835356" class="uri">doi:10.5281/zenodo.4835356</a>.</p></li>
 </ul>
-<div style="page-break-after: always;"></div>
 </div>
 <div id="publications-using-sits" class="section level2 unnumbered">
 <h2>Publications using sits<a class="anchor" aria-label="anchor" href="#publications-using-sits"><i class="fas fa-link"></i></a>
@@ -191,7 +191,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-03.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-05.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

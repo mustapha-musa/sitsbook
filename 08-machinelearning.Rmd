@@ -11,28 +11,21 @@ if (!file.exists("./tempdir/chp8"))
 
 <a href="https://www.kaggle.com/brazildatacube/sits-classification-r" target="_blank"><img src="https://kaggle.com/static/images/open-in-kaggle.svg"/></a>
 
-The `sits` package includes methods for time series classification, preserving the temporal resolution of the input data. Instead of extracting metrics from time series segments, it uses all values of the time series. Using machine learning methods in high-dimensional spaces that contain all values of the time series is a robust and efficient approach for land cover classification of large data sets. The goal of a machine learning models is to approximate a function $y = f(x)$ that maps an input $x$ to a category $y$. A model defines a mapping $y = f(x;\theta)$ and learns the value of the parameters $\theta$ that result in the best function approximation [@Goodfellow2016]. The difference between the different algorithms is the approach they take to build the mapping that classifies the input data. 
+Machine learning classification is a kind of supervised learning in which an algorithm is trained to predict which category or class an input data point belongs to. It involves teaching a computer program to recognize patterns in data and use those patterns to predict the class label of new data. The goal of classification is to build a model that can accurately assign a class label to new data based on patterns it has learned from previously labeled data. In `sits`, machine learning is used to classify individual time series, using the `time-first` approach. 
 
-The following machine learning methods are available in `sits`:
+The goal of a machine learning models is to approximate a function $y = f(x)$ that maps an input $x$ to a category $y$. A model defines a mapping $y = f(x;\theta)$ and learns the value of the parameters $\theta$ that result in the best function approximation [@Goodfellow2016]. The difference between the different algorithms is the approach they take to build the mapping that classifies the input data.  
 
--   Random forests (`sits_rfor()`)
--   Support vector machines (`sits_svm()`)
--   Extreme gradient boosting (`sits_xgboost()`)
--   Multilayer perceptrons (`sits_mlp()`)
--   Deep Residual Networks (`sits_resnet()`)
--   1D convolutional neural networks (`sits_tempcnn()`)
--   Temporal attention encoders (`sits_tae()`)
--   Lightweight temporal attention encoders (`sits_lighttae()`)
+The `sits` package includes two kinds of methods for time series classification: 
 
-\newpage
+1. Machine learning algorithms that do not explicitly consider the temporal stucture of the time series. They treat time series as a vector in a high-dimensional feature space. Each instance of the time series is taken by the algorithm as independent from the others. They include random forest (`sits_rfor()`), support vector machines (`sits_svm()`), extreme gradient boosting (`sits_xgboost()`), and multilayer perceptrons (`sits_mlp()`). 
 
-These methods can be divided in two types. The first group does not explicitly consider spatial or temporal dimensions; these algorithms treat time series as a vector in a high-dimensional feature space. They include random forests [@Belgiu2016], support vector machines [@Mountrakis2011], extreme gradient boosting [@Chen2016], and multilayer perceptrons [@Parente2019a]. The second group of models comprises deep learning methods designed to work with time series. Temporal relations between observed values in a time series are taken into account. From this kind of models, `sits` supports 1D convolution neural networks  [@Pelletier2019], residual 1D networks [@Fawaz2020], and temporal attention-based encoders [@Garnot2020a; @Russwurm2020]. In these algorithms, the order of the samples in the time series is relevant for the classifier. 
+2. Deep learning methods designed to work with time series. Temporal relations between observed values in a time series are taken into account. From this kind of models, `sits` supports 1D convolution neural networks  (`sits_tempcnn()`), residual 1D networks (`sits_resnet()`), and temporal attention-based encoders (`sits_tae()` and `sits_lighttae()`). In these algorithms, the order of the samples in the time series is relevant for the classifier. 
 
-Experience with `sits` shows that SVM and multilayer perceptron models tend to have inferior performance those using random forests, extreme gradient boosting, and temporal deep learning. This difference derives from the temporal behavior of land use and land cover classes, where some dates capture more information than others. For example, in deforestation monitoring the dates associates to the actions of forest removal are more informative than earlier or later ones. The same situation occurs in crop mapping, when a large part of the variation is captured in a few dates. In these cases, classification methods which consider the temporal order of samples are more likely to capture the seasonal behavior of the image time series. Random forests methods that use individual measures as nodes in the decision trees can also capture particular events such as deforestation. 
+Based on experience with `sits`, random forests, extreme gradient boosting, and temporal deep learning models outperform SVM and multilayer perceptron models. This is because the temporal behavior of land use and land cover classes varies, with certain dates providing more information than others. For instance, when monitoring deforestation, dates that correspond to forest removal actions are more informative than earlier or later dates. Similarly, in crop mapping, a few dates may capture a large portion of the variation. Classification methods that consider the temporal order of samples are therefore more likely to capture the seasonal behavior of image time series. Random forest and extreme gradient boosting methods that use individual measures as nodes in decision trees can also capture specific events such as deforestation.
 
 The following examples show how to train machine learning methods and apply it to classify a single time series. We use the set `samples_matogrosso_mod13q1`, containing time series samples from Brazilian Mato Grosso state, obtained from the MODIS MOD13Q1 product. It has 1,892 samples and 9 classes (Cerrado, Fallow_Cotton, Forest, Pasture, Soy_Corn, Soy_Cotton, Soy_Fallow, Soy_Millet, Soy_Sunflower). Each time series covers 12 months (23 data points) with 6 bands ("NDVI", "EVI", "BLUE", "RED", "NIR", "MIR"). The samples are arranged along an agricultural year, starting in September and ending in August. The data set was used in the paper "Big Earth observation time series analysis for monitoring Brazilian agriculture" [@Picoli2018], and is available in the R package `sitsdata`. Please see the "Setup" section for instructions on how to obtain this package.
 
-The results should not be taken as indication of which method performs better. The most important factor for achieving a good result is the quality of the training data [@Maxwell2018]. Experience shows that classification quality depends on the training samples and on how well the model matches these samples. For examples of ML for classifying large areas, please see the "Case Studies" chapter in this book and also the papers by the authors [@Picoli2018; @Picoli2020a; @Simoes2020; @Ferreira2020a].
+The results should not be taken as indication of which method performs better. The most important factor for achieving a good result is the quality of the training data [@Maxwell2018]. Experience shows that classification quality depends on the training samples and on how well the model matches these samples. For examples of ML for classifying large areas, please see the papers by the authors [@Picoli2018; @Picoli2020a; @Simoes2020; @Ferreira2020a].
 
 ## Visualizing Sample Patterns{-}
 
@@ -50,7 +43,7 @@ samples_matogrosso_mod13q1 %>%
     sits_patterns() %>% 
     plot()
 ```
-\newpage
+
 The resulting patterns provide some insights over the time series behavior of each class. The response of the Forest class is quite distinctive.  They also shows that it should be possible to separate between the single cropping classes and the double cropping ones. There are similarities between the double-cropping classes (Soy_Corn, Soy_Millet, Soy_Sunflower and Soy_Sunflower) and  between the Cerrado and Pasture classes. The subtle differences between class signatures provide hints to possible ways by which machine leaning algorithms might distinguish between classes. One example is the difference between the middle-infrared response during the dry season (May to September) to distinguish between the Cerrado and Pasture classes. 
 
 ## Common interface to machine learning and deep learning models{-}
@@ -61,11 +54,11 @@ Since `sits` is aimed at remote sensing users who are not machine learning exper
 
 When a set of time series organised as tibble is taken as input to the classifier, the result is the same tibble with one additional column ("predicted"), which contains the information on what labels are have been assigned for each interval. The results can be shown in text format using the function `sits_show_prediction()` or graphically using `plot()`.
 
-## Random forests{-}
+## Random forest{-}
 
-The random forests model uses *decision trees* as its base model with refinements. When building the decision trees, each time a split in a tree is considered, a random sample of `m` features is chosen as split candidates from the full set of `n` features of the samples[@James2013]. Each of these features is then tested; the one maximizing the decrease in a purity measure is used to build the trees. This criterion is used to identify relevant features and to perform variable selection. This decreases the correlation among trees and improves prediction performance. Classification performance depends on the number of trees in the forest as well as the number of features randomly selected at each node. 
+Random forest is a machine learning algorithm that uses an ensemble learning method for classification tasks. The algorithm consists of multiple decision trees, where each decision tree is trained on a different subset of the training data and with a different subset of features. To make a prediction, each decision tree in the forest independently classifies the input data, and the final prediction is made based on the majority vote of all the decision trees. The randomness in the algorithm comes from the random subsets of data and features used to train each decision tree, which helps to reduce overfitting and improve the accuracy of the model. This classifier measures the importance of each feature in the classification task, which can be useful in feature selection and data visualization. Pelletier et al[@Pelletier2016] discuss the robustness of random forest method for satellite image time series classification. 
 
-```{r, echo = FALSE, out.width = "70%", fig.align="center", fig.cap="Random forests algorithm (source: Venkata Jagannath in Wikipedia - licenced as CC-BY-SA 4.0.)"}
+```{r, echo = FALSE, out.width = "90%", fig.align="center", fig.cap="Random forests algorithm (source: Venkata Jagannath in Wikipedia - licenced as CC-BY-SA 4.0.)"}
 
 knitr::include_graphics("images/random_forest.png") 
 ```
@@ -76,7 +69,7 @@ SITS provides `sits_rfor()`, which uses the R `randomForest` package [@Wright201
 set.seed(290356)
 ```
 
-```{r, tidy="styler",out.width = "80%", fig.align="center", fig.cap="Most important variables in random forests model."}
+```{r, tidy="styler",out.width = "90%", fig.align="center", fig.cap="Most important variables in random forests model."}
 # Train the Mato Grosso samples with Random Forests model.
 rfor_model <- sits_train(
     samples = samples_matogrosso_mod13q1, 
@@ -87,7 +80,7 @@ plot(rfor_model)
 ```
 
 The most important explanatory variables are the NIR (near infrared) band on date 17 (2007-05-25) and the MIR (middle infrared) band in date 22 (2007-08-13). The NIR value at the end of May captures the growth of the second crop for double cropping classes.  Values of the MIR band at the end of the period (late July to late August) capture bare soil signatures to distinguish between agricultural classes and natural ones. This corresponds to summer time when the ground is drier and crops have been harvested.
-\newpage
+
 
 ```{r, tidy="styler",out.width = "90%", fig.align="center", fig.cap="Classification of time series using random forests."}
 # retrieve a point to be classified
@@ -232,11 +225,13 @@ In theory, multilayer perceptron model is able to capture more subtle changes th
 
 ## Temporal Convolutional Neural Network (TempCNN){-}
 
-Convolutional neural networks (CNN) are a variety of deep learning methods where a convolution filter (sliding window) is applied to the input data. In the case of time series, a 1D CNN works by applying a moving window to the series. Using convolution filters is a way to incorporate temporal autocorrelation information in the classification. The result of the convolution is another time series. Russwurm and Körner [@Russwurm2017] state that the use of 1D-CNN for time series classification improves on the use of multilayer perceptrons, since the classifier is able to represent temporal relationships; also, the convolution window makes the classifier more robust to moderate noise, e.g. intermittent presence of clouds.
+Convolutional neural networks (CNN) are a class of deep learning methods that apply convolution filters (sliding window) to the input data sequentially. The Temporal Convolutional Neural Network (TempCNN) is a neural network architecture that is specifically designed for processing sequential data such as time series. In the case of time series, a 1D CNN applies a moving temporal window to the time series and produces another time series as the result of the convolution. 
 
-The use of 1D CNNs for satellite image time series classification is proposed by Pelletier et al [@Pelletier2019]. The TempCNN architecture has three 1D convolutional layers, and a final softmax layer for classification (see figure). The authors use a combination of different methods to avoid overfitting and reduce the vanishing gradient effect, including dropout, regularization, and batch normalisation. In the tempCNN paper [@Pelletier2019], the authors compare favorably their model with the Recurrent Neural Network proposed by Russwurm and Körner [@Russwurm2018] for land use classification. The figure below shows the architecture of the tempCNN model.
+TempCNN applies one-dimensional convolutions on the input sequence to capture temporal dependencies, allowing the network to learn long-term dependencies in the input sequence. Each layer of the model captures temporal dependencies at a different scale. Due to its multi-scale approach, TempCNN is capable of capturing complex temporal patterns in the data and producing accurate predictions.
 
-```{r, echo = FALSE, fig.align="center", out.width = "90%", fig.cap="Structure of tempCNN architecture (source: Pelletier et al.(2019))"}
+The TempCNN architecture for satellite image time series classification is proposed by Pelletier et al [@Pelletier2019].  It has three 1D convolutional layers, and a final softmax layer for classification (see figure). The authors use a combination of different methods to avoid overfitting and reduce the vanishing gradient effect, including dropout, regularization, and batch normalisation. In the TempCNN reference paper [@Pelletier2019], the authors compare favorably their model with the Recurrent Neural Network proposed by Russwurm and Körner [@Russwurm2018] for land use classification. The figure below shows the architecture of the TempCNN model.
+
+```{r, echo = FALSE, fig.align="center", out.width = "100%", fig.cap="Structure of tempCNN architecture (source: Pelletier et al.(2019))"}
 
 knitr::include_graphics("images/tempcnn.png")
 ```
@@ -280,15 +275,17 @@ The result has important differences from the previous ones. The TempCNN model i
 
 ## Residual 1D CNN Networks (ResNet){-}
 
-The Residual Network (ResNet) is a 1D convolution neural network (CNN) proposed by Wang et al. [@Wang2017], based on the idea of deep residual networks for 2D image recognition [@He2016]. The ResNet architecture is composed of 11 layers, with three blocks of three 1D CNN layers each (see figure below). Each block corresponds to a 1D CNN architecture. The output of each block is combined with a shortcut that links its output to its input, called a "skip connection". The purpose of combining the input layer of each block with its output layer (after the convolutions) is to avoid the so-called "vanishing gradient problem". This issue occurs in deep networks as he neural network's weights are updated based on the partial derivative of the error function. If the gradient is too small, the weights will not be updated, stopping the training[@Hochreiter1998]. Skip connections aim to avoid vanishing gradients from occurring, allowing deep networks to be trained.
+A residual 1D CNN network, also known as ResNet, is an extension of the standard 1D CNN architecture, with the addition of residual connections between the layers. Residual connections allow the network to learn residual mappings, which are the difference between the input and output of a layer. By adding these residual connections, the network can learn to bypass certain layers and still capture important features in the data.
 
-```{r, echo = FALSE, out.width = "80%", out.height = "80%", fig.align="center", fig.cap="Structure of ResNet architecture (source: Wang et al.(2017))."}
+The Residual Network (ResNet) for time series classification was proposed by Wang et al. [@Wang2017], based on the idea of deep residual networks for 2D image recognition [@He2016]. The ResNet architecture is composed of 11 layers, with three blocks of three 1D CNN layers each (see figure below). Each block corresponds to a 1D CNN architecture. The output of each block is combined with a shortcut that links its output to its input, called a "skip connection". The purpose of combining the input layer of each block with its output layer (after the convolutions) is to avoid the so-called "vanishing gradient problem". This issue occurs in deep networks as he neural network's weights are updated based on the partial derivative of the error function. If the gradient is too small, the weights will not be updated, stopping the training[@Hochreiter1998]. Skip connections aim to avoid vanishing gradients from occurring, allowing deep networks to be trained.
+
+```{r, echo = FALSE, out.width = "100%", fig.align="center", fig.cap="Structure of ResNet architecture (source: Wang et al.(2017))."}
 knitr::include_graphics("images/resnet.png")
 ```
 
 In `sits`, the Residual Network is implemented using the `sits_resnet()` function. The default parameters are those proposed by Wang et al. [@Wang2017], as implemented by Fawaz et al.[@Fawaz2019]. The first parameter is `blocks`, which controls the number of blocks and the size of filters in each block. By default, the model implements three blocks, the first with 64 filters and the others with 128 filters. Users can control the number of blocks and filter size by changing this parameter. The parameter `kernels` controls the size the of kernels of the three layers inside each block. We have found out that it is useful to experiment a bit with these kernel sizes in the case of satellite image time series. The default activation is "relu", which is recommended in the literature to reduce the problem of vanishing gradients. The default optimizer is `optim_adamw`, available in package `torchopt`.
 
-```{r, tidy="styler", out.width = "80%", warning = FALSE, message = FALSE, fig.align="center", fig.cap="Training evolution of ResNet model."}
+```{r, tidy="styler", out.width = "100%", warning = FALSE, message = FALSE, fig.align="center", fig.cap="Training evolution of ResNet model."}
 # train using ResNet
 resnet_model <- sits_train(samples_matogrosso_mod13q1, 
                        sits_resnet(
@@ -301,10 +298,10 @@ resnet_model <- sits_train(samples_matogrosso_mod13q1,
 # show training evolution
 plot(resnet_model)
 ```
-\newpage
+
 Then, we classify a 16-year time series using the ResNet model. The behaviour of the ResNet model is similar to that of TempCNN, with more variability.
 
-```{r, tidy="styler", out.width = "90%", fig.align="center", fig.cap="Classification of time series using ResNet."}
+```{r, tidy="styler", out.width = "100%", fig.align="center", fig.cap="Classification of time series using ResNet."}
 # Classify using DL model and plot the result
 class <- point_mt_6bands %>% 
     sits_select(bands = c("NDVI", "EVI", "NIR", "MIR")) %>% 
@@ -314,17 +311,23 @@ class <- point_mt_6bands %>%
  
 ## Attention-based models{-}
 
-Attention-based models have become one of the most used deep learning architectures for problems that involve sequential data inputs, e.g., text recognition and automatic translation. The general idea is that in applications such as language translation not all inputs are alike. Consider the English sentence "Look at all the lonely people" and its Portuguese translation "Olhe para todas as pessoas solitárias". A good translation system needs to relate the words "look" and "people" as the key parts of this sentence and to ensure such link is captured in the translation. A specific type of attention models, called transformers, enables the recognition of such complex relationships between input and output sequences [@Vaswani2017]. 
+Attention-based deep learning models are a class of models that use a mechanism inspired by human attention to focus on specific parts of an input during processing. These models have been shown to be effective for various tasks such as machine translation, image captioning, and speech recognition.
+
+The basic idea behind attention-based models is to allow the model to selectively focus on different parts of the input at different times. This can be done by introducing a mechanism that assigns weights to each element of the input, indicating the relative importance of that element to the current processing step. The model can then use them to compute a weighted sum of the input. The results capture the model's attention on specific parts of the input.
+
+Attention-based models have become one of the most used deep learning architectures for problems that involve sequential data inputs, e.g., text recognition and automatic translation. The general idea is that in applications such as language translation not all inputs are alike. Consider the English sentence "Look at all the lonely people". A good translation system needs to relate the words "look" and "people" as the key parts of this sentence and to ensure such link is captured in the translation. A specific type of attention models, called transformers, enables the recognition of such complex relationships between input and output sequences [@Vaswani2017]. 
 
 The basic structure of transformers is the same as other neural network algorithms. They have an encoder that transforms the input textual values into numerical vectors, and a decoder that processes these vectors and provides suitable answers. The difference is on how the values are handled internally. In multilayer perceptrons (MLP), all inputs are treated equally at first; based on iterative matching of training and test data, the backpropagation technique feeds information back to the initial layers to identify the most relevant combination of inputs that produces the best output. In convolutional nets (CNN), input values that are close in time (1D) or space (2D) are combined to produce higher-level information that helps to distinguish the different components of the input data. For text recognition, the initial choice of deep learning studies was to use recurrent neural networks (RNN) that handle input sequences sequentially. However, neither MLPs, nor CNNs or RNNs have been able to capture the structure of complex inputs such as natural language. The success of transformer-based solutions accounts for substantial improvements in natural language processing.
 
 The two main differences between transformer models and other algorithms are the use of positional encoding and self-attention. Positional encoding assigns an index to each input value which ensures that the relative locations of the inputs are maintained throughout the learning and processing phases. Self-attention works by comparing every word in the sentence to every other word in the sentence, including itself. In this way, it learns contextual information about the relation between the words. This conception has been validated in large language models such as BERT [@Devlin2019] and GPT-3 [@Brown2020].
 
-The application of attention-based models for satellite image time series analysis is proposed by Garnot et [@Garnot2020a] and Russwurm and Körner [@Russwurm2020]. The intuition behind the use of self-attention to image time series is to identify which observations are most relevant for classification. The first model proposed by Garnot and co-authors was a full transformer-based model [@Garnot2020a]. Considering that image time series classification is a easier task that natural language processing, Garnot et al [@Garnot2020b] also propose a simplified version of the full transformer model. This simpler model uses a reduced way to compute the attention matrix, reducing time for training and classification without loss of quality of result. 
+The application of attention-based models for satellite image time series analysis is proposed by Garnot et [@Garnot2020a] and Russwurm and Körner [@Russwurm2020]. A self-attention network can learn to focus on specific time steps and image features that are most relevant for distinguishing between different classes. The algorithm tries to identify which combination of individual temporal observations is most relevant to identify each class. For example, crop identification will use the observations that capture the onset of the growing season, the date of maximum growth, and the end of the growing season. In case of deforestation, the algorithm tries to identify the dates where the forest is being cut. Attention-based models are a means to indentify events that characterize each land use and land cover class.
+
+The first model proposed by Garnot and co-authors is a full transformer-based model [@Garnot2020a]. Considering that image time series classification is a easier task that natural language processing, Garnot et al [@Garnot2020b] also propose a simplified version of the full transformer model. This simpler model uses a reduced way to compute the attention matrix, reducing time for training and classification without loss of quality of result. 
 
 In `sits`, the full transformer-based model proposed by Garnot and co-authors [@Garnot2020a]   is implemented using the `sits_tae()` function. The default parameters are those proposed by the authors. The default optimizer is the same is `optim_adamw`, available in package `torchopt`.
 
-```{r, tidy="styler", out.width = "80%", warning = FALSE, message = FALSE, fig.align="center", fig.cap="Training evolution of Temporal Self-Attention model."}
+```{r, tidy="styler", out.width = "100%", warning = FALSE, message = FALSE, fig.align="center", fig.cap="Training evolution of Temporal Self-Attention model."}
 # train a machine learning model using TAE
 tae_model <- sits_train(samples_matogrosso_mod13q1, 
                        sits_tae(
@@ -339,7 +342,7 @@ plot(tae_model)
 
 Then, we classify a 16-year time series using the TAE model. 
 
-```{r, tidy="styler", out.width = "90%", fig.align="center", fig.cap="Classification of time series using TAE."}
+```{r, tidy="styler", out.width = "100%", fig.align="center", fig.cap="Classification of time series using TAE."}
 # Classify using DL model and plot the result
 class <- point_mt_6bands %>% 
     sits_select(bands = c("NDVI", "EVI", "NIR", "MIR")) %>% 
@@ -347,7 +350,7 @@ class <- point_mt_6bands %>%
     plot(bands = c("NDVI", "EVI"))
 ```
 
-The `sits_lighttae()` function implements the simplified transformer-based model proposed by Garnot and co-authors [@Garnot2020a]. The default optimizer is `optim_adamw`, available in package `torchopt`. The most important parameter to be set is the learning rate `lr`. Values ranging from 0.001 to 0.005 should produce reasonable results. See also the section below on model tuning. 
+Garnot and co-authors [@Garnot2020a] also proposed the Lightweight Temporal Self-Attention Encoder.  the lightweight self-attention encoder model is that it can achieve high classification accuracy with fewer parameters compared to other neural network models. This makes it a good choice for applications where computational resources are limited. The `sits_lighttae()` function implements this algorithm. The default optimizer is `optim_adamw`, available in package `torchopt`. The most important parameter to be set is the learning rate `lr`. Values ranging from 0.001 to 0.005 should produce reasonable results. See also the section below on model tuning. 
 
 ```{r, tidy="styler", out.width = "80%", warning = FALSE, message = FALSE, fig.align="center", fig.cap="Training evolution of Lightweight Temporal Self-Attention model."}
 # train a machine learning model using TAE
@@ -364,20 +367,22 @@ plot(ltae_model)
 
 Then, we classify a 16-year time series using the LightTAE model. 
 
-```{r, tidy="styler", out.width = "90%", fig.align="center", fig.cap="Classification of time series using LightTAE."}
+```{r, tidy="styler", out.width = "100%", fig.align="center", fig.cap="Classification of time series using LightTAE."}
 # Classify using DL model and plot the result
 class <- point_mt_6bands %>% 
     sits_select(bands = c("NDVI", "EVI", "NIR", "MIR")) %>% 
     sits_classify(ltae_model) %>% 
     plot(bands = c("NDVI", "EVI"))
 ```
-\newpage
+
 
 The behaviour of both `sits_tae()` and `sits_lighttae()` is similar to that of `sits_tempcnn()`. It points out the possible need for more classes and training data to better represent the transition period between 2004 and 2010. One possibility is that the training data associated to the Pasture class is only consistent with the time series between the years 2005 to 2008. However, the transition from Forest to Pasture in 2004 and from Pasture to Agriculture in 2009-2010 is subject to uncertainty, since the classifiers do not agree on the resulting classes. In general, the deep learning temporal-aware models are more sensitive to class variability than random forests and extreme gradient boosters. 
 
 ## Model tuning{-}
 
-Model tuning is an important step in machine learning classification, to enable a better fir of the method to the training data. Learning algorithms have a set of internal configuration called hyperparameters, which control the convergence of the algorithm and minimize the classification error. In practice, an unsuitable choice of hyperparameters can have a detrimental effect on the quality of the results. 
+Deep learning model tuning is the process of selecting the best set of hyperparameters for a specific application. Model tuning enables a better fit of the algorithm to the training data. Hyperparameters are parameters of the model that are not learned during training, but instead are set prior to training and affect the behavior of the model during training. Examples of include the learning rate, batch size, number of epochs, number of hidden layers, number of neurons in each layer, activation functions, regularization parameters, and optimization algorithms.
+
+Deep learning model tuning involves selecting the best combination of hyperparameters that results in the optimal performance of the model on a given task. This is done by training and evaluating the model with different sets of hyperparameters and selecting the set that gives the best performance.
 
 Deep learning algorithms try to find the optimal point that represents the best value of the prediction function that, given an input $X$ of data points, predicts the result $Y$. In our case, $X$ is a multidimensional time series and $Y$ is a vector of probabilities for the possible output classes. For complex situations, the best prediction function is time consuming to estimate. For this reason, deep learning methods rely on gradient descent methods to speed up predictions and converge faster than an exhaustive search [@Bengio2012]. All gradient descent methods use an optimization algorithm that is adjusted with hyperparameters such as the learning rate and regularization rate [@Schmidt2021]. The learning rate controls the numerical step of the gradient descent function and the regularization rate controls model overfitting. Adjusting these values to an optimal setting requires the use of model tuning methods. 
 

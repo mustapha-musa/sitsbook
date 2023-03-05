@@ -13,11 +13,11 @@ dir.create("./tempdir/chp3")
 
 <a href="https://www.kaggle.com/esensing/introduction-to-sits" target="_blank"><img src="https://kaggle.com/static/images/open-in-kaggle.svg"/></a>
 
-## Why work with satellite image time series? 
+## Why work with satellite image time series?{-}
 
-Satellite images are the most comprehensive source of data about our environment.  Covering a large area of the Earth's surface, images allow researchers to study regional and global changes. Sensors capture data in multiple spectral bands to measure the physical, chemical, and biological properties of the Earth's surface. Covering the same location multiple times, satellites provide data on changes in the environment and survey areas that are difficult to observe from the ground. Given its unique features, images provide essential information for many application, including deforestation, crop production, food security, urban footprints, water scarcity, and land degradation.
+Satellite images are the most comprehensive source of data about our environment.  Covering a large area of the Earth's surface, images allow researchers to study regional and global changes. Sensors capture data in multiple spectral bands to measure the physical, chemical, and biological properties of the Earth's surface. Covering the same location multiple times, satellites provide data on changes in the environment and survey areas that are difficult to observe from the ground. Given its unique features, images provide essential information for many applications, including deforestation, crop production, food security, urban footprints, water scarcity, and land degradation.
 
-A time series is a set of data points collected at regular intervals over time. The data can be collected at any frequency, such as daily, weekly, monthly, or yearly, depending on the context of the data. Time series data is used to analyze trends, patterns, and changes in the data over time. Satellite image time series refer to time series obtained from a collection of images captured by a satellite over a period of time, typically months or years. Using time series, experts  improve their understanding of ecological patterns and processes. Instead of selecting individual images from specific dates and comparing them, researchers track change continuously [@Woodcock2020]. 
+A time series is a set of data points collected at regular intervals over time. Time series data is used to analyze trends, patterns, and changes. Satellite image time series refer to time series obtained from a collection of images captured by a satellite over a period of time, typically months or years. Using time series, experts improve their understanding of ecological patterns and processes. Instead of selecting individual images from specific dates and comparing them, researchers track change continuously [@Woodcock2020]. 
 
 ## Time-first, space-later{-}
 
@@ -33,7 +33,7 @@ The `sits` package uses satellite image time series to for land classification, 
 knitr::include_graphics("images/sits_general_view.png")
 ```
 
-The package provides a set of tools for analysis, visualization and classification of satellite image time series. Users follow a typical workflow:
+The package provides tools for analysis, visualization and classification of satellite image time series. Users follow a typical workflow:
 
 1.  Select an analysis-ready data image collection on cloud providers such as AWS, Microsoft Planetary Computer, Digital Earth Africa and Brazil Data Cube.
 2.  Build a regular data cube using the chosen image collection.
@@ -94,8 +94,6 @@ kableExtra::kbl(sits_api,
 
 knitr::include_graphics("images/sits_api.png") 
 ```
-
-\newpage
 
 ## Creating a Data Cube {.unnumbered}
 

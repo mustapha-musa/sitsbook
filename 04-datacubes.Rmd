@@ -8,7 +8,9 @@ library(sits)
 
 ## Analysis-ready data image collections{-}
 
-Collections of Earth observation analysis-ready data (ARD) are available in cloud services such as Amazon Web Service, Brazil Data Cube, Digital Earth Africa, Swiss Data Cube, and Microsoft's Planetary Computer. These collections have been processed to improve multidate comparability.  Radiance measures at the top of the atmosphere are converted to ground reflectance measures.  In general, timelines of the images of an ARD image collection are different. Images still contain cloudy or missing pixels; bands for the images in the collection may have different resolutions. Figure 9 shows an example of the Landsat ARD image collection. 
+Analysis-ready data (ARD) are images that are ready for analysis without the need for further preprocessing or transformation. They are designed to simplify and accelerate the analysis of Earth observation (EO) data by providing consistent and high-quality data that are standardized across different sensors and platforms. ARD data is typically provided as a collection of single files, with each pixel of the file containing a single value for each spectral band for a given date.
+
+ARD collections are available in cloud services such as Amazon Web Service, Brazil Data Cube, Digital Earth Africa, Swiss Data Cube, and Microsoft's Planetary Computer. These collections have been processed to improve multidate comparability.  Radiance measures at the top of the atmosphere are converted to ground reflectance measures.  In general, timelines of the images of an ARD image collection are different. Images still contain cloudy or missing pixels; bands for the images in the collection may have different resolutions. Figure 9 shows an example of the Landsat ARD image collection. 
 
 ```{r ardtile, echo = FALSE, out.width="80%", fig.align="center", fig.cap="ARD image collection (source: USGS). Reproduction based on fair use doctrine."}
 knitr::include_graphics("images/usgs_ard_tile.png")
@@ -39,14 +41,14 @@ As of version 1.2.0, `sits` supports access to the following ARD image collectio
 
 ## Regular image data cubes{-}
 
-Machine learning and deep learning (ML/DL) classification algorithms require the input data to be consistent. The dimensionality of the data used for training the model has to be the same as that of the data to be classified. There should be no gaps in the input data and no missing values are allowed. Thus, to use of ML/DL algorithms for remote sensing data, ARD image collections should be converted to regular data cubes. Following Appel and Pebesma [@Appel2019], a *regular data cube*  has the following definition and properties:
+Machine learning and deep learning (ML/DL) classification algorithms require the input data to be consistent. The dimensionality of the data used for training the model has to be the same as that of the data to be classified. There should be no gaps and no missing values. Thus, to use of ML/DL algorithms for remote sensing data, ARD image collections should be converted to regular data cubes. Following Appel and Pebesma [@Appel2019], a *regular data cube*  has the following definition and properties:
 
 1. A regular data cube is a four-dimensional structure with dimensions x (longitude or easting), y (latitude or northing), time, and bands.
 2. Its spatial dimensions refer to a single spatial reference system (SRS). Cells of a data cube have a constant spatial size with respect to the cube’s SRS.
 3. The temporal dimension is composed of a set of continuous and equally-spaced intervals. 
 4. For every combination of dimensions, a cell has a single value.
 
-All cells of a data cube have the same spatiotemporal extent. The spatial resolution of each cell is the same in X and Y dimensions. All temporal intervals are the same. Each cell contains a valid set of measures. For each position in space, the data cube should provide a valid time series. For each time interval, the regular data cube should provide a valid 2D image (see Figure 11). 
+All cells of a data cube have the same spatiotemporal extent. The spatial resolution of each cell is the same in X and Y dimensions. All temporal intervals are the same. Each cell contains a valid set of measures. For each position in space, the data cube should provide a set of valid time series. For each time interval, the regular data cube should provide a valid 2D image (see Figure 11). 
 
 ```{r dcconcept, echo = FALSE, out.width="100%", fig.align="center", fig.cap="Conceptual view of data cubes (source: authors)"}
 knitr::include_graphics("images/datacube_conception.png")
@@ -62,7 +64,7 @@ To obtain information on ARD image collection from cloud providers, `sits` uses 
 
 The function `sits_cube()` supports access to image collections in cloud services; it has the following parameters:
 
-1. `source`: name of the provider from the list of providers supported by `sits`. 
+1. `source`: name of the provider. 
 2. `collection`: a collection available in the provider and supported by `sits`. To find out which collections are supported by `sits`, see `sits_list_collections()`. 
 3. `platform`: optional parameter specifying the platform in case of collections that include more than one satellite. 
 4. `tiles`: Set of tiles of image collection reference system. Either `tiles` or `roi` should be specified. 
@@ -229,14 +231,14 @@ It is also possible to create local cubes based on results that have been produc
 1. `source`:  name of the original data provider. 
 2. `collection`:  name of the collection from where the data was extracted. 
 3. `data_dir`: local directory for the classified images.
-4. `band`: Band name is associated to the type of result. Use: (a) `probs` for probability cubes produced by `sits_classify()`; (b) `bayes` or `bilateral`, according to the method selected when using `sits_smooth()`; (c) `entropy`, `least`, `ratio` or `margin`, according to the method selected when using `sits_uncertainty()`; and (d) `class` for labelled cubes.
+4. `band`: Band name is associated to the type of result. Use: (a) `probs` for probability cubes produced by `sits_classify()`; (b) `bayes`, for cubes produced by `sits_smooth()`; (c) `entropy`, `least`, `ratio` or `margin`, according to the method selected when using `sits_uncertainty()`; and (d) `class` for labelled cubes.
 5. `labels`: Labels associated to the classification results (not required for cubes produced by `sits_uncertainty()`).
 6. `version`: Version of the result (default = `v1`).
 7. `parse_info`: File name parsing information to allow `sits` to deduce the values of `tile`, `start_date`, `end_date`, `band` and `version` from the file name. Unlike non-classified image files, cubes produced by classification and post-classification have both `start_date` and `end_date`. 
 
 The following code creates a results cube based on the classification of deforestation in Brazil.  This classified cube was obtained by a large data cube of Sentinel-2 images, covering the state of Rondonia, Brazil comprising 40 tiles, 10 spectral bands, and covering the period from 2020-06-01 to 2021-09-11. Samples of four classes were trained by a random forest classifier. 
 
-```{r, tidy="styler", out.width="120%", fig.align="center", fig.cap="Classified data cube for year 2020/2021 in Rondonia, Brazil"}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Classified data cube for year 2020/2021 in Rondonia, Brazil"}
 # Create a cube based on a classified image 
 data_dir <- system.file("extdata/Rondonia", package = "sitsdata")
 # file is named "SENTINEL-2_MSI_20LLP_2020-06-04_2021-08-26_class_v1.tif" 

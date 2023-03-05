@@ -56,7 +56,7 @@ library(tibble)
 
 <a href="https://github.com/e-sensing/sitsbook"><img class="cover" src="images/cover_sits_book.png" width="326" align="right" alt="Cover image" /></a>
 
-Satellite images provide key information on the Earth’s environment and the impacts caused by human actions. Petabytes of Earth observation data are now openly available. Remote sensing experts can track change using satellite image time series, which capture subtle changes in ecosystem health and condition and improve the distinction between different land classes. Using image time series, analysts make best use of the full extent of big Earth observation data collections.
+Satellite images provide key information on the Earth’s environment and the impacts caused by human actions. Petabytes of Earth observation data are now open and free, making the full extent of image archives available for researchers and experts.  Remote sensing experts can now track environmental change using satellite image time series.  Using image time series, analysts make best use of the full extent of big Earth observation data collections, capturing subtle changes in ecosystem health and condition and improving the distinction between different land classes.
 
 This book introduces `sits`, an open-source **R** package for land use and land cover classification of big Earth observation data using satellite image time series. Users build regular data cubes from cloud services such as Amazon Web Services, Microsoft Planetary Computer, Brazil Data Cube, and Digital Earth Africa. The `sits` API includes an assessment of training sample quality, machine learning and deep learning classification algorithms, and Bayesian post-processing methods for smoothing and uncertainty assessment. To evaluate results, `sits` supports best practice accuracy assessments.
 
@@ -64,7 +64,7 @@ This book introduces `sits`, an open-source **R** package for land use and land 
 
 The target audience for `sits` is the community of remote sensing experts with Earth Sciences background who want to use state-of-the-art data analysis methods with minimal investment in programming skills. The package provides a clear and direct set of functions, which are easy to learn and master. Users with a minimal background on **R** programming can start using `sits` right away. Those not yet familiar with **R** need only to learn introductory concepts.  
 
-If you are not an **R** user and would like to quickly master what is needed to run `sits`, please read Parts 1 and 2 of Garrett Golemund's book, "Hands-On Programming with R"(https://rstudio-education.github.io/hopr/>). If you already are an **R** user and would like to update your skills with the latest trends,  please read the book by Hadley Wickham and Gareth Golemund, "R for Data Science". (<https://r4ds.had.co.nz/>).
+If you are not an **R** user and would like to quickly master what is needed to run `sits`, please read Parts 1 and 2 of Garrett Golemund's book, "Hands-On Programming with R"(https://rstudio-education.github.io/hopr/>). If you already are an **R** user and would like to update your skills with the latest trends,  please read the book by Hadley Wickham and Gareth Golemund, "R for Data Science". (<https://r4ds.had.co.nz/>). Important concepts of spatial analysis are presented by Edzer Pebesma and Roger Bivand in their book "Spatial Data Science" (<https://r-spatial.org/book/>).
 
 ## Software version described in this book{-}
 
@@ -78,4 +78,4 @@ Rolf Simoes, Gilberto Camara, Gilberto Queiroz, Felipe Souza, Pedro R. Andrade, 
 
 ## Intellectual property rights {-}
 
-This book is licensed as Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) by Creative Commons, as described in the terms available <https://creativecommons.org/licenses/by-nc-sa/4.0/>. The `sits` package is licensed under the GNU General Public License, version 3.0. 
+This book is licensed as Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) by Creative Commons, described in the terms available at <https://creativecommons.org/licenses/by-nc-sa/4.0/>. The `sits` package is licensed under the GNU General Public License, version 3.0. 

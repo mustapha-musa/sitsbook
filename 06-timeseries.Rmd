@@ -8,7 +8,6 @@ source("common.R")
 
 <a href="https://www.kaggle.com/esensing/working-with-time-series-in-sits" target="_blank"><img src="https://kaggle.com/static/images/open-in-kaggle.svg"/></a>
 
-
 The `sits` package uses sets of time series data describing properties in spatiotemporal locations of interest. For land use classification, these sets consist of samples labelled by experts. The package can also be used for any type of classification, provided that the timeline and bands of the time series used for training match that of the data cubes. 
 
 The package uses a `tibble` data structure to organize time series data. A `tibble` is a generalization of a `data.frame`, the usual way in R to organize data in tables. Tibbles are part of the `tidyverse`, a collection of R packages designed to work together in data manipulation [@Wickham2017].  The following code shows the first three lines of a tibble containing 1,882 labeled samples of land cover in Mato Grosso state of Brazil. The samples contain time series extracted from the MODIS MOD13Q1 product from 2000 to 2016, provided every 16 days at 250-meter resolution in the Sinusoidal projection. Based on ground surveys and high-resolution imagery, it includes samples of nine classes: "Forest", "Cerrado", "Pasture", "Soy_Fallow", "Fallow_Cotton", "Soy_Cotton", "Soy_Corn", "Soy_Millet", and "Soy_Sunflower". 
@@ -74,7 +73,7 @@ plot(samples_cerrado)
 
 ## Obtaining time series data from data cubes{-}
 
-To get time series in `sits`, one has to first create a regular data cube and then provide a set of locations inside the data cube using `sits_get_data()`. This function uses two mandatory parameters: `cube` and `samples`. The `cube` parameter states to specify what are the locations whose values will be retrieved. The `samples` parameter accepts the following data types: 
+To get a set of time series in sits, one has to first create a regular data cube and then request one or more time series from the cube  using `sits_get_data()`.  This function uses two mandatory parameters: `cube` and `samples`. The `cube` parameter indicates the data cube from which time series will be extracted.  The `samples` parameter accepts the following data types: 
 
 1. A data.frame with information on latitude and longitude (mandatory), start_date, end_date and label for each sample point.
 2. A csv file with columns latitude and longitude, start_date, end_date and label.
@@ -83,7 +82,7 @@ To get time series in `sits`, one has to first create a regular data cube and th
 
 In the example below, given a data cube the user provides the latitude and longitude of the desired location. Since the bands, start date and end date of the time series are not informed, `sits` obtains them from the data cube. The result is a tibble with one time series that can be visualized using `plot()`.
 \newpage
-```{r, tidy="styler", fig.align="center", out.width="70%", fig.cap="NDVI and EVI time series fetched from local raster cube.", message = FALSE}
+```{r, tidy="styler", fig.align="center", out.width="90%", fig.cap="NDVI and EVI time series fetched from local raster cube.", message = FALSE}
 # Obtain a raster cube with based on local files
 data_dir <- system.file("extdata/sinop", package = "sitsdata")
 raster_cube <- sits_cube(
@@ -103,7 +102,6 @@ plot(series)
 ```
 
 A useful case is when a set of labelled samples are available to be used as a training data set. In this case, one usually has trusted observations that are labelled and commonly stored in plain text files in comma-separated values (CSV) or using shapefiles (SHP). 
-\newpage
 
 ```{r, tidy="styler", message=FALSE}
 # retrieve a list of samples described by a CSV file
@@ -126,7 +124,7 @@ points <- sits_get_data(
 # show the tibble with the first three points
 points[1:3,]
 ```
-\newpage
+
 Users can also specify samples by providing shapefiles or `sf` objects containing POINT or POLYGON geometries. The geographical location is inferred from the geometries associated with the shapefile or `sf` object. For files containing points, the geographical location is obtained directly. For polygon geometries, the parameter `n_sam_pol` (defaults to 20) determines the number of samples to be extracted from each polygon. The temporal information can be provided explicitly by the user; if absent, it is inferred from the data cube. If label information is available in the shapefile or `sf` object, users should include the parameter `label_attr` to indicate the column which contains the label to be associated with each time series.
 
 ```{r, tidy="styler", warning = FALSE, message = FALSE, error = FALSE}
@@ -167,7 +165,7 @@ The literature on satellite image time series has several applications of filter
 The Savitzky-Golay filter works by fitting a successive array of $2n+1$ adjacent data points with a $d$-degree polynomial through linear least squares. The main parameters for the filter are  the polynomial degree ($d$) and the length of the window data points ($n$). In general, it produces smoother results for a larger value of $n$ and/or a smaller value of $d$ [@Chen2004]. The optimal value for these two parameters can vary from case to case. In SITS, the user can set the order of the polynomial using the parameter `order` (default = 3), the size of the temporal window with the parameter `length` (default = 5), and the temporal expansion with the parameter `scaling` (default = 1). The following example shows the effect of Savitsky-Golay filter on a point extracted from the MOD13Q1 product, ranging from 2000-02-18 to 2018-01-01.
 
 
-```{r, fig.align="center", out.width="70%", fig.cap="Savitzky-Golay filter applied on a multi-year NDVI time series."}
+```{r, fig.align="center", out.width="90%", fig.cap="Savitzky-Golay filter applied on a multi-year NDVI time series."}
 
 # Take NDVI band of the first sample data set
 point_ndvi <- sits_select(point_mt_6bands, band = "NDVI")
@@ -186,7 +184,7 @@ The Whittaker smoother attempts to fit a curve that represents the raw data, but
 The following example shows the effect of Whitakker filter on a point extracted from the MOD13Q1 product, ranging from 2000-02-18 to 2018-01-01. The `lambda` parameter controls the smoothing of the filter. By default, it is set to 0.5, a small value. For illustrative purposes, we show the effect of a larger smoothing parameter.
 \newpage
 
-```{r, fig.align="center", out.width="70%", fig.cap="Whittaker filter applied on a one-year NDVI time series."}
+```{r, fig.align="center", out.width="90%", fig.cap="Whittaker filter applied on a one-year NDVI time series."}
 
 # Take NDVI band of the first sample data set
 point_ndvi <- sits_select(point_mt_6bands, band = "NDVI")

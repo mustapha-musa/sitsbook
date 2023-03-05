@@ -13,15 +13,15 @@
 <meta name="author" content="Pedro Ribeiro Andrade">
 <meta name="author" content="Karine Ferreira">
 <meta name="author" content="Gilberto Queiroz">
-<meta name="description" content="Data structures for satellite time series  The sits package requires a set of time series data, describing properties in spatiotemporal locations of interest. For land use classification, this set...">
+<meta name="description" content="Data structures for satellite time series  The sits package uses sets of time series data describing properties in spatiotemporal locations of interest. For land use classification, these sets...">
 <meta name="generator" content="bookdown 0.32 with bs4_book()">
 <meta property="og:title" content="Working with time series | sits: Satellite Image Time Series Analysis on Earth Observation Data Cubes">
 <meta property="og:type" content="book">
 <meta property="og:image" content="/images/cover_sits_book.png">
-<meta property="og:description" content="Data structures for satellite time series  The sits package requires a set of time series data, describing properties in spatiotemporal locations of interest. For land use classification, this set...">
+<meta property="og:description" content="Data structures for satellite time series  The sits package uses sets of time series data describing properties in spatiotemporal locations of interest. For land use classification, these sets...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Working with time series | sits: Satellite Image Time Series Analysis on Earth Observation Data Cubes">
-<meta name="twitter:description" content="Data structures for satellite time series  The sits package requires a set of time series data, describing properties in spatiotemporal locations of interest. For land use classification, this set...">
+<meta name="twitter:description" content="Data structures for satellite time series  The sits package uses sets of time series data describing properties in spatiotemporal locations of interest. For land use classification, these sets...">
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -88,7 +88,8 @@
 <li><a class="" href="image-classification-in-data-cubes.html">Image Classification in Data Cubes</a></li>
 <li><a class="" href="validation-and-accuracy-measurements.html">Validation and accuracy measurements</a></li>
 <li><a class="" href="uncertainty-and-active-learning.html">Uncertainty and active learning</a></li>
-<li><a class="" href="design-and-extensibility-considerations.html">Design and extensibility considerations</a></li>
+<li><a class="" href="ensemble-prediction-from-multiple-models.html">Ensemble Prediction from Multiple Models</a></li>
+<li><a class="" href="visualising-and-exporting-data.html">Visualising and Exporting data</a></li>
 <li><a class="" href="technical-annex.html">Technical Annex</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
@@ -105,8 +106,8 @@
 <h2>Data structures for satellite time series<a class="anchor" aria-label="anchor" href="#data-structures-for-satellite-time-series"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="https://www.kaggle.com/esensing/working-with-time-series-in-sits" target="_blank"><img src="https://kaggle.com/static/images/open-in-kaggle.svg"></a></p>
-<p>The <code>sits</code> package requires a set of time series data, describing properties in spatiotemporal locations of interest. For land use classification, this set consists of samples provided by experts that take in-situ field observations or recognize land classes using high-resolution images. The package can also be used for any type of classification, provided that the timeline and bands of the time series (used for training) match that of the data cubes.</p>
-<p>For handling time series, the package uses a <code>tibble</code> to organize time series data with associated spatial information. A <code>tibble</code> is a generalization of a <code>data.frame</code>, the usual way in R to organize data in tables. Tibbles are part of the <code>tidyverse</code>, a collection of R packages designed to work together in data manipulation <span class="citation"><a href="references.html#ref-Wickham2017" role="doc-biblioref">[19]</a></span>. The following code shows the first three lines of a tibble containing 1,882 labeled samples of land cover in Mato Grosso state of Brazil. The samples contain time series extracted from the MODIS MOD13Q1 product from 2000 to 2016, provided every 16 days at 250-meter resolution in the Sinusoidal projection. Based on ground surveys and high-resolution imagery, it includes samples of nine classes: “Forest”, “Cerrado”, “Pasture”, “Soy_Fallow”, “Fallow_Cotton”, “Soy_Cotton”, “Soy_Corn”, “Soy_Millet”, and “Soy_Sunflower”.</p>
+<p>The <code>sits</code> package uses sets of time series data describing properties in spatiotemporal locations of interest. For land use classification, these sets consist of samples labelled by experts. The package can also be used for any type of classification, provided that the timeline and bands of the time series used for training match that of the data cubes.</p>
+<p>The package uses a <code>tibble</code> data structure to organize time series data. A <code>tibble</code> is a generalization of a <code>data.frame</code>, the usual way in R to organize data in tables. Tibbles are part of the <code>tidyverse</code>, a collection of R packages designed to work together in data manipulation <span class="citation"><a href="references.html#ref-Wickham2017" role="doc-biblioref">[20]</a></span>. The following code shows the first three lines of a tibble containing 1,882 labeled samples of land cover in Mato Grosso state of Brazil. The samples contain time series extracted from the MODIS MOD13Q1 product from 2000 to 2016, provided every 16 days at 250-meter resolution in the Sinusoidal projection. Based on ground surveys and high-resolution imagery, it includes samples of nine classes: “Forest”, “Cerrado”, “Pasture”, “Soy_Fallow”, “Fallow_Cotton”, “Soy_Cotton”, “Soy_Corn”, “Soy_Millet”, and “Soy_Sunflower”.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># samples</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"samples_matogrosso_mod13q1"</span><span class="op">)</span></span>
@@ -157,7 +158,7 @@
 #&gt; 2 Croplands  1038 0.549 
 #&gt; 3 Forest      131 0.0692
 #&gt; 4 Pasture     344 0.182</code></pre>
-<p>Given that we have used the tibble data format for the metadata and the embedded time series, one can use the functions from <code>dplyr</code>, <code>tidyr</code>, and <code>purrr</code> packages of the <code>tidyverse</code> <span class="citation"><a href="references.html#ref-Wickham2017" role="doc-biblioref">[19]</a></span> to process the data. For example, the following code uses <code><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select()</a></code> to get a subset of the sample data set with two bands (NDVI and EVI) and then uses the <code><a href="https://dplyr.tidyverse.org/reference/filter.html">dplyr::filter()</a></code> to select the samples labelled as “Cerrado”.</p>
+<p>Given that we have used the tibble data format for the metadata and the embedded time series, one can use the functions from <code>dplyr</code>, <code>tidyr</code>, and <code>purrr</code> packages of the <code>tidyverse</code> <span class="citation"><a href="references.html#ref-Wickham2017" role="doc-biblioref">[20]</a></span> to process the data. For example, the following code uses <code><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select()</a></code> to get a subset of the sample data set with two bands (NDVI and EVI) and then uses the <code><a href="https://dplyr.tidyverse.org/reference/filter.html">dplyr::filter()</a></code> to select the samples labelled as “Cerrado”.</p>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># select NDVI band</span></span>
 <span><span class="va">samples_ndvi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span><span class="va">samples_matogrosso_mod13q1</span>,</span>
@@ -178,8 +179,9 @@
 <code class="sourceCode R"><span><span class="co"># plot the first 12 samples</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">samples_cerrado</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span>, <span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:cerrado-12"></span>
 <img src="sitsbook_files/figure-html/cerrado-12-1.png" alt="Plot of the first 'Cerrado' sample" width="70%"><p class="caption">
-Plot of the first ‘Cerrado’ sample
+Figure 29: Plot of the first ‘Cerrado’ sample
 </p>
 </div>
 <p>For a large number of samples, the default visualization combines all samples together in a single temporal interval even if they belong to different years. This plot is useful to show the spread of values for the time series of each band. The strong red line in the plot shows the median of the values, while the two orange lines are the first and third interquartile ranges. See <code><a href="https://rdrr.io/pkg/sits/man/plot.html">?plot</a></code> for more details on data visualization in <code>sits</code>.</p>
@@ -187,16 +189,16 @@ Plot of the first ‘Cerrado’ sample
 <code class="sourceCode R"><span><span class="co"># plot all cerrado samples together</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">samples_cerrado</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-52"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-52-1.png" alt="Plot of all Cerrado samples " width="70%"><p class="caption">
-Figure 29: Plot of all Cerrado samples
+<span style="display:block;" id="fig:unnamed-chunk-49"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-49-1.png" alt="Plot of all Cerrado samples " width="70%"><p class="caption">
+Figure 30: Plot of all Cerrado samples
 </p>
 </div>
 </div>
 <div id="obtaining-time-series-data-from-data-cubes" class="section level2 unnumbered">
 <h2>Obtaining time series data from data cubes<a class="anchor" aria-label="anchor" href="#obtaining-time-series-data-from-data-cubes"><i class="fas fa-link"></i></a>
 </h2>
-<p>To get a time series in sits, one has to first create a regular data cube and then request one or more time series points from the data cube by using <code><a href="https://rdrr.io/pkg/sits/man/sits_get_data.html">sits_get_data()</a></code>. This function provides a general means of describe training data with the <code>samples</code> parameter. This parameter accepts the following data types:</p>
+<p>To get a set of time series in sits, one has to first create a regular data cube and then request one or more time series from the cube using <code><a href="https://rdrr.io/pkg/sits/man/sits_get_data.html">sits_get_data()</a></code>. This function uses two mandatory parameters: <code>cube</code> and <code>samples</code>. The <code>cube</code> parameter indicates the data cube from which time series will be extracted. The <code>samples</code> parameter accepts the following data types:</p>
 <ol style="list-style-type: decimal">
 <li>A data.frame with information on latitude and longitude (mandatory), start_date, end_date and label for each sample point.</li>
 <li>A csv file with columns latitude and longitude, start_date, end_date and label.</li>
@@ -225,13 +227,12 @@ Figure 29: Plot of all Cerrado samples
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">series</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-53"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-53-1.png" alt="NDVI and EVI time series fetched from local raster cube." width="70%"><p class="caption">
-Figure 30: NDVI and EVI time series fetched from local raster cube.
+<span style="display:block;" id="fig:unnamed-chunk-50"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-50-1.png" alt="NDVI and EVI time series fetched from local raster cube." width="90%"><p class="caption">
+Figure 31: NDVI and EVI time series fetched from local raster cube.
 </p>
 </div>
-<p>A useful case is when a set of labelled samples are available to be used as a training data set. In this case, one usually has trusted observations that are labelled and commonly stored in plain text files in comma-separated values (CSV) or using shapefiles (SHP).
-</p>
+<p>A useful case is when a set of labelled samples are available to be used as a training data set. In this case, one usually has trusted observations that are labelled and commonly stored in plain text files in comma-separated values (CSV) or using shapefiles (SHP).</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># retrieve a list of samples described by a CSV file</span></span>
 <span><span class="va">samples_csv_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/samples/samples_sinop_crop.csv"</span>,</span>
@@ -258,12 +259,11 @@ Figure 30: NDVI and EVI time series fetched from local raster cube.
 <span><span class="co"># show the tibble with the first three points</span></span>
 <span><span class="va">points</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="op">]</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; # A tibble: 3 × 7
-#&gt;   longitude latitude start_date end_date   label    cube      time_series
-#&gt;       &lt;dbl&gt;    &lt;dbl&gt; &lt;date&gt;     &lt;date&gt;     &lt;chr&gt;    &lt;chr&gt;     &lt;list&gt;     
-#&gt; 1     -55.8    -11.7 2013-09-14 2014-08-29 Cerrado  MOD13Q1-6 &lt;tibble&gt;   
-#&gt; 2     -55.8    -11.7 2013-09-14 2014-08-29 Cerrado  MOD13Q1-6 &lt;tibble&gt;   
-#&gt; 3     -55.7    -11.7 2013-09-14 2014-08-29 Soy_Corn MOD13Q1-6 &lt;tibble&gt;</code></pre>
-<div style="page-break-after: always;"></div>
+#&gt;   longitude latitude start_date end_date   label    cube      time_series      
+#&gt;       &lt;dbl&gt;    &lt;dbl&gt; &lt;date&gt;     &lt;date&gt;     &lt;chr&gt;    &lt;chr&gt;     &lt;list&gt;           
+#&gt; 1     -55.8    -11.7 2013-09-14 2014-08-29 Cerrado  MOD13Q1-6 &lt;tibble [23 × 3]&gt;
+#&gt; 2     -55.8    -11.7 2013-09-14 2014-08-29 Cerrado  MOD13Q1-6 &lt;tibble [23 × 3]&gt;
+#&gt; 3     -55.7    -11.7 2013-09-14 2014-08-29 Soy_Corn MOD13Q1-6 &lt;tibble [23 × 3]&gt;</code></pre>
 <p>Users can also specify samples by providing shapefiles or <code>sf</code> objects containing POINT or POLYGON geometries. The geographical location is inferred from the geometries associated with the shapefile or <code>sf</code> object. For files containing points, the geographical location is obtained directly. For polygon geometries, the parameter <code>n_sam_pol</code> (defaults to 20) determines the number of samples to be extracted from each polygon. The temporal information can be provided explicitly by the user; if absent, it is inferred from the data cube. If label information is available in the shapefile or <code>sf</code> object, users should include the parameter <code>label_attr</code> to indicate the column which contains the label to be associated with each time series.</p>
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># obtain a set of points inside the state of Mato Grosso, Brazil</span></span>
@@ -301,12 +301,12 @@ Figure 30: NDVI and EVI time series fetched from local raster cube.
 <div id="filtering-techniques-for-time-series" class="section level2 unnumbered">
 <h2>Filtering techniques for time series<a class="anchor" aria-label="anchor" href="#filtering-techniques-for-time-series"><i class="fas fa-link"></i></a>
 </h2>
-<p>Satellite image time series generally is contaminated by atmospheric influence, geolocation error, and directional effects <span class="citation"><a href="references.html#ref-Lambin2006" role="doc-biblioref">[20]</a></span>. Atmospheric noise, sun angle, interferences on observations or different equipment specifications, as well as the very nature of the climate-land dynamics can be sources of variability <span class="citation"><a href="references.html#ref-Atkinson2012" role="doc-biblioref">[21]</a></span>. Inter-annual climate variability also changes the phenological cycles of the vegetation, resulting in time series whose periods and intensities do not match on a year-to-year basis. To make the best use of available satellite data archives, methods for satellite image time series analysis need to deal with <em>noisy</em> and <em>non-homogeneous</em> data sets. In this vignette, we discuss filtering techniques to improve time series data that present missing values or noise.</p>
-<p>The literature on satellite image time series has several applications of filtering to correct or smooth vegetation index data. The package supports the well-known Savitzky–Golay (<code><a href="https://rdrr.io/pkg/sits/man/sits_filters.html">sits_sgolay()</a></code>) and Whittaker (<code><a href="https://rdrr.io/pkg/sits/man/sits_filters.html">sits_whittaker()</a></code>) filters. In an evaluation of MERIS NDVI time series filtering for estimating phenological parameters in India, <span class="citation"><a href="references.html#ref-Atkinson2012" role="doc-biblioref">[21]</a></span> found that the Whittaker filter provides good results. <span class="citation"><a href="references.html#ref-Zhou2016" role="doc-biblioref">[22]</a></span> found that the Savitzky-Golay filter is good for reconstruction in tropical evergreen broadleaf forests.</p>
+<p>Satellite image time series generally is contaminated by atmospheric influence, geolocation error, and directional effects <span class="citation"><a href="references.html#ref-Lambin2006" role="doc-biblioref">[21]</a></span>. Atmospheric noise, sun angle, interferences on observations or different equipment specifications, as well as the very nature of the climate-land dynamics can be sources of variability <span class="citation"><a href="references.html#ref-Atkinson2012" role="doc-biblioref">[22]</a></span>. Inter-annual climate variability also changes the phenological cycles of the vegetation, resulting in time series whose periods and intensities do not match on a year-to-year basis. To make the best use of available satellite data archives, methods for satellite image time series analysis need to deal with <em>noisy</em> and <em>non-homogeneous</em> data sets. In this vignette, we discuss filtering techniques to improve time series data that present missing values or noise.</p>
+<p>The literature on satellite image time series has several applications of filtering to correct or smooth vegetation index data. The package supports the well-known Savitzky–Golay (<code><a href="https://rdrr.io/pkg/sits/man/sits_filters.html">sits_sgolay()</a></code>) and Whittaker (<code><a href="https://rdrr.io/pkg/sits/man/sits_filters.html">sits_whittaker()</a></code>) filters. In an evaluation of MERIS NDVI time series filtering for estimating phenological parameters in India, <span class="citation"><a href="references.html#ref-Atkinson2012" role="doc-biblioref">[22]</a></span> found that the Whittaker filter provides good results. <span class="citation"><a href="references.html#ref-Zhou2016" role="doc-biblioref">[23]</a></span> found that the Savitzky-Golay filter is good for reconstruction in tropical evergreen broadleaf forests.</p>
 <div id="savitzkygolay-filter" class="section level3 unnumbered">
 <h3>Savitzky–Golay filter<a class="anchor" aria-label="anchor" href="#savitzkygolay-filter"><i class="fas fa-link"></i></a>
 </h3>
-<p>The Savitzky-Golay filter works by fitting a successive array of <span class="math inline">\(2n+1\)</span> adjacent data points with a <span class="math inline">\(d\)</span>-degree polynomial through linear least squares. The main parameters for the filter are the polynomial degree (<span class="math inline">\(d\)</span>) and the length of the window data points (<span class="math inline">\(n\)</span>). In general, it produces smoother results for a larger value of <span class="math inline">\(n\)</span> and/or a smaller value of <span class="math inline">\(d\)</span> <span class="citation"><a href="references.html#ref-Chen2004" role="doc-biblioref">[23]</a></span>. The optimal value for these two parameters can vary from case to case. In SITS, the user can set the order of the polynomial using the parameter <code>order</code> (default = 3), the size of the temporal window with the parameter <code>length</code> (default = 5), and the temporal expansion with the parameter <code>scaling</code> (default = 1). The following example shows the effect of Savitsky-Golay filter on a point extracted from the MOD13Q1 product, ranging from 2000-02-18 to 2018-01-01.</p>
+<p>The Savitzky-Golay filter works by fitting a successive array of <span class="math inline">\(2n+1\)</span> adjacent data points with a <span class="math inline">\(d\)</span>-degree polynomial through linear least squares. The main parameters for the filter are the polynomial degree (<span class="math inline">\(d\)</span>) and the length of the window data points (<span class="math inline">\(n\)</span>). In general, it produces smoother results for a larger value of <span class="math inline">\(n\)</span> and/or a smaller value of <span class="math inline">\(d\)</span> <span class="citation"><a href="references.html#ref-Chen2004" role="doc-biblioref">[24]</a></span>. The optimal value for these two parameters can vary from case to case. In SITS, the user can set the order of the polynomial using the parameter <code>order</code> (default = 3), the size of the temporal window with the parameter <code>length</code> (default = 5), and the temporal expansion with the parameter <code>scaling</code> (default = 1). The following example shows the effect of Savitsky-Golay filter on a point extracted from the MOD13Q1 product, ranging from 2000-02-18 to 2018-01-01.</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Take NDVI band of the first sample data set</span></span>
 <span><span class="va">point_ndvi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span><span class="va">point_mt_6bands</span>, band <span class="op">=</span> <span class="st">"NDVI"</span><span class="op">)</span></span>
@@ -315,9 +315,9 @@ Figure 30: NDVI and EVI time series fetched from local raster cube.
 <span><span class="co"># merge the point and plot the series</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_merge.html">sits_merge</a></span><span class="op">(</span><span class="va">point_sg</span>, <span class="va">point_ndvi</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-58"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-58-1.png" alt="Savitzky-Golay filter applied on a multi-year NDVI time series." width="70%"><p class="caption">
-Figure 31: Savitzky-Golay filter applied on a multi-year NDVI time series.
+<span style="display:block;" id="fig:unnamed-chunk-55"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-55-1.png" alt="Savitzky-Golay filter applied on a multi-year NDVI time series." width="90%"><p class="caption">
+Figure 32: Savitzky-Golay filter applied on a multi-year NDVI time series.
 </p>
 </div>
 <p>Notice that the resulting smoothed curve has both desirable and unwanted properties. For the period 2000 to 2008, the Savitsky-Golay filter removes noise resulting from clouds. However, after 2010, when the region has been converted to agriculture, the filter removes an important part of the natural variability from the crop cycle. Therefore, the <code>length</code> parameter is arguably too big and results in oversmoothing. Users can try to reduce this parameter and analyse the results.</p>
@@ -325,7 +325,7 @@ Figure 31: Savitzky-Golay filter applied on a multi-year NDVI time series.
 <div id="whittaker-filter" class="section level3 unnumbered">
 <h3>Whittaker filter<a class="anchor" aria-label="anchor" href="#whittaker-filter"><i class="fas fa-link"></i></a>
 </h3>
-<p>The Whittaker smoother attempts to fit a curve that represents the raw data, but is penalized if subsequent points vary too much <span class="citation"><a href="references.html#ref-Atzberger2011" role="doc-biblioref">[24]</a></span>. The Whittaker filter is a balancing between the residual to the original data and the “smoothness” of the fitted curve. The filter has one parameter: <span class="math inline">\(\lambda{}\)</span> that works as a “smoothing weight” parameter.</p>
+<p>The Whittaker smoother attempts to fit a curve that represents the raw data, but is penalized if subsequent points vary too much <span class="citation"><a href="references.html#ref-Atzberger2011" role="doc-biblioref">[25]</a></span>. The Whittaker filter is a balancing between the residual to the original data and the “smoothness” of the fitted curve. The filter has one parameter: <span class="math inline">\(\lambda{}\)</span> that works as a “smoothing weight” parameter.</p>
 <p>The following example shows the effect of Whitakker filter on a point extracted from the MOD13Q1 product, ranging from 2000-02-18 to 2018-01-01. The <code>lambda</code> parameter controls the smoothing of the filter. By default, it is set to 0.5, a small value. For illustrative purposes, we show the effect of a larger smoothing parameter.
 </p>
 <div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
@@ -336,9 +336,9 @@ Figure 31: Savitzky-Golay filter applied on a multi-year NDVI time series.
 <span><span class="co"># merge the point and plot the series</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_merge.html">sits_merge</a></span><span class="op">(</span><span class="va">point_whit</span>, <span class="va">point_ndvi</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-59"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-59-1.png" alt="Whittaker filter applied on a one-year NDVI time series." width="70%"><p class="caption">
-Figure 32: Whittaker filter applied on a one-year NDVI time series.
+<span style="display:block;" id="fig:unnamed-chunk-56"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-56-1.png" alt="Whittaker filter applied on a one-year NDVI time series." width="90%"><p class="caption">
+Figure 33: Whittaker filter applied on a one-year NDVI time series.
 </p>
 </div>
 <p>In the same way as what is observed in the Savitsky-Golay filter, high values of the smoothing parameter <code>lambda</code> produce an over-smoothed time series that reduces the capacity of the time series to represent natural variations on crop growth. For this reason, low smoothing values are recommended when using the <code>sits_whittaker</code> function.</p>
@@ -379,7 +379,7 @@ Figure 32: Whittaker filter applied on a one-year NDVI time series.
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-01-23.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-05.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

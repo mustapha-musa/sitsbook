@@ -1,0 +1,108 @@
+# Technical Annex {-}
+
+This chapter contains technical details on the algorithms available in `sits`. It is intended to support those that want to understand how the package works and also want to contribute to its development.
+
+##  Bayesian smoothing {-}
+
+Doing post-processing using Bayesian smoothing in SITS is straightforward. The result of the `sits_classify` function applied to a data cube is set of probability images, one per class. The next step is to apply the `sits_smooth` function. By default, this function selects the most likely class for each pixel considering only the probabilities of each class for each pixel. For continuous probability distributions, Bayesian inference is expressed by the rule:
+
+$$
+\pi(\theta|x) \propto \pi(x|\theta)\pi(\theta)
+$$
+
+Bayesian inference involves the estimation of an unknown parameter $\theta$, which is the random variable that describe what we are trying to measure. In the case of smoothing of image classification, $\theta$ is the class probability for a given pixel, conditioned by the probability values of that pixel. We model our initial belief about this value by a probability distribution,  $\pi(\theta)$, called the \emph{prior} distribution. It represents what we know about $\theta$ \emph{before} observing the data. The distribution $\pi(x|\theta)$, called the \emph{likelihood}, is estimated based on the observed data. It represents the added information provided by our observations. The \emph{posterior} distribution $\pi(\theta|x)$ is our improved belief of $\theta$ \emph{after} seeing the data. Bayes's rule states that the \emph{posterior} probability is proportional to the product of the \emph{likelihood} and the \emph{prior} probability.
+
+### Derivation of bayesian parameters for spatiotemporal smoothing{-}
+
+In our post-classification smoothing model, we consider the output of a machine learning algorithm that provides the probabilities of each pixel in the image to belong to target classes. More formally, consider a set of $K$ classes that are candidates for labelling each pixel. Let $p_{i,t,k}$ be the probability of pixel $i$ belonging to class $k$, $k = 1, \dots, K$. We have 
+$$
+\sum_{k=1}^K p_{i,k} = 1, p_{i,k} > 0
+$$
+We label a pixel $p_i$ as being of class $k$ if
+$$
+	p_{i, k} > p_{i,m}, \forall m = 1, \dots, K, m \neq k
+$$
+
+
+For each pixel $i$, we take the odds of the classification for class $k$, expressed as
+$$
+	O_{i,k} = p_{i,k} / (1-p_{i,k})
+$$
+where $p_{i, k}$ is the probability of class $k$. We have more confidence in pixels with higher odds since their class assignment is stronger. There are situations, such as border pixels or mixed ones, where the odds of different classes are similar in magnitude. We take them as cases of low confidence in the classification result. To assess and correct these cases,  Bayesian smoothing methods borrow strength from the neighbors and reduces the variance of the estimated class for each pixel.
+
+We further make the transformation 
+$$
+	x_{i,k} = \log [O_{i,k}]
+$$
+which measures the *logit* (log of the odds) associated to classifying the pixel $i$ as being of class $k$. The support of $x_{i, k}$ is $\mathbb{R}$. We can express the pixel data as a $K$-dimensional multivariate logit vector 
+
+$$
+\mathbf{x}_{i}=(x_{i,k_{0}},x_{i,k_{1}},\dots{},x_{i,k_{K}})
+$$ 
+
+
+For each pixel, the random variable that describes the class probability $k$ is denoted by $\theta_{i,k}$. This formulation allows uses to use the class covariance matrix in our formulations. We can express Bayes' rule for all combinations of pixel and classes for a time interval as
+
+$$
+\pi(\boldsymbol\theta_{i}|\mathbf{x}_{i}) \propto \pi(\mathbf{x}_{i}|\boldsymbol\theta_{i})\pi(\boldsymbol\theta_{i}).	
+$$
+
+We assume the conditional distribution $\mathbf{x}_{i}|\boldsymbol\theta_{i}$ follows a multivariate normal distribution
+
+$$
+    [\mathbf{x}_{i}|\boldsymbol\theta_{i}]\sim\mathcal{N}_{K}(\boldsymbol\theta_{i},\boldsymbol\Sigma_{i}),
+$$
+
+where $\boldsymbol\theta_{i}$ is the mean parameter vector for the pixel $i$, and $\boldsymbol\Sigma_{i}$ is a known $k\times{}k$ covariance matrix that we will use as a parameter to control the level of smoothness effect. We will discuss later on how to estimate $\boldsymbol\Sigma_{i}$. To model our uncertainty about the parameter $\boldsymbol\theta_{i}$, we will assume it also follows a multivariate normal distribution with hyper-parameters $\mathbf{m}_{i}$ for the mean vector, and $\mathbf{S}_{i}$ for the covariance matrix. 
+
+$$
+    [\boldsymbol\theta_{i}]\sim\mathcal{N}_{K}(\mathbf{m}_{i}, \mathbf{S}_{i}).
+$$
+
+The above equation defines our prior distribution. The hyper-parameters $\mathbf{m}_{i}$ and $\mathbf{S}_{i}$ are obtained using the neighboring pixels of pixel $i$. The neighborhood can be defined as any graph scheme (e.g. a given Chebyshev distance on the time-space lattice) and can include the referencing pixel $i$ as a neighbor. More formally, let 
+
+$$
+    \mathbf{V}_{i}=\{\mathbf{x}_{i_{j}}\}_{j=1}^{N}, 
+$$
+denote the $N$ logit vectors of a spatiotemporal neighborhood $N$ of pixel $i$. Then the prior mean is calculated by
+
+$$
+	\mathbf{m}_{i}=\operatorname{E}[\mathbf{V}_{i}],
+$$
+
+and the prior covariance matrix by
+
+$$
+    \mathbf{S}_{i}=\operatorname{E}\left[
+      \left(\mathbf{V}_{i}-\mathbf{m}_{i}\right)
+      \left(\mathbf{V}_{i}-\mathbf{m}_{i}\right)^\intercal
+    \right].
+$$
+The $\boldsymbol\theta_{i}$ parameter model is our initial belief about a pixel vector using the neighborhood information in the prior distribution. It represents what we know about the probable value of $\mathbf{x}_{i}$ (and hence, about the class probabilities as the logit function is a monotonically increasing function) \emph{before} observing it. The \emph{likelihood} function $P[\mathbf{x}_{i,t}|\boldsymbol\theta_{i,t}]$ represents the added information provided by our observation of $\mathbf{x}_{i,t}$. The \emph{posterior} probability density function $P[\boldsymbol\theta_{i,t}|\mathbf{x}_{i,t}]$ is our improved belief of the pixel vector \emph{after} seeing $\mathbf{x}_{i,t}$.
+
+Since the likelihood and prior are multivariate normal distributions, the posterior will also be a multivariate normal distribution, whose updated parameters can be derived by applying the density functions associated to the above equations. The posterior distribution is given by
+
+$$
+    [\boldsymbol\theta_{i}|\mathbf{x}_{i}]\sim\mathcal{N}_{K}\left(
+    (\mathbf{S}_{i}^{-1} + \boldsymbol\Sigma^{-1})^{-1}( \mathbf{S}_{i}^{-1}\mathbf{m}_{i} + \boldsymbol\Sigma^{-1} \mathbf{x}_{i}),
+    (\mathbf{S}_{i}^{-1} + \boldsymbol\Sigma^{-1})^{-1}
+    \right).
+$$
+At this point, we are able to infer the estimator $\hat{\boldsymbol\theta}_{i}$ for the $\boldsymbol\theta_{i}|\mathbf{x}_{i}$ parameter. For the multivariate normal distribution, the posterior mean minimizes the quadratic loss but the absolute and zero-one loss functions. It can be taken from the updated mean parameter of the posterior distribution which, after some algebra, can be expressed as
+
+$$
+    \hat{\boldsymbol{\theta}}_{i}=\operatorname{E}[\boldsymbol\theta_{i}|\mathbf{x}_{i}]=\boldsymbol\Sigma_{i}\left(\boldsymbol\Sigma_{i}+\mathbf{S}_{i}\right)^{-1}\mathbf{m}_{i} +
+    \mathbf{S}_{i}\left(\boldsymbol\Sigma_{i}+\mathbf{S}_{i}\right)^{-1}\mathbf{x}_{i}.
+$$
+
+The estimator value for the logit vector $\hat{\boldsymbol\theta}_{i}$ is a weighted average of the original logit vector $\mathbf{x}_{i}$ and the neighborhood mean vector $\mathbf{m}_{i}$. The weights are given by the covariance matrix $\mathbf{S}_{i}$ of the prior distribution and the covariance matrix of the conditional distribution. The matrix $\mathbf{S}_{i}$ is calculated considering the  neighbors and the matrix $\boldsymbol\Sigma_{i}$ is the smoothing factor provided as prior belief by the user. 
+
+When the values of local class covariance $\mathbf{S}_{i}$ are higher than those the conditional covariance $\boldsymbol\Sigma_{i}$, our confidence on the influence of the neighbors is low, and the smoothing algorithm gives more weight to the original pixel value $x_{i,k}$. When the local class covariance $\mathbf{S}_{i}$ decreases relative to the smoothness factor $\boldsymbol\Sigma_{i}$, our confidence on the influence of the neighborhood increases. The smoothing procedure will be most relevant in situations where the original classification odds ratio is low, showing a low level of separability between classes. In these cases, the updated values of the classes will be influenced by the local class variances. 
+
+In practice, $\boldsymbol\Sigma_{i}$ is a user-controlled covariance matrix parameter that will be set by users based on their knowledge of the region to be classified. In the simplest case, users can associate the  conditional covariance $\boldsymbol\Sigma_{i}$ to a diagonal matrix, using only one hyperparameter $\sigma^2_k$ to set the level of smoothness. Higher values of $\sigma^2_k$ will cause the assignment of the local mean to the pixel updated probability. In our case, after some classification tests, we decided to use $\sigma^2_k=20$ by default for all $k$. 
+
+The version implemented in `sits` includes the following parameters
+
+- `smoothness`: user-controlled parameter that controls the influence of the neighborhood values on the probabibility value of each class of a pixel. Can be defined as a unique value for all classes, or a matrix whose size of size $num_classes * num_classes$. The default value is 20, but users are encouraged define `smoothness` as a diagonal matrix whose values reflect the relative importance of each class in the output product. 
+- `window_size`: size of $n*n$ window used to define the neighborhood.
+- `neigh_fraction`: percentage of pixels per window used to calculate local class statistics. The aim is to use only those pixels in the window that are likely to be part of the same class as the central pixel. For example, for a `window_size` of size 9 and `neigh_fraction` of 0.5, half of the pixels of the 9 x 9 window (those with higher class probabibility) will be used to estimate the local class statistics $\mathbf{m}_{i,t}$ and $\mathbf{S}_{i,t}$ which represent the mean and standard deviation of the classes associated to prox

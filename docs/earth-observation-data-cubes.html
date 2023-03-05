@@ -13,15 +13,15 @@
 <meta name="author" content="Pedro Ribeiro Andrade">
 <meta name="author" content="Karine Ferreira">
 <meta name="author" content="Gilberto Queiroz">
-<meta name="description" content="Analysis-ready data image collections Collections of Earth observation analysis-ready data (ARD) are available in cloud services such as Amazon Web Service, Brazil Data Cube, Digital Earth Africa,...">
+<meta name="description" content="Analysis-ready data image collections Analysis-ready data (ARD) are images that are ready for analysis without the need for further preprocessing or transformation. They are designed to simplify...">
 <meta name="generator" content="bookdown 0.32 with bs4_book()">
 <meta property="og:title" content="Earth observation data cubes | sits: Satellite Image Time Series Analysis on Earth Observation Data Cubes">
 <meta property="og:type" content="book">
 <meta property="og:image" content="/images/cover_sits_book.png">
-<meta property="og:description" content="Analysis-ready data image collections Collections of Earth observation analysis-ready data (ARD) are available in cloud services such as Amazon Web Service, Brazil Data Cube, Digital Earth Africa,...">
+<meta property="og:description" content="Analysis-ready data image collections Analysis-ready data (ARD) are images that are ready for analysis without the need for further preprocessing or transformation. They are designed to simplify...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Earth observation data cubes | sits: Satellite Image Time Series Analysis on Earth Observation Data Cubes">
-<meta name="twitter:description" content="Analysis-ready data image collections Collections of Earth observation analysis-ready data (ARD) are available in cloud services such as Amazon Web Service, Brazil Data Cube, Digital Earth Africa,...">
+<meta name="twitter:description" content="Analysis-ready data image collections Analysis-ready data (ARD) are images that are ready for analysis without the need for further preprocessing or transformation. They are designed to simplify...">
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -88,7 +88,8 @@
 <li><a class="" href="image-classification-in-data-cubes.html">Image Classification in Data Cubes</a></li>
 <li><a class="" href="validation-and-accuracy-measurements.html">Validation and accuracy measurements</a></li>
 <li><a class="" href="uncertainty-and-active-learning.html">Uncertainty and active learning</a></li>
-<li><a class="" href="design-and-extensibility-considerations.html">Design and extensibility considerations</a></li>
+<li><a class="" href="ensemble-prediction-from-multiple-models.html">Ensemble Prediction from Multiple Models</a></li>
+<li><a class="" href="visualising-and-exporting-data.html">Visualising and Exporting data</a></li>
 <li><a class="" href="technical-annex.html">Technical Annex</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
@@ -104,7 +105,8 @@
 <div id="analysis-ready-data-image-collections" class="section level2 unnumbered">
 <h2>Analysis-ready data image collections<a class="anchor" aria-label="anchor" href="#analysis-ready-data-image-collections"><i class="fas fa-link"></i></a>
 </h2>
-<p>Collections of Earth observation analysis-ready data (ARD) are available in cloud services such as Amazon Web Service, Brazil Data Cube, Digital Earth Africa, Swiss Data Cube, and Microsoft’s Planetary Computer. These collections have been processed to improve multidate comparability. Radiance measures at the top of the atmosphere are converted to ground reflectance measures. In general, timelines of the images of an ARD image collection are different. Images still contain cloudy or missing pixels; bands for the images in the collection may have different resolutions. Figure 9 shows an example of the Landsat ARD image collection.</p>
+<p>Analysis-ready data (ARD) are images that are ready for analysis without the need for further preprocessing or transformation. They are designed to simplify and accelerate the analysis of Earth observation (EO) data by providing consistent and high-quality data that are standardized across different sensors and platforms. ARD data is typically provided as a collection of single files, with each pixel of the file containing a single value for each spectral band for a given date.</p>
+<p>ARD collections are available in cloud services such as Amazon Web Service, Brazil Data Cube, Digital Earth Africa, Swiss Data Cube, and Microsoft’s Planetary Computer. These collections have been processed to improve multidate comparability. Radiance measures at the top of the atmosphere are converted to ground reflectance measures. In general, timelines of the images of an ARD image collection are different. Images still contain cloudy or missing pixels; bands for the images in the collection may have different resolutions. Figure 9 shows an example of the Landsat ARD image collection.</p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:ardtile"></span>
 <img src="images/usgs_ard_tile.png" alt="ARD image collection (source: USGS). Reproduction based on fair use doctrine." width="80%"><p class="caption">
@@ -142,14 +144,14 @@ Figure 11: WRS-2 tiling system used by Landsat-5/7/8/9 images (source: INPE and 
 <div id="regular-image-data-cubes" class="section level2 unnumbered">
 <h2>Regular image data cubes<a class="anchor" aria-label="anchor" href="#regular-image-data-cubes"><i class="fas fa-link"></i></a>
 </h2>
-<p>Machine learning and deep learning (ML/DL) classification algorithms require the input data to be consistent. The dimensionality of the data used for training the model has to be the same as that of the data to be classified. There should be no gaps in the input data and no missing values are allowed. Thus, to use of ML/DL algorithms for remote sensing data, ARD image collections should be converted to regular data cubes. Following Appel and Pebesma <span class="citation"><a href="references.html#ref-Appel2019" role="doc-biblioref">[1]</a></span>, a <em>regular data cube</em> has the following definition and properties:</p>
+<p>Machine learning and deep learning (ML/DL) classification algorithms require the input data to be consistent. The dimensionality of the data used for training the model has to be the same as that of the data to be classified. There should be no gaps and no missing values. Thus, to use of ML/DL algorithms for remote sensing data, ARD image collections should be converted to regular data cubes. Following Appel and Pebesma <span class="citation"><a href="references.html#ref-Appel2019" role="doc-biblioref">[2]</a></span>, a <em>regular data cube</em> has the following definition and properties:</p>
 <ol style="list-style-type: decimal">
 <li>A regular data cube is a four-dimensional structure with dimensions x (longitude or easting), y (latitude or northing), time, and bands.</li>
 <li>Its spatial dimensions refer to a single spatial reference system (SRS). Cells of a data cube have a constant spatial size with respect to the cube’s SRS.</li>
 <li>The temporal dimension is composed of a set of continuous and equally-spaced intervals.</li>
 <li>For every combination of dimensions, a cell has a single value.</li>
 </ol>
-<p>All cells of a data cube have the same spatiotemporal extent. The spatial resolution of each cell is the same in X and Y dimensions. All temporal intervals are the same. Each cell contains a valid set of measures. For each position in space, the data cube should provide a valid time series. For each time interval, the regular data cube should provide a valid 2D image (see Figure 11).</p>
+<p>All cells of a data cube have the same spatiotemporal extent. The spatial resolution of each cell is the same in X and Y dimensions. All temporal intervals are the same. Each cell contains a valid set of measures. For each position in space, the data cube should provide a set of valid time series. For each time interval, the regular data cube should provide a valid 2D image (see Figure 11).</p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:dcconcept"></span>
 <img src="images/datacube_conception.png" alt="Conceptual view of data cubes (source: authors)" width="100%"><p class="caption">
@@ -166,7 +168,7 @@ Figure 12: Conceptual view of data cubes (source: authors)
 <p>The function <code><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube()</a></code> supports access to image collections in cloud services; it has the following parameters:</p>
 <ol style="list-style-type: decimal">
 <li>
-<code>source</code>: name of the provider from the list of providers supported by <code>sits</code>.</li>
+<code>source</code>: name of the provider.</li>
 <li>
 <code>collection</code>: a collection available in the provider and supported by <code>sits</code>. To find out which collections are supported by <code>sits</code>, see <code><a href="https://rdrr.io/pkg/sits/man/sits_configuration.html">sits_list_collections()</a></code>.</li>
 <li>
@@ -191,11 +193,11 @@ Figure 12: Conceptual view of data cubes (source: authors)
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create a data cube covering an area in the Rondonia state in the Brazilian Amazon</span></span>
 <span><span class="co"># Sentinel-2 images over</span></span>
-<span><span class="va">s2_20LKP_cube</span> <span class="op">&lt;-</span> <span class="fu">sits_cube</span><span class="op">(</span></span>
+<span><span class="va">s2_20LKP_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"AWS"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"SENTINEL-S2-L2A-COGS"</span>,</span>
 <span>  tiles <span class="op">=</span> <span class="st">"20LKP"</span>,</span>
-<span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"B04"</span>, <span class="st">"B08"</span>, <span class="st">"B11"</span>, <span class="st">"CLOUD"</span><span class="op">)</span>,</span>
+<span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"B02"</span>, <span class="st">"B8A"</span>, <span class="st">"B11"</span>, <span class="st">"CLOUD"</span><span class="op">)</span>,</span>
 <span>  start_date <span class="op">=</span> <span class="st">"2018-07-12"</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="st">"2019-07-28"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -206,7 +208,7 @@ Figure 12: Conceptual view of data cubes (source: authors)
 <p>Microsoft’s Planetary Computer (MPC) hosts two open data collections: <code>SENTINEL-2-L2A</code> and <code>LANDSAT-C2-L2</code>. The first collection contains SENTINEL-2/2A ARD images, with the same bands and resolutions as those available in AWS (see above). The example below shows how to access the <code>SENTINEL-2-L2A</code> collection.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create a data cube covering an area in the Brazilian Amazon</span></span>
-<span><span class="va">s2_20LKP_cube_MPC</span> <span class="op">&lt;-</span> <span class="fu">sits_cube</span><span class="op">(</span></span>
+<span><span class="va">s2_20LKP_cube_MPC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"MPC"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"SENTINEL-2-L2A"</span>,</span>
 <span>  tiles <span class="op">=</span> <span class="st">"20LKP"</span>,</span>
@@ -220,8 +222,8 @@ Figure 12: Conceptual view of data cubes (source: authors)
 <span>  date <span class="op">=</span> <span class="st">"2019-07-18"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-24"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-24-1.png" alt="Sentinel-2 image in an area of the state of Rondonia, Brazil" width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-21"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-21-1.png" alt="Sentinel-2 image in an area of the state of Rondonia, Brazil" width="100%"><p class="caption">
 Figure 13: Sentinel-2 image in an area of the state of Rondonia, Brazil
 </p>
 </div>
@@ -233,7 +235,7 @@ Figure 13: Sentinel-2 image in an area of the state of Rondonia, Brazil
 <span><span class="op">)</span></span>
 <span><span class="va">sf_bsb</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">read_sf</a></span><span class="op">(</span><span class="va">shp_file</span><span class="op">)</span></span>
 <span><span class="co"># select the cube</span></span>
-<span><span class="va">s2_L8_cube_MPC</span> <span class="op">&lt;-</span> <span class="fu">sits_cube</span><span class="op">(</span></span>
+<span><span class="va">s2_L8_cube_MPC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"MPC"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"LANDSAT-C2-L2"</span>,</span>
 <span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"BLUE"</span>, <span class="st">"NIR08"</span>, <span class="st">"SWIR16"</span>, <span class="st">"CLOUD"</span><span class="op">)</span>,</span>
@@ -247,8 +249,8 @@ Figure 13: Sentinel-2 image in an area of the state of Rondonia, Brazil
 <span>  date <span class="op">=</span> <span class="st">"2019-07-30"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-25"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-25-1.png" alt="Landsat-8 image in an area of the city of Brasilia, Brazil" width="120%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-22"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-22-1.png" alt="Landsat-8 image in an area of the city of Brasilia, Brazil" width="100%"><p class="caption">
 Figure 14: Landsat-8 image in an area of the city of Brasilia, Brazil
 </p>
 </div>
@@ -258,7 +260,7 @@ Figure 14: Landsat-8 image in an area of the city of Brasilia, Brazil
 </h2>
 <p>Digital Earth Africa (DEAFRICA) is a cloud service that provides open access Earth Observation data for the African continent. The ARD image collections available in <code>sits</code> are <code>S2_L2A</code> (Sentinel-2 level 2A) and <code>LS8_SR</code> (Landsat-8). Since the STAC interface for DEAFRICA does not implement the concept of tiles, users users need to specify their area of interest using the <code>roi</code> parameter. The requested <code>roi</code> produces a cube that contains three MGRS tiles (“35HLD”, “35HKD”, and “35HLC”) covering part of South Africa.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dea_cube</span> <span class="op">&lt;-</span> <span class="fu">sits_cube</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">dea_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"DEAFRICA"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"S2_L2A"</span>,</span>
 <span>  roi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
@@ -273,9 +275,9 @@ Figure 14: Landsat-8 image in an area of the city of Brasilia, Brazil
 <div id="assessing-the-brazil-data-cube" class="section level2 unnumbered">
 <h2>Assessing the Brazil Data Cube<a class="anchor" aria-label="anchor" href="#assessing-the-brazil-data-cube"><i class="fas fa-link"></i></a>
 </h2>
-<p>The <a href="http://brazildatacube.org/">Brazil Data Cube</a> (BDC) is built by Brazil’s National Institute for Space Research (INPE). The BDC uses three hierarchical grids based on the Albers Equal Area projection and SIRGAS 2000 datum. The three grids are generated taking -54<span class="math inline">\(^\circ\)</span> longitude as the central reference and defining tiles of <span class="math inline">\(6\times4\)</span>, <span class="math inline">\(3\times2\)</span> and <span class="math inline">\(1.5\times1\)</span> degrees. The large grid is composed by tiles of <span class="math inline">\(672\times440\)</span> km<sup>2</sup> and is used for CBERS-4 AWFI collections at 64 meter resolution; each CBERS-4 AWFI tile contains images of <span class="math inline">\(10,504\times6,865\)</span> pixels. The medium grid is used for Landsat-8 OLI collections at 30 meter resolution; tiles have an extension of <span class="math inline">\(336\times220\)</span> km<sup>2</sup> and each image has <span class="math inline">\(11,204\times7,324\)</span> pixels. The small grid covers <span class="math inline">\(168\times110\)</span> km<sup>2</sup> and is used for Sentinel-2 MSI collections at 10m resolutions; each image has <span class="math inline">\(16,806\times10,986\)</span> pixels. The data cubes in the BDC are regularly spaced in time and cloud-corrected <span class="citation"><a href="references.html#ref-Ferreira2020a" role="doc-biblioref">[2]</a></span>.</p>
+<p>The <a href="http://brazildatacube.org/">Brazil Data Cube</a> (BDC) is built by Brazil’s National Institute for Space Research (INPE). The BDC uses three hierarchical grids based on the Albers Equal Area projection and SIRGAS 2000 datum. The three grids are generated taking -54<span class="math inline">\(^\circ\)</span> longitude as the central reference and defining tiles of <span class="math inline">\(6\times4\)</span>, <span class="math inline">\(3\times2\)</span> and <span class="math inline">\(1.5\times1\)</span> degrees. The large grid is composed by tiles of <span class="math inline">\(672\times440\)</span> km<sup>2</sup> and is used for CBERS-4 AWFI collections at 64 meter resolution; each CBERS-4 AWFI tile contains images of <span class="math inline">\(10,504\times6,865\)</span> pixels. The medium grid is used for Landsat-8 OLI collections at 30 meter resolution; tiles have an extension of <span class="math inline">\(336\times220\)</span> km<sup>2</sup> and each image has <span class="math inline">\(11,204\times7,324\)</span> pixels. The small grid covers <span class="math inline">\(168\times110\)</span> km<sup>2</sup> and is used for Sentinel-2 MSI collections at 10m resolutions; each image has <span class="math inline">\(16,806\times10,986\)</span> pixels. The data cubes in the BDC are regularly spaced in time and cloud-corrected <span class="citation"><a href="references.html#ref-Ferreira2020a" role="doc-biblioref">[3]</a></span>.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-27"></span>
+<span style="display:block;" id="fig:unnamed-chunk-24"></span>
 <img src="images/bdc_grid.png" alt="Hierarchical BDC tiling system showing overlayed on Brazilian Biomes (a), illustrating that one large tile (b) contains four medium tiles (c) and that medium tile contains four small tiles. Source: Ferreira et al.(2020). Reproduction under fair use doctrine." width="80%"><p class="caption">
 Figure 15: Hierarchical BDC tiling system showing overlayed on Brazilian Biomes (a), illustrating that one large tile (b) contains four medium tiles (c) and that medium tile contains four small tiles. Source: Ferreira et al.(2020). Reproduction under fair use doctrine.
 </p>
@@ -288,7 +290,7 @@ Figure 15: Hierarchical BDC tiling system showing overlayed on Brazilian Biomes 
 <p>In the example below, the data cube is defined as one tile (“022024”) of <code>CB4_64_16D_STK-1</code> collection which holds CBERS AWFI images at 16 days resolution.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define a tile from the CBERS-4/4A AWFI collection</span></span>
-<span><span class="va">cbers_tile</span> <span class="op">&lt;-</span> <span class="fu">sits_cube</span><span class="op">(</span></span>
+<span><span class="va">cbers_tile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"BDC"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"CB4_64_16D_STK-1"</span>,</span>
 <span>  tiles <span class="op">=</span> <span class="st">"022024"</span>,</span>
@@ -299,7 +301,7 @@ Figure 15: Hierarchical BDC tiling system showing overlayed on Brazilian Biomes 
 <span><span class="co"># plot one time instance</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">cbers_tile</span>, red <span class="op">=</span> <span class="st">"B15"</span>, green <span class="op">=</span> <span class="st">"B16"</span>, blue <span class="op">=</span> <span class="st">"B13"</span>, date <span class="op">=</span> <span class="st">"2018-09-30"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-30"></span>
+<span style="display:block;" id="fig:unnamed-chunk-27"></span>
 <img src="images/cbers_4_image_bdc.png" alt="Plot of CBERS-4 image obtained from the BDC with a single tile covering an area in the Brazilian Cerrado." width="100%"><p class="caption">
 Figure 16: Plot of CBERS-4 image obtained from the BDC with a single tile covering an area in the Brazilian Cerrado.
 </p>
@@ -342,8 +344,8 @@ Figure 16: Plot of CBERS-4 image obtained from the BDC with a single tile coveri
 <span><span class="co"># plot the band B8A in the first time instance</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">s2_cube_20LKP</span>, red <span class="op">=</span> <span class="st">"B11"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>, blue <span class="op">=</span> <span class="st">"B02"</span>, dates <span class="op">=</span> <span class="st">"2021-07-25"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-32"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-32-1.png" alt="CBERS-4 NDVI in an area over Brazil" width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-29"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-29-1.png" alt="CBERS-4 NDVI in an area over Brazil" width="100%"><p class="caption">
 Figure 17: CBERS-4 NDVI in an area over Brazil
 </p>
 </div>
@@ -360,7 +362,7 @@ Figure 17: CBERS-4 NDVI in an area over Brazil
 <li>
 <code>data_dir</code>: local directory for the classified images.</li>
 <li>
-<code>band</code>: Band name is associated to the type of result. Use: (a) <code>probs</code> for probability cubes produced by <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>; (b) <code>bayes</code> or <code>bilateral</code>, according to the method selected when using <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code>; (c) <code>entropy</code>, <code>least</code>, <code>ratio</code> or <code>margin</code>, according to the method selected when using <code><a href="https://rdrr.io/pkg/sits/man/sits_uncertainty.html">sits_uncertainty()</a></code>; and (d) <code>class</code> for labelled cubes.</li>
+<code>band</code>: Band name is associated to the type of result. Use: (a) <code>probs</code> for probability cubes produced by <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>; (b) <code>bayes</code>, for cubes produced by <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code>; (c) <code>entropy</code>, <code>least</code>, <code>ratio</code> or <code>margin</code>, according to the method selected when using <code><a href="https://rdrr.io/pkg/sits/man/sits_uncertainty.html">sits_uncertainty()</a></code>; and (d) <code>class</code> for labelled cubes.</li>
 <li>
 <code>labels</code>: Labels associated to the classification results (not required for cubes produced by <code><a href="https://rdrr.io/pkg/sits/man/sits_uncertainty.html">sits_uncertainty()</a></code>).</li>
 <li>
@@ -390,8 +392,8 @@ Figure 17: CBERS-4 NDVI in an area over Brazil
 <span><span class="co"># plot the classified cube</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">Rondonia_class_cube</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-33"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-33-1.png" alt="Classified data cube for year 2020/2021 in Rondonia, Brazil" width="120%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-30"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-30-1.png" alt="Classified data cube for year 2020/2021 in Rondonia, Brazil" width="100%"><p class="caption">
 Figure 18: Classified data cube for year 2020/2021 in Rondonia, Brazil
 </p>
 </div>
@@ -399,7 +401,7 @@ Figure 18: Classified data cube for year 2020/2021 in Rondonia, Brazil
 <div id="regularizing-data-cubes" class="section level2 unnumbered">
 <h2>Regularizing data cubes<a class="anchor" aria-label="anchor" href="#regularizing-data-cubes"><i class="fas fa-link"></i></a>
 </h2>
-<p>Analysis-ready data (ARD) collections available in AWS, MSPC, USGS and DEAFRICA are not regular in space and time. Bands may have different resolutions, images may not cover the entire tile, and time intervals are not regular. For this reason, data from these collection need to be converted to regular data cubes to run machine learning methods. This is done in by the function <code><a href="https://rdrr.io/pkg/sits/man/sits_regularize.html">sits_regularize()</a></code>, which uses the <em>gdalcubes</em> package <span class="citation"><a href="references.html#ref-Appel2019" role="doc-biblioref">[1]</a></span>.</p>
+<p>Analysis-ready data (ARD) collections available in AWS, MSPC, USGS and DEAFRICA are not regular in space and time. Bands may have different resolutions, images may not cover the entire tile, and time intervals are not regular. For this reason, data from these collection need to be converted to regular data cubes to run machine learning methods. This is done in by the function <code><a href="https://rdrr.io/pkg/sits/man/sits_regularize.html">sits_regularize()</a></code>, which uses the <em>gdalcubes</em> package <span class="citation"><a href="references.html#ref-Appel2019" role="doc-biblioref">[2]</a></span>.</p>
 <p>In the following example, the user has created an irregular data cube from the Sentinel-2 collection available in Microsoft’s Planetary Computer (MSPC) for tiles <code>20LKP</code> and <code>20LLP</code> in the state of Rondonia, Brazil. We first build an irregular data cube using <code><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube()</a></code>.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># creating an irregular data cube from MSPC</span></span>
@@ -415,24 +417,21 @@ Figure 18: Classified data cube for year 2020/2021 in Rondonia, Brazil
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_timeline.html">sits_timeline</a></span><span class="op">(</span><span class="va">s2_cube</span><span class="op">)</span></span></code></pre></div>
 <pre><code>#&gt; Warning: cube is not regular, returning all timelines</code></pre>
 <pre class="sourceCode"><code>#&gt; $`20LKP`
-#&gt;  [1] "2018-07-03" "2018-07-08" "2018-07-13" "2018-07-18" "2018-07-23"
-#&gt;  [6] "2018-07-28" "2018-08-02" "2018-08-07" "2018-08-12" "2018-08-17"
-#&gt; [11] "2018-08-22" "2018-08-27"
+#&gt;  [1] "2018-07-03" "2018-07-08" "2018-07-13" "2018-07-18" "2018-07-23" "2018-07-28" "2018-08-02" "2018-08-07"
+#&gt;  [9] "2018-08-12" "2018-08-17" "2018-08-22" "2018-08-27"
 #&gt; 
 #&gt; $`20LLP`
-#&gt;  [1] "2018-07-03" "2018-07-05" "2018-07-08" "2018-07-10" "2018-07-13"
-#&gt;  [6] "2018-07-15" "2018-07-18" "2018-07-20" "2018-07-23" "2018-07-25"
-#&gt; [11] "2018-07-28" "2018-07-30" "2018-08-02" "2018-08-04" "2018-08-07"
-#&gt; [16] "2018-08-09" "2018-08-12" "2018-08-14" "2018-08-17" "2018-08-19"
-#&gt; [21] "2018-08-22" "2018-08-24" "2018-08-27" "2018-08-29"</code></pre>
+#&gt;  [1] "2018-07-03" "2018-07-05" "2018-07-08" "2018-07-10" "2018-07-13" "2018-07-15" "2018-07-18" "2018-07-20"
+#&gt;  [9] "2018-07-23" "2018-07-25" "2018-07-28" "2018-07-30" "2018-08-02" "2018-08-04" "2018-08-07" "2018-08-09"
+#&gt; [17] "2018-08-12" "2018-08-14" "2018-08-17" "2018-08-19" "2018-08-22" "2018-08-24" "2018-08-27" "2018-08-29"</code></pre>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot the first image of the irregular cube</span></span>
 <span><span class="va">s2_cube</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">tile</span> <span class="op">==</span> <span class="st">"20LLP"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>red <span class="op">=</span> <span class="st">"B12"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>, blue <span class="op">=</span> <span class="st">"B05"</span>, date <span class="op">=</span> <span class="st">"2018-07-03"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-35"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-35-1.png" alt="Sentinel-2 tile 20LLP for date 2018-07-03" width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-32"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-32-1.png" alt="Sentinel-2 tile 20LLP for date 2018-07-03" width="100%"><p class="caption">
 Figure 19: Sentinel-2 tile 20LLP for date 2018-07-03
 </p>
 </div>
@@ -452,8 +451,8 @@ Figure 19: Sentinel-2 tile 20LLP for date 2018-07-03
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">tile</span> <span class="op">==</span> <span class="st">"20LLP"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>red <span class="op">=</span> <span class="st">"B12"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>, blue <span class="op">=</span> <span class="st">"B05"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-36"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-36-1.png" alt="Regularized image for tile Sentinel-2 tile 20LLP" width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-33"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-33-1.png" alt="Regularized image for tile Sentinel-2 tile 20LLP" width="100%"><p class="caption">
 Figure 20: Regularized image for tile Sentinel-2 tile 20LLP
 </p>
 </div>
@@ -495,7 +494,7 @@ Figure 20: Regularized image for tile Sentinel-2 tile 20LLP
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-01-23.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-05.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

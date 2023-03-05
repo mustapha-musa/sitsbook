@@ -25,8 +25,8 @@
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.5/font.css" rel="stylesheet">
-<link href="libs/IBM_Plex_Mono-0.4.5/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.4/font.css" rel="stylesheet">
+<link href="libs/IBM_Plex_Mono-0.4.4/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
@@ -88,7 +88,8 @@
 <li><a class="" href="image-classification-in-data-cubes.html">Image Classification in Data Cubes</a></li>
 <li><a class="" href="validation-and-accuracy-measurements.html">Validation and accuracy measurements</a></li>
 <li><a class="" href="uncertainty-and-active-learning.html">Uncertainty and active learning</a></li>
-<li><a class="" href="design-and-extensibility-considerations.html">Design and extensibility considerations</a></li>
+<li><a class="" href="ensemble-prediction-from-multiple-models.html">Ensemble Prediction from Multiple Models</a></li>
+<li><a class="" href="visualising-and-exporting-data.html">Visualising and Exporting data</a></li>
 <li><a class="active" href="technical-annex.html">Technical Annex</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
@@ -188,70 +189,9 @@ At this point, we are able to infer the estimator <span class="math inline">\(\h
 </ul>
 </div>
 </div>
-<div id="bilateral-smoothing-1" class="section level2 unnumbered">
-<h2>Bilateral smoothing<a class="anchor" aria-label="anchor" href="#bilateral-smoothing-1"><i class="fas fa-link"></i></a>
-</h2>
-<p>Bilateral smoothing combines proximity (combining pixels which are close) and similarity (comparing the values of the pixels) <span class="citation"><a href="references.html#ref-Tomasi1998" role="doc-biblioref">[81]</a></span>. If most of the pixels in a neighborhood have similar values, it is easy to identify outliers and noisy pixels. In contrast, there is a strong difference between the values of pixels in a if neighborhood, it is possible that the pixel is located in a class boundary. Bilateral filtering combines domain filtering with range filtering. In domain filtering, the weights used to combine pixels decrease with distance. In range filtering, the weights are computed considering value similarity.</p>
-<p>The combination of domain and range filtering is mathematically expressed as:</p>
-<p><span class="math display">\[
-S(x_i) = \frac{1}{W_{i}} \sum_{x_k \in \theta} I(x_k)\mathcal{N}_{\tau}(\|I(x_k) - I(x_i)\|)\mathcal{N}_{\sigma}(\|x_k - x_i\|),
-\]</span>
-where</p>
-<ul>
-<li>
-<span class="math inline">\(S(x_i)\)</span> is the smoothed value of pixel <span class="math inline">\(i\)</span>;</li>
-<li>
-<span class="math inline">\(I\)</span> is the original probability image to be filtered;</li>
-<li>
-<span class="math inline">\(I(x_i)\)</span> is the value of pixel <span class="math inline">\(i\)</span>;</li>
-<li>
-<span class="math inline">\(\theta\)</span> is the neighborhood centered in <span class="math inline">\(x_i\)</span>;</li>
-<li>
-<span class="math inline">\(x_k\)</span> is a pixel <span class="math inline">\(k\)</span> which belongs to neighborhood <span class="math inline">\(\theta\)</span>;</li>
-<li>
-<span class="math inline">\(I(x_k)\)</span> is the value of a pixel <span class="math inline">\(k\)</span> in the neighborhood of pixel <span class="math inline">\(i\)</span>;</li>
-<li>
-<span class="math inline">\(\|I(x_k) - I(x_i)\|\)</span> is the absolute difference between the values of the pixel <span class="math inline">\(k\)</span> and pixel <span class="math inline">\(i\)</span>;</li>
-<li>
-<span class="math inline">\(\|x_k - x_i\|\)</span> is the distance between pixel <span class="math inline">\(k\)</span> and pixel <span class="math inline">\(i\)</span>;</li>
-<li>
-<span class="math inline">\(\mathcal{N}_{\tau}\)</span> is the Gaussian range kernel for smoothing differences in intensities;</li>
-<li>
-<span class="math inline">\(\mathcal{N}_{\sigma}\)</span>is the Gaussian spatial kernel for smoothing differences based on proximity.</li>
-<li>
-<span class="math inline">\(\tau\)</span> is the variance of the Gaussian range kernel;</li>
-<li>
-<span class="math inline">\(\sigma\)</span> is the variance of the Gaussian spatial kernel.</li>
-</ul>
-<p>The normalization term to be applied to compute the smoothed values of pixel <span class="math inline">\(i\)</span> is defined as</p>
-<p><span class="math display">\[
-W_{i} = \sum_{x_k \in \theta}{\mathcal{N}_{\tau}(\|I(x_k) - I(x_i)\|)\mathcal{N}_{\sigma}(\|x_k - x_i\|)}
-\]</span>
-## How parallel processing works{-}</p>
-<p>This section provides an overview of how the functions <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>, <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code> and <code><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification()</a></code> process images in parallel. To achieve efficiency, <code>sits</code> implements a fault tolerant multitasking procedure for big EO data classification. Users are not burdened with the need to learn how to do multiprocessing. Thus, their learning curve is shortened. Image classification in <code>sits</code> is done by a cluster of independent workers linked to a virtual machine. To avoid communication overhead, all large payloads are read and stored independently; direct interaction between the main process and the workers is kept at a minimum.</p>
-<p>The classification procedure benefits from the fact that most images available in cloud collections are stored as COGs (cloud-optimized Geotiff). COGs are a regular GeoTIFF files organized in regular square blocks to improve visualization and access for large data sets. Thus, data requests can be optimized to access only portions of the images. All cloud services supported by <code>sits</code> use COG files. The classification algorithm in <code>sits</code> uses COGs to ensure optimal data access, reducing I/O demand as much as possible.</p>
-<p>The approach for parallel processing in <code>sits</code>, depicted in the figure below, has the following steps:</p>
-<ol style="list-style-type: decimal">
-<li>Based on the block size of individual COG files, calculate the size of each chunk that has to be loaded in memory, considering the number of bands and the length of the timeline. Chunk access is optimized for efficient transfer of data blocks.</li>
-<li>Divide the total memory available by the chunk size to find out how many processes can be run in parallel.</li>
-<li>Each core processes a chunk and produces a subset of the result.</li>
-<li>Repeat the process until all chunks in the cube have been processed.</li>
-<li>Check that subimages have been produced correctly. If there is a problem with one or more subimages, run a failure recovery procedure to ensure all data is processed.</li>
-<li>After all subimages are generated, join them to obtain the result.</li>
-</ol>
-<div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-155"></span>
-<img src="images/sits_parallel.png" alt="Parallel processing in sits (source: Simoes et al.,2021)." width="90%" height="90%"><p class="caption">
-Figure 82: Parallel processing in sits (source: Simoes et al.,2021).
-</p>
-</div>
-<p>This approach has many advantages. It works in any virtual machine that supports R and has no dependencies on proprietary software. Processing is done in a concurrent and independent way, with no communication between workers. Failure of one worker does not cause failure of the big data processing. The software is prepared to resume classification processing from the last processed chunk, preventing against failures such as memory exhaustion, power supply interruption, or network breakdown.</p>
-<p>To reduce processing time, it is necessary to adjust <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>, <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code>, and <code><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification()</a></code> according to the capabilities of the host environment. The <code>memsize</code> parameter controls the size of the main memory (in GBytes) to be used for classification. A practical approach is to set <code>memsize</code> to the maximum memory available in the virtual machine for classification and to chose <code>multicores</code> as the largest number of cores available. Based on the memory available and the size of blocks in COG files, <code>sits</code> will access the images in an optimized way. In this way, <code>sits</code> tries to ensure best possible use of the available resources.</p>
-
-</div>
 </div>
   <div class="chapter-nav">
-<div class="prev"><a href="design-and-extensibility-considerations.html">Design and extensibility considerations</a></div>
+<div class="prev"><a href="visualising-and-exporting-data.html">Visualising and Exporting data</a></div>
 <div class="next"><a href="references.html">References</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
@@ -260,7 +200,6 @@ Figure 82: Parallel processing in sits (source: Simoes et al.,2021).
 <li>
 <a class="nav-link" href="#bayesian-smoothing-1">Bayesian smoothing</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#derivation-of-bayesian-parameters-for-spatiotemporal-smoothing">Derivation of bayesian parameters for spatiotemporal smoothing</a></li></ul>
 </li>
-<li><a class="nav-link" href="#bilateral-smoothing-1">Bilateral smoothing</a></li>
 </ul>
 
       <div class="book-extra">
@@ -277,7 +216,7 @@ Figure 82: Parallel processing in sits (source: Simoes et al.,2021).
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-03.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-05.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
