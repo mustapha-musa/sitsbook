@@ -107,11 +107,11 @@
 </h2>
 <p>To show how to do validation and accuracy assessment in<code>sits</code>, we show an example of land classification in the Cerrado biome, the second largest biome in Brazil with 1.9 million km<span class="math inline">\(^2\)</span>. The Brazilian Cerrado is a tropical savanna ecoregion with a rich ecosystem ranging from grasslands to woodlands. It is home to more than 7000 species of plants with high levels of endemism <span class="citation"><a href="references.html#ref-Klink2005" role="doc-biblioref">[79]</a></span>. It includes three major types of natural vegetation: Open Cerrado, typically composed of grasses and small shrubs with a sporadic presence of small tree vegetation; Cerrado, a typical savanna formation, with the presence of low, irregularly branched, thin-trunked trees; and Cerradão, areas of medium-sized trees (up to 10–12 m)<span class="citation"><a href="references.html#ref-Del-Claro2019" role="doc-biblioref">[80]</a></span>. Its natural areas are being converted to agriculture at a fast pace, as it is one of the world’s fast moving agricultural frontiers <span class="citation"><a href="references.html#ref-Walter2006" role="doc-biblioref">[81]</a></span>. The main agricultural land uses include cattle ranching, crop farms, and planted forests. The classification follows the work by Simoes et al.<span class="citation"><a href="references.html#ref-Simoes2021" role="doc-biblioref">[60]</a></span>.</p>
 <p>The data is composed of 67 Landsat-8 tiles from the Brazil Data Cube, with 23 time steps covering the the period 2017-08-29 to 2018-08-29. Since the data is avaliable in the Brazil Data Cube, users should first obtain access to the BDC, by obtaining an access key. After obtaining the access key, they should to include their credentials using an environment variables, as shown below. Obtaining a BDC access key is free. Users need to register at the <a href="https://brazildatacube.dpi.inpe.br/portal/explore">BDC site</a> to obtain the key.</p>
-<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="validation-and-accuracy-measurements.html#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setenv</span>(</span>
-<span id="cb123-2"><a href="validation-and-accuracy-measurements.html#cb123-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"BDC_ACCESS_KEY"</span> <span class="ot">=</span> <span class="er">&lt;</span>your_bdc_access_key<span class="sc">&gt;</span></span>
-<span id="cb123-3"><a href="validation-and-accuracy-measurements.html#cb123-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb124-1"><a href="validation-and-accuracy-measurements.html#cb124-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setenv</span>(</span>
+<span id="cb124-2"><a href="validation-and-accuracy-measurements.html#cb124-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"BDC_ACCESS_KEY"</span> <span class="ot">=</span> <span class="er">&lt;</span>your_bdc_access_key<span class="sc">&gt;</span></span>
+<span id="cb124-3"><a href="validation-and-accuracy-measurements.html#cb124-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>After obtaining the BDC access key, we now can create a data cube for the Cerrado biome.</p>
-<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># files are available in the Brazil Data Cube</span></span>
 <span><span class="co">#</span></span>
 <span><span class="co"># obtain the region of interest covering the Cerrado biome</span></span>
@@ -139,13 +139,13 @@
 <span>  blue <span class="op">=</span> <span class="st">"B4"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-124"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-124-1.png" alt="Color composite image of first date of the cube" width="80%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-147"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-147-1.png" alt="Color composite image of first date of the cube" width="80%"><p class="caption">
 Figure 74: Color composite image of first date of the cube
 </p>
 </div>
 <p>To classify the Cerrado, we use a training data set produced by by Simoes et al.<span class="citation"><a href="references.html#ref-Simoes2021" role="doc-biblioref">[60]</a></span>. The authors carried out a systematic sampling using a grid of 5 x 5 km throughout the Cerrado biome, collecting 85,026 samples. The training data labels were extracted from three sources: the 2018 pastureland map from Parente et al. <span class="citation"><a href="references.html#ref-Parente2019" role="doc-biblioref">[82]</a></span>, MapBiomas Collection 5 for 2018 <span class="citation"><a href="references.html#ref-Souza2020" role="doc-biblioref">[83]</a></span>, and~Brazil’s National Mapping Agency IBGE land maps for 2016–2018. Out of the 85,026 samples, the authors selected those where there was no disagreement between the labels assigned by the three sources. The final training set consists of 48,850 points from which the authors extracted the time series using the Landsat-8 data cube available in the BDC. The classes for this training set are: <code>Annual Crop</code>, <code>Cerradao</code>, <code>Cerrado</code>, <code>Open Cerrado</code>, <code>Nat_NonVeg</code> (Dunes), <code>Pasture</code>, <code>Perennial_Crop</code>, <code>Silviculture</code> (Planted Forests), <code>Sugarcane</code>, and <code>Water</code>. This data set is available in the package <code>sitsdata</code> as <code>samples_cerrado_lc8</code>.</p>
-<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/e-sensing/sitsdata/">sitsdata</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"samples_cerrado_lc8"</span><span class="op">)</span></span>
 <span><span class="co"># show the class distribution in the new training set</span></span>
@@ -171,7 +171,7 @@ Figure 74: Color composite image of first date of the cube
 <p>Cross-validation uses part of the available samples to fit the classification model, and a different part to test it. The k-fold validation method splits the data into <span class="math inline">\(k\)</span> partitions with approximately the same size and proceed by fitting the model and testing it <span class="math inline">\(k\)</span> times. At each step, we take one distinct partition for test and the remaining <span class="math inline">\({k-1}\)</span> for training the model, and calculate its prediction error for classifying the test partition. A simple average gives us an estimation of the expected prediction error. The recommended choices of <span class="math inline">\(k\)</span> are <span class="math inline">\(5\)</span> or <span class="math inline">\(10\)</span> <span class="citation"><a href="references.html#ref-Hastie2009" role="doc-biblioref">[48]</a></span>.</p>
 <p><code><a href="https://rdrr.io/pkg/sits/man/sits_kfold_validate.html">sits_kfold_validate()</a></code> supports k-fold validation in <code>sits</code>. The result is the confusion matrix and the accuracy statistics (overall and by class). In the examples below, we use multiprocessing to speed up the results.</p>
 <p>Since the data set is big and highly imbalanced, we use the function <code><a href="https://rdrr.io/pkg/sits/man/sits_reduce_imbalance.html">sits_reduce_imbalance()</a></code> to reduce the size and produce a smaller and more balanced sample data set for the validation examples.</p>
-<div class="sourceCode" id="cb127"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb128"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># reduce imbalance in the data set</span></span>
 <span><span class="co"># maximum number of samples per class will be 1000</span></span>
 <span><span class="co"># minimum number of samples per class will be 500</span></span>
@@ -197,7 +197,7 @@ Figure 74: Color composite image of first date of the cube
 #&gt;  9 Sugarcane        960 0.119 
 #&gt; 10 Water            500 0.0618</code></pre>
 <p>The following code does a five-fold validation using random forests.</p>
-<div class="sourceCode" id="cb129"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb130"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># perform a five fold validation for the cerrado data set</span></span>
 <span><span class="co"># random forests machine learning method using default parameters</span></span>
 <span><span class="va">val_rfor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_kfold_validate.html">sits_kfold_validate</a></span><span class="op">(</span></span>
@@ -208,12 +208,12 @@ Figure 74: Color composite image of first date of the cube
 <span><span class="op">)</span></span>
 <span><span class="co"># print the validation statistics</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_accuracy_summary.html">sits_accuracy_summary</a></span><span class="op">(</span><span class="va">val_rfor</span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode"><code>#&gt; Overall Statistics                          
-#&gt;  Accuracy : 0.877         
-#&gt;    95% CI : (0.869, 0.884)
-#&gt;     Kappa : 0.862</code></pre>
+<pre class="sourceCode"><code>#&gt; Overall Statistics                         
+#&gt;  Accuracy : 0.878        
+#&gt;    95% CI : (0.87, 0.885)
+#&gt;     Kappa : 0.863</code></pre>
 <p>One useful function in SITS is the capacity to compare different validation methods and store them in an XLS file for further analysis. The following example shows how to do this, using the Cerrado data set. We take the models: random forests(<code><a href="https://rdrr.io/pkg/sits/man/sits_rfor.html">sits_rfor()</a></code>), extreme gradient boosting (<code><a href="https://rdrr.io/pkg/sits/man/sits_xgboost.html">sits_xgboost()</a></code>), temporal CNN (<code><a href="https://rdrr.io/pkg/sits/man/sits_tempcnn.html">sits_tempcnn()</a></code>), and lightweight temporal attention encoder (<code>sits_lighttae())</code>. After computing the confusion matrix and the statistics for each model, we also store the result in a list. When the calculation is finished, the function <code><a href="https://rdrr.io/pkg/sits/man/sits_to_xlsx.html">sits_to_xlsx()</a></code> writes all of the results in an Excel-compatible spreadsheet.</p>
-<div class="sourceCode" id="cb131"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb132"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare different models for the Cerrado data set</span></span>
 <span><span class="co"># create a list to store the results</span></span>
 <span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -273,13 +273,13 @@ Figure 74: Color composite image of first date of the cube
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_to_xlsx.html">sits_to_xlsx</a></span><span class="op">(</span><span class="va">results</span>, file <span class="op">=</span> <span class="va">xlsx_file</span><span class="op">)</span></span></code></pre></div>
 <p>The resulting Excel file can be opened with R or using spreadsheet programs. The figure below shows a printout of what is read by Excel. As shown below, each sheet corresponds to the output of one model. For simplicity, we show only the result of TempCNN, that has an overall accuracy of 90%.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-131"></span>
+<span style="display:block;" id="fig:unnamed-chunk-154"></span>
 <img src="images/k_fold_validation_xlsx.png" alt="Result of 5-fold cross validation of Mato Grosso data using LightTAE" width="90%" height="90%"><p class="caption">
 Figure 75: Result of 5-fold cross validation of Mato Grosso data using LightTAE
 </p>
 </div>
 <p>The scores for overall accuracy are similar between the models. However, there are significant differences between the models, as shown by comparing their F1 scores, as shown below.</p>
-<div class="sourceCode" id="cb132"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb133"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_acc</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
 <span>  <span class="st">"Random Forest"</span> <span class="op">=</span> <span class="va">val_rfor</span><span class="op">$</span><span class="va">overall</span><span class="op">[[</span><span class="st">"Accuracy"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  <span class="st">"XGBoost"</span>       <span class="op">=</span> <span class="va">val_xgb</span><span class="op">$</span><span class="va">overall</span><span class="op">[[</span><span class="st">"Accuracy"</span><span class="op">]</span><span class="op">]</span>,</span>
@@ -293,7 +293,7 @@ Figure 75: Result of 5-fold cross validation of Mato Grosso data using LightTAE
 #&gt;             &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
 #&gt; 1           0.879   0.889   0.897    0.894</code></pre>
 <p>The table below shows the F1-scores of all classes for each model, as produced by the k-fold validation. The F1-scores are obtained as the harmonic mean between user’s accuracy and precision accuracy for each class. The results show that although deep learning models such TempCNN and LightTAE have similar overall accuracies than Random Forests or XGBoost, their F1-scores per class are in most cases better.</p>
-<div class="sourceCode" id="cb134"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb135"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">f1_score_rfor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unname.html">unname</a></span><span class="op">(</span><span class="va">val_rfor</span><span class="op">$</span><span class="va">byClass</span><span class="op">[</span>, <span class="st">"F1"</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">f1_score_xgb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unname.html">unname</a></span><span class="op">(</span><span class="va">val_xgb</span><span class="op">$</span><span class="va">byClass</span><span class="op">[</span>, <span class="st">"F1"</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">f1_score_tcnn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unname.html">unname</a></span><span class="op">(</span><span class="va">val_tcnn</span><span class="op">$</span><span class="va">byClass</span><span class="op">[</span>, <span class="st">"F1"</span><span class="op">]</span><span class="op">)</span></span>
@@ -338,7 +338,7 @@ This unbiased area estimator includes the effect of false negatives (omission er
 <p>To use the <code><a href="https://rdrr.io/pkg/sits/man/sits_accuracy.html">sits_accuracy()</a></code> function to produce the adjusted area estimates, users have to provide the classified image together with a csv file containing a set of well selected labeled points. The csv file should have the same format as the one used to obtain samples, as discussed earlier. The labelled points should be based on a random stratified sample. All areas associated to each class should contribute to the test data used for accuracy assessment.</p>
 <p>Because of the biases inherent in cross validation of training data, users should provide an independent validation data set to measure classification accuracy. In this case study, Simoes et al.<span class="citation"><a href="references.html#ref-Simoes2021" role="doc-biblioref">[60]</a></span> did a systematic sampling of the Cerrado biome using a 20 x 20 km grid with a total of 5402 points. These samples are independent of the training set used in the classification. They were interpreted by five specialists using high resolution images from the same period of the classification. This resulted in 5286 evaluation samples thus distributed: “Annual Crop” (553), “Cerrado” (3155), “Natural Non Vegetated” (44), “Pasture” (1246), “Perennial Crop” (38), “Silviculture” (94), “Sugarcane” (77), and “Water” (79). This data set is available in package <code>sitsdata</code>, as described below. In this validation file, all samples belonging to classes “Cerrado”, “Open Cerrado” and “Cerradao” (Woody Savanna) have been grouped together in a single class.</p>
 <p>The first step is to obtain the classification map. The code for the full classification of the Cerrado biome, using the TempCNN algorithm, is shown below. Because of the large data size, the code will not be executed. For the accuracy assessment, we will use the labelled classification map available in a Dropbox folder.</p>
-<div class="sourceCode" id="cb136"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># This code shows the classification of the Cerrado biome</span></span>
 <span><span class="co"># It is include for information purposes</span></span>
 <span><span class="co"># It takes a long time to run</span></span>
@@ -369,7 +369,7 @@ This unbiased area estimator includes the effect of false negatives (omission er
 <span>  output_dir <span class="op">=</span> <span class="st">"./cerrado_label"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Since the above code is included for information only, we use the labelled cube stored in a Dropbox folder to perform the accuracy assessment. First, we retrieve the metadata for the cube.</p>
-<div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># retrieve the metadata for the classified cube</span></span>
 <span><span class="co"># the files are stored as Dropbox links</span></span>
 <span><span class="va">cerrado_classif_rds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/Cerrado/cerrado_classif_dropbox.rds"</span>,</span>
@@ -380,13 +380,13 @@ This unbiased area estimator includes the effect of false negatives (omission er
 <span><span class="co"># plot one tile of the classification</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">cerrado_classif</span>, tiles <span class="op">=</span> <span class="st">"044048"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-137"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-137-1.png" alt="Classification of tile 044048 from the Landsat data cube for the Brazilian Cerrado in 2017/2018." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-160"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-160-1.png" alt="Classification of tile 044048 from the Landsat data cube for the Brazilian Cerrado in 2017/2018." width="100%"><p class="caption">
 Figure 76: Classification of tile 044048 from the Landsat data cube for the Brazilian Cerrado in 2017/2018.
 </p>
 </div>
 <p>The next step is to provide a CSV file with the validation points, as described above.</p>
-<div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get ground truth points</span></span>
 <span><span class="va">valid_csv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/csv/cerrado_lc8_validation.csv"</span>,</span>
 <span>  package <span class="op">=</span> <span class="st">"sitsdata"</span></span>
@@ -488,7 +488,7 @@ Figure 76: Classification of tile 044048 from the Landsat data cube for the Braz
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-05.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-06.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -150,6 +150,17 @@ options(download.file.method = "wget")
 devtools::install_github("e-sensing/sitsdata")
 ```
 
+## Using Torch for deep learning{-}
+
+The deep learning models of `sits` use the `torch` package, which is an **R** version of `pyTorch`. The `torch` package automatically recognizes if a GPU is available on the machine and uses the GPU for training and classification. There is a significant performance gain when GPUs are used instead of CPUs for deep learning models. There is no need for specific adjustments to `torch`. 
+
+To use `torch`, run the following command after installing `sits`.
+
+```{r, eval = FALSE}
+torch::install_torch()
+```
+
+
 <!--chapter:end:01-setup.Rmd-->
 
 # Acknowledgements {-}

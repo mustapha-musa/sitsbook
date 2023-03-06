@@ -125,14 +125,14 @@
 y = \beta_{i} + f(x) + \epsilon, \epsilon \sim N(0, \sigma^2).
 \]</span></p>
 <p>The function <code><a href="https://rdrr.io/pkg/sits/man/sits_patterns.html">sits_patterns()</a></code> uses a GAM to predict a smooth, idealized approximation to the time series associated to the each label, for all bands. This function is based on the R package <code>dtwSat</code><span class="citation"><a href="references.html#ref-Maus2019" role="doc-biblioref">[45]</a></span>, which implements the TWDTW time series matching method described in <span class="citation"><a href="references.html#ref-Maus2016" role="doc-biblioref">[31]</a></span>. The resulting patterns can be viewed using <code>plot</code>.</p>
-<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Estimate the patterns for each class and plot them</span></span>
 <span><span class="va">samples_matogrosso_mod13q1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_patterns.html">sits_patterns</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-79"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-79-1.png" alt="Patterns for the samples for Mato Grosso." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-102"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-102-1.png" alt="Patterns for the samples for Mato Grosso." width="100%"><p class="caption">
 Figure 42: Patterns for the samples for Mato Grosso.
 </p>
 </div>
@@ -150,13 +150,13 @@ Figure 42: Patterns for the samples for Mato Grosso.
 </h2>
 <p>Random forest is a machine learning algorithm that uses an ensemble learning method for classification tasks. The algorithm consists of multiple decision trees, where each decision tree is trained on a different subset of the training data and with a different subset of features. To make a prediction, each decision tree in the forest independently classifies the input data, and the final prediction is made based on the majority vote of all the decision trees. The randomness in the algorithm comes from the random subsets of data and features used to train each decision tree, which helps to reduce overfitting and improve the accuracy of the model. This classifier measures the importance of each feature in the classification task, which can be useful in feature selection and data visualization. Pelletier et al<span class="citation"><a href="references.html#ref-Pelletier2016" role="doc-biblioref">[46]</a></span> discuss the robustness of random forest method for satellite image time series classification.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-80"></span>
+<span style="display:block;" id="fig:unnamed-chunk-103"></span>
 <img src="images/random_forest.png" alt="Random forests algorithm (source: Venkata Jagannath in Wikipedia - licenced as CC-BY-SA 4.0.)" width="90%"><p class="caption">
 Figure 43: Random forests algorithm (source: Venkata Jagannath in Wikipedia - licenced as CC-BY-SA 4.0.)
 </p>
 </div>
 <p>SITS provides <code><a href="https://rdrr.io/pkg/sits/man/sits_rfor.html">sits_rfor()</a></code>, which uses the R <code>randomForest</code> package <span class="citation"><a href="references.html#ref-Wright2017" role="doc-biblioref">[47]</a></span>; its main parameter is <code>num_trees</code>, which is the number of trees to grow with a default value of 100. The model can be visualized using <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code>.</p>
-<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Train the Mato Grosso samples with Random Forests model.</span></span>
 <span><span class="va">rfor_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_train.html">sits_train</a></span><span class="op">(</span></span>
 <span>  samples <span class="op">=</span> <span class="va">samples_matogrosso_mod13q1</span>,</span>
@@ -165,13 +165,13 @@ Figure 43: Random forests algorithm (source: Venkata Jagannath in Wikipedia - li
 <span><span class="co"># plot the most important variables of the model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">rfor_model</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-82"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-82-1.png" alt="Most important variables in random forests model." width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-105"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-105-1.png" alt="Most important variables in random forests model." width="90%"><p class="caption">
 Figure 44: Most important variables in random forests model.
 </p>
 </div>
 <p>The most important explanatory variables are the NIR (near infrared) band on date 17 (2007-05-25) and the MIR (middle infrared) band in date 22 (2007-08-13). The NIR value at the end of May captures the growth of the second crop for double cropping classes. Values of the MIR band at the end of the period (late July to late August) capture bare soil signatures to distinguish between agricultural classes and natural ones. This corresponds to summer time when the ground is drier and crops have been harvested.</p>
-<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># retrieve a point to be classified</span></span>
 <span><span class="va">point_mt_4bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">point_mt_6bands</span>,</span>
@@ -184,8 +184,8 @@ Figure 44: Most important variables in random forests model.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">point_class</span>, bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-83"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-83-1.png" alt="Classification of time series using random forests." width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-106"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-106-1.png" alt="Classification of time series using random forests." width="90%"><p class="caption">
 Figure 45: Classification of time series using random forests.
 </p>
 </div>
@@ -197,7 +197,7 @@ Figure 45: Classification of time series using random forests.
 </h2>
 <p>The support vector machine (SVM) classifier is a generalization of a linear classifier which finds an optimal separation hyperplane that minimizes misclassification <span class="citation"><a href="references.html#ref-Cortes1995" role="doc-biblioref">[49]</a></span>. Since a set of samples with <span class="math inline">\(n\)</span> features defines an n-dimensional feature space, hyperplanes are linear <span class="math inline">\({(n-1)}\)</span>-dimensional boundaries that define linear partitions in that space. If the classes are linearly separable on the feature space, there will be an optimal solution defined by the maximal margin hyperplane, which is the separating hyperplane that is farthest from the training observations<span class="citation"><a href="references.html#ref-James2013" role="doc-biblioref">[50]</a></span>. The maximal margin is computed as the the smallest distance from the observations to the hyperplane. The solution for the hyperplane coefficients depends only on the samples that define the maximum margin criteria, the so-called support vectors.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-84"></span>
+<span style="display:block;" id="fig:unnamed-chunk-107"></span>
 <img src="images/svm_margin.png" alt="Maximum-margin hyperplane and margins for an SVM trained with samples from two classes. Samples on the margin are called the support vectors. (source: Larhmam in Wikipedia - licensed as CC-BY-SA-4.0 )." width="50%"><p class="caption">
 Figure 46: Maximum-margin hyperplane and margins for an SVM trained with samples from two classes. Samples on the margin are called the support vectors. (source: Larhmam in Wikipedia - licensed as CC-BY-SA-4.0 ).
 </p>
@@ -205,7 +205,7 @@ Figure 46: Maximum-margin hyperplane and margins for an SVM trained with samples
 <p>For data that is not linearly separable, SVM includes kernel functions that map the original feature space into a higher dimensional space, providing nonlinear boundaries to the original feature space. The new classification model, despite having a linear boundary on the enlarged feature space, generally translates its hyperplane to a nonlinear boundary in the original attribute space. Kernels are an efficient computational strategy to produce nonlinear boundaries in the input attribute space; thus, they improve training-class separation. SVM is one of the most widely used algorithms in machine learning applications and has been applied to classify remote sensing data <span class="citation"><a href="references.html#ref-Mountrakis2011" role="doc-biblioref">[51]</a></span>.</p>
 <p>In <code>sits</code>, SVM is implemented as a wrapper of <code>e1071</code> R package that uses the <code>LIBSVM</code> implementation <span class="citation"><a href="references.html#ref-Chang2011" role="doc-biblioref">[52]</a></span>, the <code>sits</code> package adopts the <em>one-against-one</em> method for multiclass classification. For a <span class="math inline">\(q\)</span> class problem, this method creates <span class="math inline">\({q(q-1)/2}\)</span> SVM binary models, one for each class pair combination and tests any unknown input vectors throughout all those models. The overall result is computed by a voting scheme.</p>
 <p>The example below shows how to apply the SVM method for classification of time series using default values. The main parameters for the SVM are <code>kernel</code> which controls whether to use a non-linear transformation (default is <code>radial</code>), <code>cost</code> which measures the punishment for wrongly-classified samples (default is 10), and <code>cross</code> which sets the value of the k-fold cross validation (default is 10).</p>
-<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Train a SVM model</span></span>
 <span><span class="va">svm_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_train.html">sits_train</a></span><span class="op">(</span></span>
 <span>  samples <span class="op">=</span> <span class="va">samples_matogrosso_mod13q1</span>,</span>
@@ -219,8 +219,8 @@ Figure 46: Maximum-margin hyperplane and margins for an SVM trained with samples
 <span><span class="co"># plot the result</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">point_class</span>, bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-86"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-86-1.png" alt="Classification of time series using SVM." width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-109"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-109-1.png" alt="Classification of time series using SVM." width="90%"><p class="caption">
 Figure 47: Classification of time series using SVM.
 </p>
 </div>
@@ -233,7 +233,7 @@ Figure 47: Classification of time series using SVM.
 <p>Gradient boosting is a variant of boosting methods where the cost function is minimized by gradient descent. Extreme gradient boosting <span class="citation"><a href="references.html#ref-Chen2016" role="doc-biblioref">[53]</a></span>, called XGBoost, is an efficient approximation to the gradient loss function. Some recent papers show that it outperforms random forests for remote sensing image classification<span class="citation"><a href="references.html#ref-Jafarzadeh2021" role="doc-biblioref">[54]</a></span>. However, this result is not generalizable, since actual performance is controlled by the quality of the training data set.</p>
 <p>In SITS, the XGBoost method is implemented by the <code>sits_xbgoost()</code> function, which is based on <code>XGBoost</code> R package and has five hyperparameters that require tuning. The <code>sits_xbgoost()</code> function takes the user choices as input to a cross validation to determine suitable values for the predictor.</p>
 <p>The learning rate <code>eta</code> varies from 0.0 to 1.0 and should be kept small (default is 0.3) to avoid overfitting. The minimum loss value <code>gamma</code> specifies the minimum reduction required to make a split. Its default is 0; increasing it makes the algorithm more conservative. The <code>max_depth</code> value controls the maximum depth of the trees. Increasing this value will make the model more complex and more likely to overfit (default is 6). The <code>subsample</code> parameter controls the percentage of samples supplied to a tree. Its default is 1 (maximum). Setting it to lower values means that xgboost randomly collects only part of the data instances to grow trees, thus preventing overfitting. The <code>nrounds</code> parameter controls the maximum number of boosting interactions; its default is 100, which has proven to be enough in most cases. In order to follow the convergence of the algorithm, users can turn the <code>verbose</code> parameter on. In general, the results using the extreme gradient boosting algorithm are similar to the random forests method.</p>
-<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Train using  XGBoost</span></span>
 <span><span class="va">xgb_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_train.html">sits_train</a></span><span class="op">(</span></span>
 <span>  samples <span class="op">=</span> <span class="va">samples_matogrosso_mod13q1</span>,</span>
@@ -246,8 +246,8 @@ Figure 47: Classification of time series using SVM.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">point_class</span>, bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-88"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-88-1.png" alt="Classification of time series using XGBoost." width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-111"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-111-1.png" alt="Classification of time series using XGBoost." width="90%"><p class="caption">
 Figure 48: Classification of time series using XGBoost.
 </p>
 </div>
@@ -264,7 +264,7 @@ Figure 48: Classification of time series using XGBoost.
 <p>Another relevant parameter is the list of dropout rates (<code>dropout</code>). Dropout is a technique for randomly dropping units from the neural network during training <span class="citation"><a href="references.html#ref-Srivastava2014" role="doc-biblioref">[56]</a></span>. By randomly discarding some neurons, dropout reduces overfitting. Since the purpose of a cascade of neural nets is to improve learning as more data is acquired, discarding some neurons may seem a waste of resources. In practice, dropout prevents an early convergence to a local minimum <span class="citation"><a href="references.html#ref-Goodfellow2016" role="doc-biblioref">[41]</a></span>. We suggest users experiment with different dropout rates, starting from small values (10-30%) and increasing as required.</p>
 <p>The following example shows how to use <code><a href="https://rdrr.io/pkg/sits/man/sits_mlp.html">sits_mlp()</a></code>. The default parameters for have been chosen based on a modified verion of <span class="citation"><a href="references.html#ref-Wang2017" role="doc-biblioref">[57]</a></span>, which proposes the use of multilayer perceptrons as a baseline for time series classification. These parameters are: (a) Three layers with 512 neurons each, specified by the parameter <code>layers</code>; (b) Using the “relu” activation function; (c) dropout rates of 40%, 30%, and 20% for the layers; (d) the “optimizer_adamw” as optimizer (default value); (e) a number of training steps (<code>epochs</code>) of 100; (f) a <code>batch_size</code> of 64, which indicates how many time series are used for input at a given steps; and (g) a validation percentage of 20%, which means 20% of the samples will be randomly set side for validation.</p>
 <p>In our experience, if the training data is of good quality, using 3 to 5 layers is a reasonable compromise. Further increase on the number of layers will not improve the model. To simplify the output generation, the <code>verbose</code> option has been turned off. The default value is “on”. After the model has been generated, we plot its training history.</p>
-<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># train using an MLP model</span></span>
 <span><span class="co"># this is an example of how to set parameters</span></span>
 <span><span class="co"># first-time users should test default options first</span></span>
@@ -282,22 +282,22 @@ Figure 48: Classification of time series using XGBoost.
 <span><span class="co"># show training evolution</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">mlp_model</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-90"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-90-1.png" alt="Evolution of training accuracy of MLP model." width="80%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-113"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-113-1.png" alt="Evolution of training accuracy of MLP model." width="80%"><p class="caption">
 Figure 49: Evolution of training accuracy of MLP model.
 </p>
 </div>
 <div style="page-break-after: always;"></div>
 <p>Then, we classify a 16-year time series using the multilayer perceptron model.</p>
-<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Classify using DL model and plot the result</span></span>
 <span><span class="va">point_mt_6bands</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span>bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span>, <span class="st">"NIR"</span>, <span class="st">"MIR"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify</a></span><span class="op">(</span><span class="va">mlp_model</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-91"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-91-1.png" alt="Classification of time series using MLP." width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-114"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-114-1.png" alt="Classification of time series using MLP." width="90%"><p class="caption">
 Figure 50: Classification of time series using MLP.
 </p>
 </div>
@@ -310,13 +310,13 @@ Figure 50: Classification of time series using MLP.
 <p>TempCNN applies one-dimensional convolutions on the input sequence to capture temporal dependencies, allowing the network to learn long-term dependencies in the input sequence. Each layer of the model captures temporal dependencies at a different scale. Due to its multi-scale approach, TempCNN is capable of capturing complex temporal patterns in the data and producing accurate predictions.</p>
 <p>The TempCNN architecture for satellite image time series classification is proposed by Pelletier et al <span class="citation"><a href="references.html#ref-Pelletier2019" role="doc-biblioref">[58]</a></span>. It has three 1D convolutional layers, and a final softmax layer for classification (see figure). The authors use a combination of different methods to avoid overfitting and reduce the vanishing gradient effect, including dropout, regularization, and batch normalisation. In the TempCNN reference paper <span class="citation"><a href="references.html#ref-Pelletier2019" role="doc-biblioref">[58]</a></span>, the authors compare favorably their model with the Recurrent Neural Network proposed by Russwurm and Körner <span class="citation"><a href="references.html#ref-Russwurm2018" role="doc-biblioref">[59]</a></span> for land use classification. The figure below shows the architecture of the TempCNN model.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-92"></span>
+<span style="display:block;" id="fig:unnamed-chunk-115"></span>
 <img src="images/tempcnn.png" alt="Structure of tempCNN architecture (source: Pelletier et al.(2019))" width="100%"><p class="caption">
 Figure 51: Structure of tempCNN architecture (source: Pelletier et al.(2019))
 </p>
 </div>
 <p>The function <code><a href="https://rdrr.io/pkg/sits/man/sits_tempcnn.html">sits_tempcnn()</a></code> implements the model. The parameter <code>cnn_layers</code> controls the number of 1D-CNN layers and the size of the filters applied at each layer; the default values are three CNNs with 128 units. The parameter <code>cnn_kernels</code> indicates the size of the convolution kernels; the default are kernels of size 7. Activation for all 1D-CNN layers uses the “relu” function. The dropout rates for each 1D-CNN layer are controlled individually by the parameter <code>cnn_dropout_rates</code>. The <code>validation_split</code> controls the size of the test set, relative to the full data set. We recommend to set aside at least 20% of the samples for validation.</p>
-<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/e-sensing/torchopt/">torchopt</a></span><span class="op">)</span></span>
 <span><span class="co"># train using tempCNN</span></span>
 <span><span class="va">tempcnn_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_train.html">sits_train</a></span><span class="op">(</span></span>
@@ -336,21 +336,21 @@ Figure 51: Structure of tempCNN architecture (source: Pelletier et al.(2019))
 <span><span class="co"># show training evolution</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">tempcnn_model</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-94"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-94-1.png" alt="Training evolution of TempCNN model." width="80%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-117"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-117-1.png" alt="Training evolution of TempCNN model." width="80%"><p class="caption">
 Figure 52: Training evolution of TempCNN model.
 </p>
 </div>
 <p>Then, we classify a 16-year time series using the TempCNN model.</p>
-<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Classify using TempCNN model and plot the result</span></span>
 <span><span class="va">class</span> <span class="op">&lt;-</span> <span class="va">point_mt_6bands</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span>bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span>, <span class="st">"NIR"</span>, <span class="st">"MIR"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify</a></span><span class="op">(</span><span class="va">tempcnn_model</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-95"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-95-1.png" alt="Classification of time series using TempCNN." width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-118"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-118-1.png" alt="Classification of time series using TempCNN." width="90%"><p class="caption">
 Figure 53: Classification of time series using TempCNN.
 </p>
 </div>
@@ -362,13 +362,13 @@ Figure 53: Classification of time series using TempCNN.
 <p>A residual 1D CNN network, also known as ResNet, is an extension of the standard 1D CNN architecture, with the addition of residual connections between the layers. Residual connections allow the network to learn residual mappings, which are the difference between the input and output of a layer. By adding these residual connections, the network can learn to bypass certain layers and still capture important features in the data.</p>
 <p>The Residual Network (ResNet) for time series classification was proposed by Wang et al. <span class="citation"><a href="references.html#ref-Wang2017" role="doc-biblioref">[57]</a></span>, based on the idea of deep residual networks for 2D image recognition <span class="citation"><a href="references.html#ref-He2016" role="doc-biblioref">[62]</a></span>. The ResNet architecture is composed of 11 layers, with three blocks of three 1D CNN layers each (see figure below). Each block corresponds to a 1D CNN architecture. The output of each block is combined with a shortcut that links its output to its input, called a “skip connection”. The purpose of combining the input layer of each block with its output layer (after the convolutions) is to avoid the so-called “vanishing gradient problem”. This issue occurs in deep networks as he neural network’s weights are updated based on the partial derivative of the error function. If the gradient is too small, the weights will not be updated, stopping the training<span class="citation"><a href="references.html#ref-Hochreiter1998" role="doc-biblioref">[63]</a></span>. Skip connections aim to avoid vanishing gradients from occurring, allowing deep networks to be trained.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-96"></span>
+<span style="display:block;" id="fig:unnamed-chunk-119"></span>
 <img src="images/resnet.png" alt="Structure of ResNet architecture (source: Wang et al.(2017))." width="100%"><p class="caption">
 Figure 54: Structure of ResNet architecture (source: Wang et al.(2017)).
 </p>
 </div>
 <p>In <code>sits</code>, the Residual Network is implemented using the <code><a href="https://rdrr.io/pkg/sits/man/sits_resnet.html">sits_resnet()</a></code> function. The default parameters are those proposed by Wang et al. <span class="citation"><a href="references.html#ref-Wang2017" role="doc-biblioref">[57]</a></span>, as implemented by Fawaz et al.<span class="citation"><a href="references.html#ref-Fawaz2019" role="doc-biblioref">[64]</a></span>. The first parameter is <code>blocks</code>, which controls the number of blocks and the size of filters in each block. By default, the model implements three blocks, the first with 64 filters and the others with 128 filters. Users can control the number of blocks and filter size by changing this parameter. The parameter <code>kernels</code> controls the size the of kernels of the three layers inside each block. We have found out that it is useful to experiment a bit with these kernel sizes in the case of satellite image time series. The default activation is “relu”, which is recommended in the literature to reduce the problem of vanishing gradients. The default optimizer is <code>optim_adamw</code>, available in package <code>torchopt</code>.</p>
-<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># train using ResNet</span></span>
 <span><span class="va">resnet_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_train.html">sits_train</a></span><span class="op">(</span></span>
 <span>  <span class="va">samples_matogrosso_mod13q1</span>,</span>
@@ -384,21 +384,21 @@ Figure 54: Structure of ResNet architecture (source: Wang et al.(2017)).
 <span><span class="co"># show training evolution</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">resnet_model</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-97"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-97-1.png" alt="Training evolution of ResNet model." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-120"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-120-1.png" alt="Training evolution of ResNet model." width="100%"><p class="caption">
 Figure 55: Training evolution of ResNet model.
 </p>
 </div>
 <p>Then, we classify a 16-year time series using the ResNet model. The behaviour of the ResNet model is similar to that of TempCNN, with more variability.</p>
-<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Classify using DL model and plot the result</span></span>
 <span><span class="va">class</span> <span class="op">&lt;-</span> <span class="va">point_mt_6bands</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span>bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span>, <span class="st">"NIR"</span>, <span class="st">"MIR"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify</a></span><span class="op">(</span><span class="va">tempcnn_model</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-98"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-98-1.png" alt="Classification of time series using ResNet." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-121"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-121-1.png" alt="Classification of time series using ResNet." width="100%"><p class="caption">
 Figure 56: Classification of time series using ResNet.
 </p>
 </div>
@@ -414,7 +414,7 @@ Figure 56: Classification of time series using ResNet.
 <p>The application of attention-based models for satellite image time series analysis is proposed by Garnot et <span class="citation"><a href="references.html#ref-Garnot2020a" role="doc-biblioref">[68]</a></span> and Russwurm and Körner <span class="citation"><a href="references.html#ref-Russwurm2020" role="doc-biblioref">[61]</a></span>. A self-attention network can learn to focus on specific time steps and image features that are most relevant for distinguishing between different classes. The algorithm tries to identify which combination of individual temporal observations is most relevant to identify each class. For example, crop identification will use the observations that capture the onset of the growing season, the date of maximum growth, and the end of the growing season. In case of deforestation, the algorithm tries to identify the dates where the forest is being cut. Attention-based models are a means to indentify events that characterize each land use and land cover class.</p>
 <p>The first model proposed by Garnot and co-authors is a full transformer-based model <span class="citation"><a href="references.html#ref-Garnot2020a" role="doc-biblioref">[68]</a></span>. Considering that image time series classification is a easier task that natural language processing, Garnot et al <span class="citation"><a href="references.html#ref-Garnot2020b" role="doc-biblioref">[69]</a></span> also propose a simplified version of the full transformer model. This simpler model uses a reduced way to compute the attention matrix, reducing time for training and classification without loss of quality of result.</p>
 <p>In <code>sits</code>, the full transformer-based model proposed by Garnot and co-authors <span class="citation"><a href="references.html#ref-Garnot2020a" role="doc-biblioref">[68]</a></span> is implemented using the <code><a href="https://rdrr.io/pkg/sits/man/sits_tae.html">sits_tae()</a></code> function. The default parameters are those proposed by the authors. The default optimizer is the same is <code>optim_adamw</code>, available in package <code>torchopt</code>.</p>
-<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># train a machine learning model using TAE</span></span>
 <span><span class="va">tae_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_train.html">sits_train</a></span><span class="op">(</span></span>
 <span>  <span class="va">samples_matogrosso_mod13q1</span>,</span>
@@ -429,26 +429,26 @@ Figure 56: Classification of time series using ResNet.
 <span><span class="co"># show training evolution</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">tae_model</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-99"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-99-1.png" alt="Training evolution of Temporal Self-Attention model." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-122"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-122-1.png" alt="Training evolution of Temporal Self-Attention model." width="100%"><p class="caption">
 Figure 57: Training evolution of Temporal Self-Attention model.
 </p>
 </div>
 <p>Then, we classify a 16-year time series using the TAE model.</p>
-<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Classify using DL model and plot the result</span></span>
 <span><span class="va">class</span> <span class="op">&lt;-</span> <span class="va">point_mt_6bands</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span>bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span>, <span class="st">"NIR"</span>, <span class="st">"MIR"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify</a></span><span class="op">(</span><span class="va">tae_model</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-100"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-100-1.png" alt="Classification of time series using TAE." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-123"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-123-1.png" alt="Classification of time series using TAE." width="100%"><p class="caption">
 Figure 58: Classification of time series using TAE.
 </p>
 </div>
 <p>Garnot and co-authors <span class="citation"><a href="references.html#ref-Garnot2020a" role="doc-biblioref">[68]</a></span> also proposed the Lightweight Temporal Self-Attention Encoder. the lightweight self-attention encoder model is that it can achieve high classification accuracy with fewer parameters compared to other neural network models. This makes it a good choice for applications where computational resources are limited. The <code><a href="https://rdrr.io/pkg/sits/man/sits_lighttae.html">sits_lighttae()</a></code> function implements this algorithm. The default optimizer is <code>optim_adamw</code>, available in package <code>torchopt</code>. The most important parameter to be set is the learning rate <code>lr</code>. Values ranging from 0.001 to 0.005 should produce reasonable results. See also the section below on model tuning.</p>
-<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># train a machine learning model using TAE</span></span>
 <span><span class="va">ltae_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_train.html">sits_train</a></span><span class="op">(</span></span>
 <span>  <span class="va">samples_matogrosso_mod13q1</span>,</span>
@@ -463,21 +463,21 @@ Figure 58: Classification of time series using TAE.
 <span><span class="co"># show training evolution</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ltae_model</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-101"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-101-1.png" alt="Training evolution of Lightweight Temporal Self-Attention model." width="80%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-124"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-124-1.png" alt="Training evolution of Lightweight Temporal Self-Attention model." width="80%"><p class="caption">
 Figure 59: Training evolution of Lightweight Temporal Self-Attention model.
 </p>
 </div>
 <p>Then, we classify a 16-year time series using the LightTAE model.</p>
-<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Classify using DL model and plot the result</span></span>
 <span><span class="va">class</span> <span class="op">&lt;-</span> <span class="va">point_mt_6bands</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span>bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span>, <span class="st">"NIR"</span>, <span class="st">"MIR"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify</a></span><span class="op">(</span><span class="va">ltae_model</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-102"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-102-1.png" alt="Classification of time series using LightTAE." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-125"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-125-1.png" alt="Classification of time series using LightTAE." width="100%"><p class="caption">
 Figure 60: Classification of time series using LightTAE.
 </p>
 </div>
@@ -513,7 +513,7 @@ Figure 60: Classification of time series using LightTAE.
 </ol>
 <p>The <code><a href="https://rdrr.io/pkg/sits/man/sits_tuning_hparams.html">sits_tuning_hparams()</a></code> function inside <code><a href="https://rdrr.io/pkg/sits/man/sits_tuning.html">sits_tuning()</a></code> allows users to define optimizers and their hyperparameters including <code>lr</code> (learning rate), <code>eps</code> (controls numerical stability) and <code>weight_decay</code> (controls overfitting). The default values for <code>eps</code> and <code>weight_decay</code> in all <code>sits</code> deep learning functions are 1.0e-08 and 1.0e-06, respectively. The default <code>lr</code> for <code><a href="https://rdrr.io/pkg/sits/man/sits_lighttae.html">sits_lighttae()</a></code> and <code><a href="https://rdrr.io/pkg/sits/man/sits_tempcnn.html">sits_tempcnn()</a></code> is 0.005, and for <code><a href="https://rdrr.io/pkg/sits/man/sits_tae.html">sits_tae()</a></code> and <code><a href="https://rdrr.io/pkg/sits/man/sits_resnet.html">sits_resnet()</a></code> is 0.001. Users have different ways to randomize the hyperparameters, including: <code>choice()</code> (a list of options), <code>uniform</code> (a uniform distribution), <code>randint</code> (random integers from a uniform distribution), <code>normal(mean, sd)</code> (normal distribution), <code>beta(shape1, shape2)</code>(beta distribution). These options allow extensive combination of hyperparameters.</p>
 <p>In the example, the <code><a href="https://rdrr.io/pkg/sits/man/sits_tuning.html">sits_tuning()</a></code> function finds good hyperparameters to train the <code><a href="https://rdrr.io/pkg/sits/man/sits_lighttae.html">sits_lighttae()</a></code> method for the Mato Grosso data set. It tests 100 combinations of learning rate and weight decay for the Adamw optimizer. To randomize the learning rate, it uses a beta distribution with parameters 0.35 and 10, which allows for variation between about 0.2 and 1.0e-00; for the weight decay, the beta distribution with parameters 0.1 and 2 generates values roughly between 1 and 1.0e-24.</p>
-<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tuned</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_tuning.html">sits_tuning</a></span><span class="op">(</span></span>
 <span>  samples <span class="op">=</span> <span class="va">samples_matogrosso_mod13q1</span>,</span>
 <span>  ml_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_lighttae.html">sits_lighttae</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -529,7 +529,7 @@ Figure 60: Classification of time series using LightTAE.
 <span>  progress <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The result is a tibble with different values of accuracy, kappa, decision matrix, and hyperparameters. The 10 best results obtain accuracy values between 0.976 and 0.958, as shown below. The best result is obtained by a learning rate of 0.0011 and an weight decay of 2.14e-05,</p>
-<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># obtain accuracy, kappa, lr and weight decay for the 10 best results</span></span>
 <span><span class="co"># hyperparameters are organized as a list</span></span>
 <span><span class="va">hparams_10</span> <span class="op">&lt;-</span> <span class="va">tuned</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="op">]</span><span class="op">$</span><span class="va">opt_hparams</span></span>
@@ -610,7 +610,7 @@ Figure 60: Classification of time series using LightTAE.
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-05.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-06.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
