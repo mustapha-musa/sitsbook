@@ -240,7 +240,7 @@ The following code creates a results cube based on the classification of defores
 
 ```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Classified data cube for year 2020/2021 in Rondonia, Brazil"}
 # Create a cube based on a classified image 
-data_dir <- system.file("extdata/Rondonia", package = "sitsdata")
+data_dir <- system.file("extdata/Rondonia-20LLP", package = "sitsdata")
 # file is named "SENTINEL-2_MSI_20LLP_2020-06-04_2021-08-26_class_v1.tif" 
 Rondonia_class_cube <- sits_cube(
     source = "AWS",
