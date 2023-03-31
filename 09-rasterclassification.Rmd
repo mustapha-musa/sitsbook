@@ -196,7 +196,7 @@ The `sits_reclassify()` operation requires the parameters: (a) `cube`, the class
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Deforestation map by sits masked by PRODES map."}
 # Reclassify cube
-ro_def_202021 <- sits_reclassify(
+ro_def_2021 <- sits_reclassify(
     cube = ro_class,
     mask = prodes2021,
     rules = list(

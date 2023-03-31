@@ -75,14 +75,16 @@ if (!file.exists("./tempdir/chp11"))
     dir.create("./tempdir/chp11")
 # select a S2 tile
 s2_cube_ro <- sits_cube(
-      source = "MPC",
-      collection = "sentinel-2-l2a",
+      source = "AWS",
+      collection = "SENTINEL-S2-L2A-COGS",
       tiles = "20LMR",
       bands = c("B02", "B8A", "B11", "SCL"),
       start_date = as.Date("2020-06-01"),
       end_date = as.Date("2021-09-01")
 )
 # select a small area inside the tile
+
+
 
 roi = c(lon_max = -63.25790, lon_min = -63.6078, 
         lat_max = -8.72290, lat_min = -8.95630)
