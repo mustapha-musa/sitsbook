@@ -14,7 +14,7 @@
 <meta name="author" content="Karine Ferreira">
 <meta name="author" content="Gilberto Queiroz">
 <meta name="description" content="The sits package relies on the sf and terra R packages, which in turn require the GDAL and PROJ libraries. Please follow the instructions below for installing sf and terra together with GDAL,...">
-<meta name="generator" content="bookdown 0.32 with bs4_book()">
+<meta name="generator" content="bookdown 0.33 with bs4_book()">
 <meta property="og:title" content="Setup | sits: Satellite Image Time Series Analysis on Earth Observation Data Cubes">
 <meta property="og:type" content="book">
 <meta property="og:image" content="/images/cover_sits_book.png">
@@ -25,8 +25,8 @@
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.4/font.css" rel="stylesheet">
-<link href="libs/IBM_Plex_Mono-0.4.4/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.5/font.css" rel="stylesheet">
+<link href="libs/IBM_Plex_Mono-0.4.5/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
@@ -86,6 +86,7 @@
 <li><a class="" href="improving-the-quality-of-training-samples.html">Improving the Quality of Training Samples</a></li>
 <li><a class="" href="machine-learning-for-data-cubes.html">Machine Learning for Data Cubes</a></li>
 <li><a class="" href="image-classification-in-data-cubes.html">Image Classification in Data Cubes</a></li>
+<li><a class="" href="bayesian-smoothing-for-post-processing.html">Bayesian smoothing for post-processing</a></li>
 <li><a class="" href="validation-and-accuracy-measurements.html">Validation and accuracy measurements</a></li>
 <li><a class="" href="uncertainty-and-active-learning.html">Uncertainty and active learning</a></li>
 <li><a class="" href="ensemble-prediction-from-multiple-models.html">Ensemble Prediction from Multiple Models</a></li>
@@ -114,15 +115,17 @@
 <div id="ubuntu" class="section level3 unnumbered">
 <h3>Ubuntu<a class="anchor" aria-label="anchor" href="#ubuntu"><i class="fas fa-link"></i></a>
 </h3>
-<p>For Ubuntu versions 20.04 (focal) and 22.04 (jammy), we provide a script for fast installation, based on the work by Dirk Eddelbuettel in <a href="https://github.com/eddelbuettel/r2u">r2u</a> project. The script installs binary versions of sits and all its dependencies. It requires R version 4.2.0 or later. To download the script use:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="setup.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://raw.githubusercontent.com/e-sensing/sitsbook/master/utils/fast_sits_installation_ubuntu.sh</span></code></pre></div>
-<p>and run the script as sudo:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="setup.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> sh fast_sits_installation_ubuntu.sh</span></code></pre></div>
-<p>Alternatively, the installation can be done step-by-step. We recommend using the latest version of the GDAL, GEOS, and PROJ4 libraries. To do so, use the repository <code>ubuntugis-unstable</code>, which should be done as follows:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="setup.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> add-apt-repository ppa:ubuntugis/ubuntugis-unstable</span>
-<span id="cb3-2"><a href="setup.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt-get update</span>
-<span id="cb3-3"><a href="setup.html#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt-get install libudunits2-dev libgdal-dev libgeos-dev libproj-dev </span></code></pre></div>
+<p>We recommend using the latest version of the GDAL, GEOS, and PROJ4 libraries and binaries. To do so, use the repository <code>ubuntugis-unstable</code>, which should be done as follows:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="setup.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> add-apt-repository ppa:ubuntugis/ubuntugis-unstable</span>
+<span id="cb1-2"><a href="setup.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt-get update</span>
+<span id="cb1-3"><a href="setup.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt-get install libudunits2-dev libgdal-dev libgeos-dev libproj-dev </span>
+<span id="cb1-4"><a href="setup.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt-get install gdal-bin</span>
+<span id="cb1-5"><a href="setup.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt-get install proj-bin</span></code></pre></div>
 <p>If you get an error while adding this PPA repository, it could be because you miss the package <code>software-properties-common</code>. When GDAL is running in <code>docker</code> containers, please add the security flag <code>--security-opt seccomp=unconfined</code> on start.</p>
+<p>After installing GDAL, GEOS, and PROJ4, please install packages “sf” and “terra”, in this order.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"sf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"terra"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div id="debian" class="section level3 unnumbered">
 <h3>Debian<a class="anchor" aria-label="anchor" href="#debian"><i class="fas fa-link"></i></a>
@@ -133,15 +136,24 @@
 <h3>Fedora<a class="anchor" aria-label="anchor" href="#fedora"><i class="fas fa-link"></i></a>
 </h3>
 <p>The following command installs all required dependencies:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="setup.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf install gdal-devel proj-devel geos-devel sqlite-devel udunits2-devel</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="setup.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf install gdal-devel proj-devel geos-devel sqlite-devel udunits2-devel</span></code></pre></div>
 </div>
+</div>
+<div id="support-for-deep-learning-with-torch" class="section level2 unnumbered">
+<h2>Support for deep learning with torch<a class="anchor" aria-label="anchor" href="#support-for-deep-learning-with-torch"><i class="fas fa-link"></i></a>
+</h2>
+<p>The deep learning models of <code>sits</code> use the <code>torch</code> package, which is an <strong>R</strong> version of <code>pyTorch</code>. Before installing “sits”, please also install packages “torch” and “luz”, and initialize torch.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"torch"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"luz"</span><span class="op">)</span></span>
+<span><span class="fu">torch</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/torch/man/install_torch.html">install_torch</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div id="installing-the-sits-package" class="section level2 unnumbered">
 <h2>Installing the <code>sits</code> package<a class="anchor" aria-label="anchor" href="#installing-the-sits-package"><i class="fas fa-link"></i></a>
 </h2>
-<p><code>sits</code> is available on CRAN and should be installed as other <strong>R</strong> packages.</p>
+<p>After installing <code>sf</code>, <code>terra</code>, <code>torch</code> and <code>luz</code>, please proceed to install <code>sits</code>, which is available on CRAN and should be installed as a normal <strong>R</strong> package.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"sits"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"sits"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>The source code repository is on GitHub <a href="https://github.com/e-sensing/sits" class="uri">https://github.com/e-sensing/sits</a>. To install the development version of <code>sits</code>, which contains the latest updates but might be unstable, users should install <code>devtools</code> if not already available, as then install sits as follows:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
@@ -151,13 +163,11 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>download.file.method <span class="op">=</span> <span class="st">"wget"</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"e-sensing/sitsdata"</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="using-torch-for-deep-learning" class="section level2 unnumbered">
-<h2>Using Torch for deep learning<a class="anchor" aria-label="anchor" href="#using-torch-for-deep-learning"><i class="fas fa-link"></i></a>
+<div id="using-gpus-with-sits" class="section level2" number="0.1">
+<h2>
+<span class="header-section-number">0.1</span> Using GPUs with <code>sits</code><a class="anchor" aria-label="anchor" href="#using-gpus-with-sits"><i class="fas fa-link"></i></a>
 </h2>
-<p>The deep learning models of <code>sits</code> use the <code>torch</code> package, which is an <strong>R</strong> version of <code>pyTorch</code>. The <code>torch</code> package automatically recognizes if a GPU is available on the machine and uses the GPU for training and classification. There is a significant performance gain when GPUs are used instead of CPUs for deep learning models. There is no need for specific adjustments to <code>torch</code>.</p>
-<p>To use <code>torch</code>, run the following command after installing <code>sits</code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">torch</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/torch/man/install_torch.html">install_torch</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>The <code>torch</code> package automatically recognizes if a GPU is available on the machine and uses the GPU for training and classification. There is a significant performance gain when GPUs are used instead of CPUs for deep learning models. There is no need for specific adjustments to <code>torch</code> scripts. To use GPUs with <code>torch</code> requires version 11.6 of the CUDA library, which is available for Ubuntu 20.04 and Ubuntu 18.04.</p>
 
 </div>
 </div>
@@ -176,8 +186,9 @@
 <li><a class="nav-link" href="#fedora">Fedora</a></li>
 </ul>
 </li>
+<li><a class="nav-link" href="#support-for-deep-learning-with-torch">Support for deep learning with torch</a></li>
 <li><a class="nav-link" href="#installing-the-sits-package">Installing the sits package</a></li>
-<li><a class="nav-link" href="#using-torch-for-deep-learning">Using Torch for deep learning</a></li>
+<li><a class="nav-link" href="#using-gpus-with-sits"><span class="header-section-number">0.1</span> Using GPUs with sits</a></li>
 </ul>
 
       <div class="book-extra">
@@ -194,7 +205,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-06.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-03-31.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

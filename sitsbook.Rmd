@@ -1548,14 +1548,9 @@ The most important explanatory variables are the NIR (near infrared) band on dat
 
 
 ```{r, tidy="styler",out.width = "90%", fig.align="center", fig.cap="Classification of time series using random forests."}
-# retrieve a point to be classified
-point_mt_4bands <- sits_select(
-    data = point_mt_6bands, 
-    bands = c("NDVI", "EVI", "NIR", "MIR")
-)
 # Classify using Random Forest model and plot the result
 point_class <- sits_classify(
-    data = point_mt_4bands, 
+    data = point_mt_mod13q1, 
     ml_model  = rfor_model
 )
 plot(point_class, bands = c("NDVI", "EVI"))
@@ -1592,7 +1587,7 @@ svm_model <- sits_train(
     ml_method = sits_svm())
 # Classify using SVM model and plot the result
 point_class <- sits_classify(
-    data = point_mt_4bands, 
+    data = point_mt_mod13q1, 
     ml_model = svm_model
 )
 # plot the result
@@ -1625,7 +1620,7 @@ xgb_model <- sits_train(
 )
 # Classify using SVM model and plot the result
 point_class <- sits_classify(
-    data = point_mt_4bands, 
+    data = point_mt_mod13q1, 
     ml_model = xgb_model
 )
 plot(point_class, bands = c("NDVI", "EVI"))
@@ -1675,13 +1670,12 @@ mlp_model <- sits_train(
 # show training evolution
 plot(mlp_model)
 ```
-\newpage
+
 Then, we classify a 16-year time series using the multilayer perceptron model.
 
 ```{r, tidy="styler", out.width = "90%", fig.align="center", fig.cap="Classification of time series using MLP."}
 # Classify using DL model and plot the result
-point_mt_6bands %>% 
-    sits_select(bands = c("NDVI", "EVI", "NIR", "MIR")) %>% 
+point_mt_mod13q1 %>% 
     sits_classify(mlp_model) %>% 
     plot(bands = c("NDVI", "EVI"))
 ```
@@ -1730,8 +1724,7 @@ Then, we classify a 16-year time series using the TempCNN model.
 
 ```{r, out.width = "90%", tidy="styler", fig.align="center", fig.cap="Classification of time series using TempCNN."}
 # Classify using TempCNN model and plot the result
-class <- point_mt_6bands %>% 
-    sits_select(bands = c("NDVI", "EVI", "NIR", "MIR")) %>% 
+class <- point_mt_mod13q1 %>% 
     sits_classify(tempcnn_model) %>% 
     plot(bands = c("NDVI", "EVI"))
 ```
@@ -1768,8 +1761,7 @@ Then, we classify a 16-year time series using the ResNet model. The behaviour of
 
 ```{r, tidy="styler", out.width = "100%", fig.align="center", fig.cap="Classification of time series using ResNet."}
 # Classify using DL model and plot the result
-class <- point_mt_6bands %>% 
-    sits_select(bands = c("NDVI", "EVI", "NIR", "MIR")) %>% 
+class <- point_mt_mod13q1 %>% 
     sits_classify(tempcnn_model) %>% 
     plot(bands = c("NDVI", "EVI"))
 ```
@@ -1809,8 +1801,7 @@ Then, we classify a 16-year time series using the TAE model.
 
 ```{r, tidy="styler", out.width = "100%", fig.align="center", fig.cap="Classification of time series using TAE."}
 # Classify using DL model and plot the result
-class <- point_mt_6bands %>% 
-    sits_select(bands = c("NDVI", "EVI", "NIR", "MIR")) %>% 
+class <- point_mt_mod13q1 %>% 
     sits_classify(tae_model) %>% 
     plot(bands = c("NDVI", "EVI"))
 ```
@@ -1834,8 +1825,7 @@ Then, we classify a 16-year time series using the LightTAE model.
 
 ```{r, tidy="styler", out.width = "100%", fig.align="center", fig.cap="Classification of time series using LightTAE."}
 # Classify using DL model and plot the result
-class <- point_mt_6bands %>% 
-    sits_select(bands = c("NDVI", "EVI", "NIR", "MIR")) %>% 
+class <- point_mt_mod13q1 %>% 
     sits_classify(ltae_model) %>% 
     plot(bands = c("NDVI", "EVI"))
 ```
@@ -2828,15 +2818,14 @@ if (!file.exists("./tempdir/chp11"))
     dir.create("./tempdir/chp11")
 # select a S2 tile
 s2_cube_ro <- sits_cube(
-      source = "MPC",
-      collection = "sentinel-2-l2a",
+      source = "AWS",
+      collection = "SENTINEL-S2-L2A-COGS",
       tiles = "20LMR",
       bands = c("B02", "B8A", "B11", "SCL"),
       start_date = as.Date("2020-06-01"),
       end_date = as.Date("2021-09-01")
 )
 # select a small area inside the tile
-
 roi = c(lon_max = -63.25790, lon_min = -63.6078, 
         lat_max = -8.72290, lat_min = -8.95630)
 

@@ -83,9 +83,6 @@ s2_cube_ro <- sits_cube(
       end_date = as.Date("2021-09-01")
 )
 # select a small area inside the tile
-
-
-
 roi = c(lon_max = -63.25790, lon_min = -63.6078, 
         lat_max = -8.72290, lat_min = -8.95630)
 
