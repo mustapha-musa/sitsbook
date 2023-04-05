@@ -1,6 +1,9 @@
 ```{r, include = FALSE}
 source("common.R")
 dir.create("./tempdir/ch10")
+sits:::.conf_set_options("tmap_legend_text_size" = 0.7)
+sits:::.conf_set_options("tmap_legend_title_size" = 0.7)
+sits:::.conf_set_options("tmap_max_cells" = 1e+09) 
 ```
 
 # Bayesian smoothing for post-processing{-}
@@ -11,20 +14,18 @@ Image classification post-processing has been defined as "a refinement of the la
 
 The `sits` package uses a *time-first, space-later* approach. Since machine learning classifiers in `sits` are mostly pixel-based, it is necessary to complement them with spatial smoothing methods. These methods improve the accuracy of land-cover classification by incorporating spatial and contextual information into the classification process. Smoothing methods use the neighborhood data to remove outliers and enhance consistency in the resulting product. 
 
-Post-processing is a desirable step in any classification process. Most statistical classifiers use training samples derived from "pure" pixels, that have been selected by users as representative of the desired output classes. However, images contain many mixed pixels irrespective of the resolution. Also, there is a considerable degree of data variability in each class. These effects lead to outliers whose chance of misclassification is significant. To offset these problems, most post-processing methods use the "smoothness assumption" [@Schindler2012]: nearby pixels tend to have the same label. To put this assumption in practice, smoothing methods use the neighbourhood information to remove outliers and enhance consistency in the resulting product.
-
-Probability-based smoothing methods include Gaussian filtering and edge-aware filtering [@Schindler2012], modal filters [@Ghimire2010] and probabilistic relaxation [@Gong1989]. Huang et al. [@Huang2014] propose a relearning method based on co-ocurrence matrices; these matrices represent the joint distribution of class labels in the neighborhood of each pixel. In the current work, we introduce a Bayesian smoothing method, which provides the means to incorporate prior knowledge in data analysis.
+Most statistical classifiers use training samples derived from "pure" pixels, that have been selected by users as representative of the desired output classes. However, images contain many mixed pixels irrespective of the resolution. Also, there is a considerable degree of data variability in each class. These effects lead to outliers whose chance of misclassification is significant. To offset these problems, most post-processing methods use the "smoothness assumption" [@Schindler2012]: nearby pixels tend to have the same label. To put this assumption in practice, smoothing methods in `sits` use the neighborhood information to remove outliers and enhance consistency in the resulting product.
 
 
 ## Motivation{-}
 
-The smoothing method available in `sits` uses Bayesian inference. Bayesian inference can be thought of as way of coherently updating our uncertainty in the light of new evidence. It allows the inclusion of expert knowledge on the derivation of probabilities. As stated by [@Spiegelhalter2009]: "In the Bayesian paradigm, degrees of belief in states of nature are specified. Bayesian statistical methods start with existing 'prior' beliefs, and update these using data to give 'posterior' beliefs, which may be used as the basis for inferential decisions". Bayesian inference has now been established as a major method for assessing probability. 
+The smoothing method available in `sits` uses Bayesian inference. Bayesian inference can be thought of as way of allowing the inclusion of expert knowledge on the derivation of probabilities. As stated by [@Spiegelhalter2009]: "In the Bayesian paradigm, degrees of belief in states of nature are specified. Bayesian statistical methods start with existing 'prior' beliefs, and update these using data to give 'posterior' beliefs, which may be used as the basis for inferential decisions". Bayesian inference has now been established as a major method for assessing probability. 
 
 Bayesian inference allows the inclusion of expert knowledge. The assumption is that, at local level, class probabilities should be similar and provide the baseline for comparison with the pixel values produced by the classifier. Based on these two elements, Bayesian smoothing adjusts the probabilities for the pixels including spatial dependence.  
 
 ## Bayesian estimation{-}
 
-The estimate is based on two random variables: (a) The observed class probabilities for each pixel denoted by a random variable $p_{i,k}$ where $i$ is the index of the pixel and $k$ indicates the class; (b) The underlying class probabilities for each pixel, denoted by a random variable $\phi_{i,k}$. The probabilities $p_{i,k}$ are the output of the classifier and are subject to noise, outliers, and classification errors. Our estimation aims to remove these effects and obtain $\phi_{i,k}$ which would be a better approximation to the actual class probability. 
+The Bayesian estimate is based on two random variables: (a) The observed class probabilities for each pixel denoted by a random variable $p_{i,k}$ where $i$ is the index of the pixel and $k$ indicates the class; (b) The underlying class probabilities for each pixel, denoted by a random variable $\phi_{i,k}$. The probabilities $p_{i,k}$ are the output of the classifier and are subject to noise, outliers, and classification errors. Our estimation aims to remove these effects and obtain $\phi_{i,k}$ which would be a better approximation to the actual class probability. 
 
 To more our inference tractable, we first convert the class probability values $p_{i,k}$  to log-odds values using the logit function, as shown below. The logit function converts probability values from 0 to 1 to values from negative infinity to infinity. The conversion from probabilities ranging from $0$ to $1$ to logit values is useful to support our assumption of normal distribution functions for our data. 
 
@@ -39,18 +40,17 @@ $$
 $$
 To estimate the conditional posterior distribution $\pi(\theta{}|x)$, we combine two distributions: (a) the distribution $\pi(x|\mu)$, known as the likelihood function, which expresses the dependency of the measured values $x_{i,k}$ in the underlying values $\mu_{i,k}$; and (b) $\pi(\mu)$, which is our guess on the actual data distribution, known as the prior. For simplicity, we will also assume independence between the different classes $k$, instead of considering a multivariate distribution. Therefore, the update will be performed for each class $k$ separately. 
 
-We assume that the random variable $x_{i,k}$ follows a normal distribution, $N(\mu_{i,k}, \sigma^2_{k})$, with parameters $\mu_{i,k}$ and $\sigma^2_{k}$. We will assume the variance $\sigma^2_{k}$ will be estimated by users based on their expertise. This variance will be used as a hyper parameter to control the level of smoothness. Therefore,
+We assume that the likelihood $x_{i,k} | \mu_{i,k}$ follows a normal distribution, $N(\mu_{i,k}, \sigma^2_{k})$, with parameters $\mu_{i,k}$ and $\sigma^2_{k}$. The variance $\sigma^2_{k}$ will be estimated by users based on their expertise and will be used as a hyperparameter to control the level of smoothness of the resulting estimate. Therefore
 
-Therefore,
 $$
 x_{i,k} | \mu_{i,k} \sim N(\mu_{i,k}, \sigma^2_{k})
 $$
-is the likelihood function. We will assume a local prior for the parameter $\mu_{i,k}$, also normal, with parameters $m_{i,k}$ and $s^2_{i,k}$:
+is the likelihood function. We will assume a nomrmal local prior for the parameter $\mu_{i,k}$ with parameters $m_{i,k}$ and $s^2_{i,k}$:
 
 $$
 \mu_{i,k} \sim N(m_{i,k}, s^2_{i,k}).
 $$
-We estimate the local means and variances, by considering the neighboring pixels in space. Let $\#(V_{i})$ be the number of elements in the neighborhood $V_{i}$. We then can calculate the mean value by
+We estimate the local means and variances for the prior distribution by considering a spatial neighboring. Let $\#(V_{i})$ be the number of elements in the neighborhood $V_{i}$. We then can calculate the mean value by
 
 $$
 m_{i,t,k} = \frac{\sum_{(j) \in V_{i}} x_{j,k}}{\#(V_{i})}
@@ -59,15 +59,16 @@ and the variance by
 $$
 s^2_{i,k} = \frac{\sum_{(j) \in V_{i}} [x_{j,k} - m_{i,k}]^2}{\#(V_{i})-1}.    
 $$
-The Bayesian update for the parameter $\mu_{i,k}$, based on the expected conditional mean, is given by:
-
+Given these assumptions, the Bayesian update for the expected conditional mean ${E}[\mu_{i,k} | x_{i,k}]$ is given by:
 $$
+\begin{equation}
 {E}[\mu_{i,k} | x_{i,k}] =
 \frac{m_{i,t} \times \sigma^2_{k} + 
 x_{i,k} \times s^2_{i,k}}{ \sigma^2_{k} +s^2_{i,k}}
+\end{equation}
 $$
 
-which can be expressed as a weigthed mean
+which can be expressed as a weighted mean
 
 $$ 
 {E}[\mu_{i,k} | x_{i,k}] =
@@ -83,38 +84,35 @@ where
 3. $s^2_{i,k}$ is the variance of logit values for pixels of class $k$ in the neighborhood of pixel $i$.
 4. $sigma^2_{k}$ is the prior variance of the logit values for class $k$.
 
-The above equation is weighted average between the value $x_{i,k}$ for the pixel and the mean $m_{i,k}$ for the neighboring pixels. When the variance $s^2_{i,k}$ for the 
-neighbors is too high, the smoothing algorithm gives more weight to the pixel value $x_{i,k}$. On the other hand, when the noise $\sigma^2_k$ increases, the method gives more weight to the neighborhood mean $m_{i,k}$.
+The above equation is weighted average between the value $x_{i,k}$ for the pixel and the mean $m_{i,k}$ for the neighboring pixels. When the variance $s^2_{i,k}$ for the neighbors is too high, the smoothing algorithm gives more weight to the pixel value $x_{i,k}$. On the other hand, when the noise $\sigma^2_k$ increases, the method gives more weight to the neighborhood mean $m_{i,k}$.
 
-The parameter $\sigma^2_k$ gives a way to control for the level of smoothness. If $\sigma^2_k$ is zero, the smoothed value ${E}[\mu_{i,k} | x_{i,k}]$ will be equal to the pixel value $x_{i,k}$. Making $\sigma^2_k$ too high, we will have a high amount of smoothness. Values of the prior variance $sigma^2_{k}$ which are small relative to the local variance $s^2_{i,k}$ increase our confidence in the original probabilities. Conversely, values of the prior variance $sigma^2_{k}$ which are big relative to the local variance $s^2_{i,k}$ increase our confidence in the average probability of the neighborhood. 
+The parameter $\sigma^2_k$ controls the level of smoothness. If $\sigma^2_k$ is zero, the smoothed value ${E}[\mu_{i,k} | x_{i,k}]$ will be equal to the pixel value $x_{i,k}$. Making $\sigma^2_k$ high leads to a lot of smoothness. Values of the prior variance $sigma^2_{k}$ which are small relative to the local variance $s^2_{i,k}$ increase our confidence in the original probabilities. Conversely, values of the prior variance $\sigma^2_{k}$ which are big relative to the local variance $s^2_{i,k}$ increase our confidence in the average probability of the neighborhood. 
+
+Thus, the parameter $\sigma^2_{k}$ expresses our confidence on the inherent variability of the distribution of values of a class $k$. The smaller the parameter $\sigma^2_{k}$, the more we trust the estimated probability values produced by the classifier for class $k$. Conversely, higher values of $\sigma^2_{k}$ indicate lower confidence on the outputs of the classifier and improved confidence on the values of the local average.
 
 Consider the following two-class example. Take a pixel with probability 0.4 (logit $x_{i,1}$ = -0.4054) for class A, and probability 0.6 (logit $x_{i,2}$ = 0.4054) for class B. Without post-processing, the pixel will be labelled as class B. Consider that the local average is 0.6 (logit $m_{i,1}$ = 0.4054) for class A and 0.4 (logit $m_{i,2}$ = -0.4054) for class B. This is a case of an outlier classified originally as class B in the midst of a set of pixels of class A. Take the local variance of logits to be $s^2_{i,1}$ = 5 for class A and $s^2_{i,2}$ = 10 and for class B. This difference is to be expected if the local variability of class A is smaller than that of class B. 
 
-To complete the estimate, we need to set the parameter $sigma^2_{k}$, which represents our prior belief in the variability of the probability values for each class. If we take both $sigma^2_{A}$ for class A and $sigma^2_{B}$ for class B to be both 10, the Bayesian estimated probability for class A is 0.52  and for class B is 0.48. In this case, the pixel will be relabeled as being of class A. However, if our belief in the original values is higher, we will get a different result. If we set a value of $sigma^2$ to be 5 for both classes A and B, the Bayesian probability estimate will be 0.48 for class A and will be 0.52 for class B. In this case, the original label will be kept. 
+To complete the estimate, we need to set the parameter $\sigma^2_{k}$, which represents our prior belief in the variability of the probability values for each class. If we take both $\sigma^2_{A}$ for class A and $\sigma^2_{B}$ for class B to be both 10, the Bayesian estimated probability for class A is 0.52  and for class B is 0.48. In this case, the pixel will be relabeled as being of class A. However, if our belief in the original values is higher, we will get a different result. If we set a value of $\sigma^2$ to be 5 for both classes A and B, the Bayesian probability estimate will be 0.48 for class A and will be 0.52 for class B. In this case, the original label will be kept. 
 
-## Setting the smoothness parameter {-}
-
-To compute the Bayesian estimate, we need to include our a priori belief in the variability of classes, expressed in the parameter $sigma^2_{k}$. This parameter expresses our confidence on the inherent variability of the distribution of values of a class $k$. The smaller the parameter $sigma^2_{k}$, the more we trust the estimated probability values produced by the classifier for class $k$. Conversely, higher values of $sigma^2_{k}$ indicate lower confidence on the outputs of the classifier and improved confidence on the values of the local average.
-
-We make the following recommendations for setting the $sigma^2_{k}$ parameter:
+We make the following recommendations for setting the $\sigma^2_{k}$ parameter:
     
-1. Set the $sigma^2_{k}$ parameter with high values (20 or above) to increase the neighborhood influence compared with the probability values for each pixel. Classes whose probabilities have strong spatial autocorrelation will tend to replace outliers of different classes.
+1. Set the $\sigma^2_{k}$ parameter with high values (20 or above) to increase the neighborhood influence compared with the probability values for each pixel. Classes whose probabilities have strong spatial autocorrelation will tend to replace outliers of different classes.
 
-2. Set the $sigma^2_{k}$ parameter with low values (5 or below) to reduce the neighborhood influence compared with the probabilities for each pixel of class $k$. In this way, classes which have low spatial autocorrelation are more likely not to be relabeled.
+2. Set the $\sigma^2_{k}$ parameter with low values (5 or below) to reduce the neighborhood influence compared with the probabilities for each pixel of class $k$. In this way, classes which have low spatial autocorrelation are more likely not to be relabeled.
 
-Consider the case of forest areas and watersheds. If an expert wishes to have compact areas classified as forests, without many outliers inside them, she would set the $sigma^2$ parameter for the class "Forest" to be high. For comparison, one usually wants to avoid that small watersheds which have few similar neighbors be relabeled. In this case, it is advisable to avoid a strong influence of the neighbors; the $sigma^2$ should be set as low as possible. 
+Consider the case of forest areas and watersheds. If an expert wishes to have compact areas classified as forests, without many outliers inside them, she would set the $\sigma^2$ parameter for the class "Forest" to be high. For comparison, one usually wants to avoid that small watersheds which have few similar neighbors be relabeled. In this case, it is advisable to avoid a strong influence of the neighbors and $\sigma^2$ should be set as low as possible. 
 
 ## Defining the neighborhood{-}
 
-The intuition for Bayesian smoothing is that homogeneous neighborhoods should have the same class. In homogeneous neighborhoods, the dominant class has both higher average probabilities and lower variance than the other classes. In these neighborhoods, a pixel of a different class is likely to be associated to lower average probabilities and higher local variance. 
+The intuition for Bayesian smoothing is that homogeneous neighborhoods should have the same class. In homogeneous neighborhoods, the dominant class has both higher average probabilities and lower variance than the other classes. In these neighborhoods, a pixel of a different class is likely to be associated to lower average probabilities and higher local variance. Mixed pixels at the limits between areas with different classes pose a problem for classification. These pixels contain signatures of two classes. To account for these cases, Bayesian smoothing in `sits` uses a special definition of a neighborhood.
 
-One expected consequence of Bayesian smoothing is to improve the borders between the objects created by the classification. In pixel-based classification, mixed pixels at the limits between areas with different classes pose a problem for classification. These pixels contain signatures of two classes. To account for these cases, Bayesian smoothing in `sits` uses a special definition of a neighborhood. Each pixel in a probability map of a class is associated to a neighborhood with a proportion of the local window. The pixels in this neighborhood which are used to compute the Bayesian statistics are those having the highest probability of belonging to the class. 
+To be reliable, local class statistics should only include pixels that are likely to belong to such class. Windows centered on border pixels contain only some pixels belonging to same class as the central pixel; the others belongs to a different class. Consider a window of size 7 x 7 around a pixel in the probability map of class "Forest". It will contain the central pixel and 80 neighbors. Instead of using all those neighbors to compute the local statistics, `sits` uses only some of them. The neighbors used to calculate the local statistics is set by the taking only those with the highest probability of belonging to class "Forest". Such percentage of pixels per windows to calculate the local statistics is user-controllable. 
 
 ## Measuring the local variance{-}
 
-To illustrate the impact of neighborhood definition and choices of the $sigma^2_{k}$ parameter, we present a detailed example. The first step is to take a probability cube for a deforestation detection application in an area of the Brazilian Amazon. This cube has been produced by a random forest model with 6 classes. We first build the data cube.
+As discussed above, the effect of the Bayesian estimator depends on the values of the a priori variance $sigma^2_{k}$ set by the user and of the local variance $s^2_{i,1}$ measured for each pixel. To illustrate the impact of the choices of the $sigma^2_{k}$ parameter, we present a detailed example. The first step is to take a probability cube for a deforestation detection application in an area of the Brazilian Amazon. This cube has been produced by a random forest model with 6 classes. We first build the data cube and then plot the probabilities for classes "Water" and "Forest". 
 
-```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Probability map produced for class Forest."}
+```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Probability map produced for classes Forest and Water."}
 # define the classes of the probability cube
 labels <- c("Water", "ClearCut_Burn", "ClearCut_Soil",
             "ClearCut_Veg", "Forest", "Wetland")
@@ -129,112 +127,107 @@ probs_cube <- sits_cube(
     labels = labels,
     parse_info = c("X1", "X2", "tile", "start_date", "end_date", "band", "version")
 )
-plot(probs_cube, labels = "Forest")
-
+# plot the probabilities for water and forest
+plot(probs_cube, labels = c("Water", "Forest"))
 ```
-In this example, there are both compact forest patches as well other linear stretches mostly associated with riparian areas. In order to preserve the linear patches 
+The probability map for class "Forest" shows high values associated to compact patches as well linear stretches in riparian areas. By contrast, the probability map for class "Water" has mostly low values, except in a few places with high chance of occurrence of this class. To further understand the behavior of the Bayesian estimator, it is useful to examine the local variance associated the logits of the probabilities. 
 
-```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Probability map for class  for class ClearCut_Burn."}
-plot(probs_cube, labels = "ClearCut_Burn")
-```
-
+The `sits_variance` function estimates the local variances for the logits, which correspond to the $s^2_{i,k}$ parameter in the Bayesian estimator. It has the following parameters: (a) `cube`, a probability cube; (b) `window_size`, dimension of the local neighborhood; (c) `neigh_fraction`, percentage of pixels in the neighborhood which will be used to calculate the variance; (d) `multicores`, number of CPU cores that will be used for processing; (e) `memsize`, memory available; (f) `output_dir`, directory where results will be stored; (g) `version`, for version control. In the example below, we will use half of the pixels of a 7x7 window to estimate the variance. The chosen pixels will be those with highest probability pixels, to be more representative of the actual class distribution. The output values are the variances of the logits.
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Variance map for class Forest."}
 var_cube <- sits_variance(
     cube = probs_cube,
-    window_size = 9,
+    window_size = 7,
     neigh_fraction = 0.5,
     multicores = 4,
     memsize = 24,
-    output_dir = data_dir,
-    version = "w9-n05"
+    output_dir = "./tempdir/chp10",
+    version = "w7-n05"
 )
-plot(var_cube, labels = "Forest")
+plot(var_cube, labels = c("Water", "Forest"))
 ```
-```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Histogram of variances"}
-plot(var_cube, type = "hist")
-```
+The plot for the "Forest" class shows that the areas of low variance are associated both to dense forest patches as well as areas where trees have been completely remove. Areas of high variance are mostly associated with the borders between forest areas and the other classes. These high values  By contrast, the plot for the "Water" class is not informative, with small areas of high variance located near the areas of high water probability. Both plots show that most variance values are low, and high values reach 30. This information is relevant for setting the values of the prior variance $\sigmaˆ2$ as discussed below.
 
+## Running Bayesian smoothing {-}
 
-```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Variance map for class Forest."}
-var_cube_2 <- sits_variance(
+To run Bayesian smoothing we use the function `sits_smooth()` with parameters: (a) `cube`, a probability cube produced by `sits_classify()`; (b) `window_size`, the local window to compute the neighborhood probabilities; (d) `neigh_fraction`, fraction of local neighbors used to calculate local statistics; (e) `smoothness`, a vector with estimates of the prior variance of each class; (f) `multicores`, number of CPU cores that will be used for processing; (g) `memsize`, memory available for classification; (h) `output_dir`, directory where results will be stored; (i) `version`, for version control. The resulting cube can be visualized with `plot()`. In what follows, we compare the smoothing effect  by varying the `window_size` and `smoothness` parameters. 
+
+Together, the parameters `window_size` and `neigh_fraction` control how many pixels in a neighborhood are used to calculate the local statistics used by the Bayesian estimator. For example, setting `window size` to 7 and `neigh_fraction` to 0.5 (the defaults) ensures that 25 samples are used to estimate the local statistics. 
+
+Our first reference is the classified map without smoothing which shows the presence of outliers and classification errors. To obtain it, we use the function `sits_label_classification` taking the probability map as an input, as follows.
+
+```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Classified map without smoothing."}
+# generate thematic map
+class_map <- sits_label_classification(
     cube = probs_cube,
-    window_size = 5,
-    neigh_fraction = 1.0,
-    multicores = 4,
-    memsize = 24,
-    output_dir = data_dir,
-    version = "w7-n1"
-)
-plot(var_cube_2, labels = "Forest")
-```
-
-## Implementation in sits{-}
-
-To run Bayesian smoothing, the parameter of `sits_smooth()` are: (a) `cube`, a probability cube produced by `sits_classify()`; (b) `type` should be `bayes` (the default); (c) `window_size`, the local window to compute the neighborhood probabilities; (d) `neigh_fraction`, fraction of local neighbors used to calculate local statistics; (e) `smoothness`, an estimate of the prior variance of each class; (f) `multicores`, number of CPU cores that will be used for processing; (g) `memsize`, memory available for classification; (h) `output_dir`, directory where results will be stored; (i) `version`, for version control. The resulting cube can be visualized with `plot()`. The bigger one sets the `window_size` and `smoothness` parameters, the stronger the adjustments will be.  In what follows, we compare two situations of smoothing effects, by varying the `window_size` and `smoothness` parameters. 
-
-As explained above, the `window_size` parameter controls the size of the neighborhood. However, not all pixels inside the window will be included in the Bayesian estimator.  To be reliable, local class statistics should only include pixels that are likely to belong to such class. Windows centered on border pixels contain only some pixels belonging to same class as the central pixel; the others belongs to a different class. Consider a window of size 9 x 9 around a pixel in the probability map of class "Forest". It will contain the central pixel and 80 neighbors. Instead of using all those neighbors to compute the local statistics, `sits` uses only some of them. The number of neighbors used to calculate the local statistics is set by the taking those with the highest probability of belonging to class "Forest". The percentage of pixel per window used to calculate local class statistics is set by the `neigh_fraction` parameter. 
-
-Together, the parameters `window_size` and `neigh_fraction` control how many pixels in a neighborhood are used to calculate the local statistics used by the Bayesian estimator. Since the estimator is based on Gaussian distributions, it needs at least 30 samples to produce statistical significant values. For example, setting `window size` to 9 and `neigh_fraction` to 0.5 (the defaults) ensures that at least 40 samples are used to estimate the local statistics. 
-
-```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Probability maps after bayesian smoothing."}
-# compute Bayesian smoothing
-cube_smooth_w9_s20 <- sits_smooth(
-    cube = ro_cube_20LKP_probs,
-    window_size = 9,
-    neigh_fraction = 0.50,
-    smoothness = 20,
     multicores = 4,
     memsize = 12,
-    version = "bayes_w9_s20",
+    output_dir = "./tempdir/chp10",
+    version = "no_smooth"
+)
+# plot the result
+plot(class_map)
+```
+To remove the outliers and classification errors, we will run a smoothing procedure where all prior variances are set the same value of 20 which is relatively high compared with the maximum local class variance shown above. In this case, for most situations, the new value of the 
+
+```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Probability maps after bayesian smoothing."}
+# compute Bayesian smoothing
+cube_smooth_w7_f05_s20 <- sits_smooth(
+    cube = probs_cube,
+    window_size = 7,
+    neigh_fraction = 0.50,
+    smoothness = 20, 
+    multicores = 4,
+    memsize = 12,
+    version = "w7-f05-s20",
     output_dir = "./tempdir/chp10"
 )
 # plot the result
-plot(cube_smooth_w9_s20, palette = "YlGn")
+plot(cube_smooth_w7_f05_s20, labels = c("Water", "Forest"), palette = "YlGn")
 ```
+Bayesian smoothing has removed some of local variability associated to misclassified pixels which are different from their neighbors. There is a side effect: the water areas surrounded by forests have not been preserved in the forest probability map. The impact of smoothing is best appreciated comparing the labelled map produced without smoothing to the one that follows the procedure, as shown below.
 
-Bayesian smoothing has removed some of local variability associated to misclassified pixels which are different from their neighbors. The impact of smoothing is best appreciated comparing the labelled map produced without smoothing to the one that follows the procedure, as shown below.
-
-```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Final classification map after Bayesian smoothing with 5 x 5 window and smoothness = 30."}
+```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Final classification map after Bayesian smoothing with 7 x 7 window, neigh_fraction = 0.5 and smoothness = 20."}
 # generate thematic map
-defor_map_smooth_w9_20 <- sits_label_classification(
-    cube = cube_smooth_w9_s20,
+defor_map_w7_f05_20 <- sits_label_classification(
+    cube = cube_smooth_w7_f05_s20,
     multicores = 4,
     memsize = 12,
     output_dir = "./tempdir/chp8",
-    version = "bayes_w9_s20"
+    version = "w7-f05-s20"
 )
-plot(defor_map_smooth_w9_20)
+plot(defor_map_w7_f05_20)
 ```
 
-To produce an even stronger smoothing effect, the example below uses bigger values for `window_size` and `smoothness`. 
+In the smoothed map, the outliers have been removed by the expansion of forest areas. Small corridors of water and soil encircled by trees have been replaced by forests. This effect is due to high probability of forest detection in the training data. To keep the water areas and reducing the expansion of the forest area, a viable alternative is to reduce the smoothness ($\sigma^2$) for the "Forest" and "Water" classes. In this way, the local influence of the forest in the other classes is reduced. As for the water areas, since they are narrow, their neighborhoods will have many low probability values, which would reduce the expected value of the bayesian estimator. 
 
-```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Probability maps after bayesian smoothing with 9 x 9 window smoothness = 80."}
+```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Probability maps after bayesian smoothing with 7 x 7 window with low smoothness for classes Water and Forest"}
+# reduce smoothing for classes Water and Forest
+# labels:  "Water", "ClearCut_Burn", "ClearCut_Soil", 
+#          "ClearCut_Veg", "Forest", "Wetland"
+smooth_water_forest <- c(5, 20, 20, 20, 5, 20)
 # compute Bayesian smoothing
-cube_smooth_w13_s80 <- sits_smooth(
-    cube = ro_cube_20LKP_probs,
-    window_size = 13,
-    smoothness = 80,
+cube_smooth_w7_f05_swf <- sits_smooth(
+    cube = probs_cube,
+    window_size = 7,
+    neigh_fraction = 0.5,
+    smoothness = smooth_water_forest,
     multicores = 4,
     memsize = 12,
-    version = "bayes_w13_s80",
-    output_dir = "./tempdir/chp8"
+    version = "w7-f05-swf",
+    output_dir = "./tempdir/chp10"
 )
-# plot the result
-plot(cube_smooth_w13_s80, palette = "YlGn")
-```
-
-
-```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Final classification map after Bayesian smoothing with 9 x 9 size."}
-# generate thematic map
-defor_map_smooth_w13_s80 <- sits_label_classification(
-    cube = cube_smooth_w13_s80,
+# computed labelled map
+defor_map_w7_f05_swf <- sits_label_classification(
+    cube = cube_smooth_w7_f05_swf,
     multicores = 4,
     memsize = 12,
-    output_dir = "./tempdir/chp8",
-    version = "bayes_w13_s80"
+    output_dir = "./tempdir/chp10",
+    version = "w7-f05-swf"
 )
-plot(defor_map_smooth_w13_s80, palette = "YlGn")
+plot(defor_map_w7_f05_swf)
 ```
 
-Comparing the two maps, it is apparent that the smoothing procedure has reduced a lot of the noise in the original classification and produced a more homogeneous result. Although more pleasing to the eye, this map may not be be more accurate than the previous one, since much spatial details has been lost. In general, Bayesian smoothing improves the quality of the final labelled maps and thus should be applied in most situations.
+Comparing the two maps, the narrow water streams inside the forest area have been better preserved. Small corridors between forest areas have also been maintained. A better comparison between the two maps requires importing them into QGIS. Exporting data from `sits` to QGIS is discussed in the chapter "Visualising and Exporting data". 
+
+In conclusion, post-processing is a desirable step in any classification process. Bayesian smoothing improves the borders between the objects created by the classification and remove outliers that result from pixel-based classification. It is a reliable methods that should be used in most situations. 

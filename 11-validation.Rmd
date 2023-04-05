@@ -4,7 +4,7 @@
 
 ```{r, include = FALSE, echo = FALSE}
 source("common.R")
-dir.create("./tempdir/chp10")
+dir.create("./tempdir/chp11")
 ```
 
 ## Case study{-}
@@ -257,20 +257,20 @@ cerrado_probs_cube <- sits_classify(
     ml_model = tcnn_model,
     memsize = 128,
     multicores = 64,
-    output_dir = "./cerrado_probs"
+    output_dir = "./tempdir/chp11"
 )
 cerrado_bayes_cube <- sits_smooth(
     cube = cerrado_probs_cube,
     type = "bayes",
     memsize = 128,
     multicores = 64,
-    output_dir = "./cerrado_bayes"
+    output_dir = "./tempdir/chp11"
 )
 cerrado_classif <- sits_label_classification(
     cube = cerrado_bayes_cube,
     memsize = 128,
     multicores = 64,
-    output_dir = "./cerrado_label"
+    output_dir = "./tempdir/chp11"
 )
 ```
 

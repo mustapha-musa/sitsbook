@@ -2,6 +2,9 @@
 
 ```{r, echo = FALSE}
 source("common.R")
+# create a directory to store files
+if (!file.exists("./tempdir/chp12"))
+    dir.create("./tempdir/chp12")
 ```
 
 Land use and land cover classification tasks have unique characteristics that differ from other machine learning domains such as image recognition and natural language processing. The main challenge for land classification is to be able to describe the diversity of the planet's landscapes in a handful of labels. However, the diversity of the world's ecosystem makes all classification systems to be biased approximations of reality. As stated by Murphy : “The gradation of properties in the world means that our smallish number of categories will never map perfectly onto all objects” [@Murphy2002]. For this reason, `sits` provides tools for users to improve their classifications by iterative means, using a process called "active learning". 
@@ -70,9 +73,7 @@ The study area is located close to the Samuel Hydroelectric Dam, located on the 
 The first step is to produce a regular data cube for the chosen area rom the period 2020-06-01 to 2021-09-01. To reduce processing time and storage, we use only three bands ("B02", "B8A", "B11") plus the cloud band, and take a small area inside the tile. After obtaining a regular cube, we plot the study area in the dates during the temporal interval of the data cube. The first image is taken at the beginning of the dry season in "2020-07-04", when the inundation area of the dam is covered by shallow water. 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Area in Rondonia near Samuel dam (source: authors)"}
-# create a directory to store files
-if (!file.exists("./tempdir/chp11"))
-    dir.create("./tempdir/chp11")
+
 # select a S2 tile
 s2_cube_ro <- sits_cube(
       source = "AWS",
@@ -90,7 +91,7 @@ roi = c(lon_max = -63.25790, lon_min = -63.6078,
 
 s2_reg_cube_ro <- sits_regularize(
   cube = s2_cube_ro,
-  output_dir = "./tempdir/chp11/",
+  output_dir = "./tempdir/chp12/",
   res = 20,
   roi = roi,
   period = "P16D",
@@ -139,21 +140,21 @@ ltae_model <- sits_train(
 s2_cube_probs <- sits_classify(
     data = s2_reg_cube_ro,
     ml_model = ltae_model,
-    output_dir = "./tempdir/chp11/",
+    output_dir = "./tempdir/chp12/",
     memsize = 15,
     multicores = 5
 )
 # post-process the probability cube
 s2_cube_bayes <- sits_smooth(
     cube = s2_cube_probs,
-    output_dir = "./tempdir/chp11/",
+    output_dir = "./tempdir/chp12/",
     memsize = 16,
     multicores = 4
 )
 # label the post-processed  probability cube
 s2_cube_label <- sits_label_classification(
     cube = s2_cube_bayes,
-    output_dir = "./tempdir/chp11/",
+    output_dir = "./tempdir/chp12/",
     memsize = 16,
     multicores = 4  
 )
@@ -166,7 +167,7 @@ The resulting map correctly identifies the forest area and the deforestation. Ho
 s2_cube_uncert <- sits_uncertainty(
     cube = s2_cube_bayes,
     type = "entropy",
-    output_dir = "./tempdir/chp11/",
+    output_dir = "./tempdir/chp12/",
     memsize = 16,
     multicores = 4  
 )
@@ -223,7 +224,7 @@ ltae_model_v2 <- sits_train(
 s2_cube_probs_v2 <- sits_classify(
     data = s2_reg_cube_ro,
     ml_model = ltae_model_v2,
-    output_dir = "./tempdir/chp11/",
+    output_dir = "./tempdir/chp12/",
     version = "v2",
     memsize = 16,
     multicores = 4
@@ -231,7 +232,7 @@ s2_cube_probs_v2 <- sits_classify(
 # post-process the probability cube
 s2_cube_bayes_v2 <- sits_smooth(
     cube = s2_cube_probs_v2,
-    output_dir = "./tempdir/chp11/",
+    output_dir = "./tempdir/chp12/",
     version = "v2",
     memsize = 16,
     multicores = 4
@@ -239,7 +240,7 @@ s2_cube_bayes_v2 <- sits_smooth(
 # label the post-processed  probability cube
 s2_cube_label_v2 <- sits_label_classification(
     cube = s2_cube_bayes_v2,
-    output_dir = "./tempdir/chp11/",
+    output_dir = "./tempdir/chp12/",
     version = "v2",
     memsize = 16,
     multicores = 4  
@@ -255,7 +256,7 @@ The results shows a significant quality gain over the earlier classification. Th
 s2_cube_uncert_v2 <- sits_uncertainty(
     cube = s2_cube_bayes_v2,
     type = "entropy",
-    output_dir = "./tempdir/chp11/",
+    output_dir = "./tempdir/chp12/",
     version = "v2",
     memsize = 16,
     multicores = 4  
