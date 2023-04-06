@@ -2145,7 +2145,7 @@ ro_def_2021 <- sits_reclassify(
     memsize = 8,
     multicores = 2,
     output_dir = "./tempdir/chp9",
-    version = "defor-reclass"
+    version = "reclass"
 )
 # plot the reclassified map
 plot(ro_def_2021)
