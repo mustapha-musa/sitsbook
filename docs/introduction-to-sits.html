@@ -30,7 +30,7 @@
 <script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
-    
+
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   </style>
 <style type="text/css">
@@ -96,7 +96,7 @@
 </ul>
 
         <div class="book-extra">
-          
+
         </div>
       </nav>
 </div>
@@ -289,55 +289,7 @@ Figure 2: Main functions of the SITS API (source: authors).
 <span>  data_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/sinop"</span>, package <span class="op">=</span> <span class="st">"sitsdata"</span><span class="op">)</span>,</span>
 <span>  parse_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"X1"</span>, <span class="st">"X2"</span>, <span class="st">"tile"</span>, <span class="st">"band"</span>, <span class="st">"date"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode"><code>#&gt; 
-  |                                                                                   
-  |                                                                             |   0%
-  |                                                                                   
-  |===                                                                          |   4%
-  |                                                                                   
-  |=======                                                                      |   9%
-  |                                                                                   
-  |==========                                                                   |  13%
-  |                                                                                   
-  |=============                                                                |  17%
-  |                                                                                   
-  |=================                                                            |  22%
-  |                                                                                   
-  |====================                                                         |  26%
-  |                                                                                   
-  |=======================                                                      |  30%
-  |                                                                                   
-  |===========================                                                  |  35%
-  |                                                                                   
-  |==============================                                               |  39%
-  |                                                                                   
-  |=================================                                            |  43%
-  |                                                                                   
-  |=====================================                                        |  48%
-  |                                                                                   
-  |========================================                                     |  52%
-  |                                                                                   
-  |============================================                                 |  57%
-  |                                                                                   
-  |===============================================                              |  61%
-  |                                                                                   
-  |==================================================                           |  65%
-  |                                                                                   
-  |======================================================                       |  70%
-  |                                                                                   
-  |=========================================================                    |  74%
-  |                                                                                   
-  |============================================================                 |  78%
-  |                                                                                   
-  |================================================================             |  83%
-  |                                                                                   
-  |===================================================================          |  87%
-  |                                                                                   
-  |======================================================================       |  91%
-  |                                                                                   
-  |==========================================================================   |  96%
-  |                                                                                   
-  |=============================================================================| 100%</code></pre>
+
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot a the NDVI  for the first date (2013-09-14)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">sinop</span>,</span>
@@ -356,7 +308,7 @@ Figure 3: Color composite image MODIS cube for 2013-09-14 (red = EVI, green = ND
 <code class="sourceCode R"><span><span class="co"># show the R object that describes the data cube</span></span>
 <span><span class="va">sinop</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; # A tibble: 1 × 11
-#&gt;   source collection satellite sensor tile        xmin      xmax      ymin    ymax crs  
+#&gt;   source collection satellite sensor tile        xmin      xmax      ymin    ymax crs
 #&gt;   &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;
 #&gt; 1 BDC    MOD13Q1-6  TERRA     MODIS  012010 -6181982. -5963298. -1353336. -1.23e6 "PRO…
 #&gt; # ℹ 1 more variable: file_info &lt;list&gt;</code></pre>
@@ -372,8 +324,8 @@ Figure 3: Color composite image MODIS cube for 2013-09-14 (red = EVI, green = ND
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"samples_matogrosso_mod13q1"</span>, package <span class="op">=</span> <span class="st">"sitsdata"</span><span class="op">)</span></span>
 <span><span class="va">samples_matogrosso_mod13q1</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="op">]</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; # A tibble: 2 × 7
-#&gt;   longitude latitude start_date end_date   label   cube     time_series      
-#&gt;       &lt;dbl&gt;    &lt;dbl&gt; &lt;date&gt;     &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt;    &lt;list&gt;           
+#&gt;   longitude latitude start_date end_date   label   cube     time_series
+#&gt;       &lt;dbl&gt;    &lt;dbl&gt; &lt;date&gt;     &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt;    &lt;list&gt;
 #&gt; 1     -57.8    -9.76 2006-09-14 2007-08-29 Pasture bdc_cube &lt;tibble [23 × 5]&gt;
 #&gt; 2     -59.4    -9.31 2014-09-14 2015-08-29 Pasture bdc_cube &lt;tibble [23 × 5]&gt;</code></pre>
 <p>The data structure associated to the time series is a table that contains data and metadata. The first six columns contain the metadata: spatial and temporal information, the label assigned to the sample, and the data cube from where the data has been extracted. The <code>time_series</code> column contains the time series data for each spatiotemporal location. This data is also organized as a table, with a column with the dates and the other columns with the values for each spectral band. For more details on how to handle time series data, please see the “Working with Time Series” chapter.</p>
@@ -487,7 +439,7 @@ Figure 8: Classification map for Sinop
 <code class="sourceCode R"><span><span class="co"># show the location of the classification file</span></span>
 <span><span class="va">sinop_map</span><span class="op">$</span><span class="va">file_info</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; # A tibble: 1 × 12
-#&gt;   band  start_date end_date   ncols nrows  xres  yres      xmin     xmax    ymin    ymax path 
+#&gt;   band  start_date end_date   ncols nrows  xres  yres      xmin     xmax    ymin    ymax path
 #&gt;   &lt;chr&gt; &lt;date&gt;     &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;
 #&gt; 1 class 2013-09-14 2014-08-29   944   551  232.  232. -6181982.  -5.96e6 -1.35e6 -1.23e6 ./te…</code></pre>
 <p>As shown in this “Introduction”, <code>sits</code> provides an end-to-end API to land use and land cover classification. In what follows, each chapter provides a detailed description of the training, modelling and classification workflow.</p>
@@ -514,7 +466,7 @@ Figure 8: Classification map for Sinop
 
       <div class="book-extra">
         <ul class="list-unstyled">
-          
+
         </ul>
 </div>
     </nav>
