@@ -24,7 +24,6 @@
 *.utf8.md
 *.knit.md
 samples_*.rds
-*.tif
 .DS_Store
 # add bookdown files
 _bookdown_files
