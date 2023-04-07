@@ -118,7 +118,7 @@ sinop <- sits_cube(
   data_dir = system.file("extdata/sinop", package = "sitsdata"),  
   parse_info = c("X1", "X2", "tile", "band", "date")
 )
-# Plot a the NDVI  for the first date (2013-09-14)
+# Plot the NDVI for the first date (2013-09-14)
 plot(sinop, 
      band = "NDVI", 
      dates = "2013-09-14",

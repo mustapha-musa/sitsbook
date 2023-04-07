@@ -28,7 +28,7 @@ The package provides functions for data manipulation and displaying information 
 sits_labels_summary(samples_matogrosso_mod13q1)
 ```
 
-In many cases, it is helpful to relabel the data set. For example, there may be situations when one wants to use a smaller set of labels, since samples in one label on the original set may not be distinguishable from samples with other labels. We then could use `sits_labels()<-` to assign new labels). The example below shows how to do relabelling on a time series set shown above; all samples associated with crops are grouped in a single "Croplands" label.
+In many cases, it is helpful to relabel the data set. For example, there may be situations when one wants to use a smaller set of labels since samples in one label on the original set may not be distinguishable from samples with other labels. We then could use `sits_labels()<-` to assign new labels). The example below shows how to do relabelling on a time series set shown above; all samples associated with crops are grouped in a single "Croplands" label.
 ```{r, tidy = "styler"}
 # Copy the sample set for Mato Grosso 
 samples_new_labels <- samples_matogrosso_mod13q1
@@ -78,7 +78,7 @@ To get a set of time series in sits, one must first create a regular data cube a
 3. A shapefile containing either POINT or POLYGON geometries. See details below.
 4. An `sf` object (from the `sf` package) with POINT or POLYGON geometry information. See details below.
 
-In the example below, given a data cube the user provides the latitude and longitude of the desired location. Since the bands, start date, and end date of the time series are missing, `sits` obtains them from the data cube. The result is a tibble with one time series that can be visualized using `plot()`.
+In the example below, given a data cube, the user provides the latitude and longitude of the desired location. Since the bands, start date, and end date of the time series are missing, `sits` obtains them from the data cube. The result is a tibble with one time series that can be visualized using `plot()`.
 \newpage
 ```{r, tidy="styler", fig.align="center", out.width="90%", fig.cap="NDVI and EVI time series fetched from local raster cube.", message = FALSE}
 # Obtain a raster cube based on local files
@@ -160,7 +160,7 @@ The literature on satellite image time series has several applications of filter
 
 ### Savitzky–Golay filter{-}
 
-The Savitzky-Golay filter fits a successive array of $2n+1$ adjacent data points with a $d$-degree polynomial through linear least squares. The main parameters for the filter are  the polynomial degree ($d$) and the length of the window data points ($n$). It generally produces smoother results for a larger value of $n$ and/or a smaller value of $d$ [@Chen2004]. The optimal value for these two parameters can vary from case to case. In SITS, the user can set the order of the polynomial using the parameter `order` (default = 3), the size of the temporal window with the parameter `length` (default = 5), and the temporal expansion with the parameter `scaling` (default = 1). The following example shows the effect of Savitsky-Golay filter on a point extracted from the MOD13Q1 product, ranging from 2000-02-18 to 2018-01-01.
+The Savitzky-Golay filter fits a successive array of $2n+1$ adjacent data points with a $d$-degree polynomial through linear least squares. The main parameters for the filter are the polynomial degree ($d$) and the length of the window data points ($n$). It generally produces smoother results for a larger value of $n$ and/or a smaller value of $d$ [@Chen2004]. The optimal value for these two parameters can vary from case to case. In SITS, the user can set the order of the polynomial using the parameter `order` (default = 3), the size of the temporal window with the parameter `length` (default = 5), and the temporal expansion with the parameter `scaling` (default = 1). The following example shows the effect of Savitsky-Golay filter on a point extracted from the MOD13Q1 product, ranging from 2000-02-18 to 2018-01-01.
 
 
 ```{r, fig.align="center", out.width="90%", fig.cap="Savitzky-Golay filter applied on a multi-year NDVI time series."}
@@ -173,7 +173,7 @@ point_sg <- sits_sgolay(point_ndvi, length = 11)
 sits_merge(point_sg, point_ndvi) %>% plot()
 ```
 
-Notice that the resulting smoothed curve has both desirable and unwanted properties. For 2000 to 2008, the Savitsky-Golay filter removes noise from clouds. However, after 2010, when the region was converted to agriculture, the filter removes an important part of the natural variability from the crop cycle. Therefore, the `length` parameter is arguably too big, resulting in oversmoothing. Users can try to reduce this parameter and analyze the results.
+Notice that the resulting smoothed curve has both desirable and unwanted properties. From 2000 to 2008, the Savitsky-Golay filter removes noise from clouds. However, after 2010, when the region was converted to agriculture, the filter removes an important part of the natural variability from the crop cycle. Therefore, the `length` parameter is arguably too big, resulting in oversmoothing. Users can try to reduce this parameter and analyze the results.
 
 ### Whittaker filter{-}
 

@@ -78,7 +78,7 @@ The result of `sits_cube()` is a tibble with a description of the selected image
 
 ## Assessing Amazon Web Services{-}
 
-Amazon Web Services (AWS) holds two kinds of collections: *open-data* and *requester-pays*. Open data collections can be accessed without cost. Requester-pays collections require payment to an AWS account. Currently, `sits` supports collections `SENTINEL-S2-L2A` (requester-pays) and `SENTINEL-S2-L2A-COGS` (open-data). Both collections include all Sentinel-2/2A bands.  The bands in 10m resolution are `B02`, `B03`, `B04`, and `B08`. The  20m bands are `B05`, `B06`, `B07`, `B8A`, `B11`, and `B12`. Bands `B01` and `B09` are available at 60m resolution. A `CLOUD` band is also available. The example below shows how to access one tile of the open data `SENTINEL-S2-L2A-COGS` collection.  The `tiles` parameter allows selection of desired area according to the MGRS reference system. 
+Amazon Web Services (AWS) holds two kinds of collections: *open-data* and *requester-pays*. Open data collections can be accessed without cost. Requester-pays collections require payment to an AWS account. Currently, `sits` supports collections `SENTINEL-S2-L2A` (requester-pays) and `SENTINEL-S2-L2A-COGS` (open-data). Both collections include all Sentinel-2/2A bands.  The bands in 10m resolution are `B02`, `B03`, `B04`, and `B08`. The  20m bands are `B05`, `B06`, `B07`, `B8A`, `B11`, and `B12`. Bands `B01` and `B09` are available at 60m resolution. A `CLOUD` band is also available. The example below shows how to access one tile of the open data `SENTINEL-S2-L2A-COGS` collection.  The `tiles` parameter allows selecting the desired area according to the MGRS reference system. 
 
 ```{r, tidy="styler"}
 # Create a data cube covering an area in Brazil
@@ -155,7 +155,7 @@ plot(dea_cube, red = "B11", blue = "B05", green = "B8A",)
 
 ## Assessing the Brazil Data Cube{-}
 
-The [Brazil Data Cube](http://brazildatacube.org/) (BDC) is built by Brazil’s National Institute for Space Research (INPE). The BDC uses three hierarchical grids based on the Albers Equal Area projection and SIRGAS 2000 datum. The three grids are generated taking -54$^\circ$ longitude as the central reference and defining tiles of $6\times4$, $3\times2$ and $1.5\times1$ degrees. The large grid has tiles of $672\times440$ km^2^ and is used for CBERS-4 AWFI collections at 64 meter resolution; each CBERS-4 AWFI tile contains images of $10,504\times6,865$ pixels. The medium grid is used for Landsat-8 OLI collections at 30 meter resolution; tiles have an extension of $336\times220$ km^2^ and each image has $11,204\times7,324$ pixels. The small grid covers $168\times110$ km^2^ and is used for Sentinel-2 MSI collections at 10m resolutions; each image has $16,806\times10,986$ pixels. The data cubes in the BDC are regularly spaced in time and cloud-corrected [@Ferreira2020a]. 
+The [Brazil Data Cube](http://brazildatacube.org/) (BDC) is built by Brazil’s National Institute for Space Research (INPE). The BDC uses three hierarchical grids based on the Albers Equal Area projection and SIRGAS 2000 datum. The three grids are generated taking -54$^\circ$ longitude as the central reference and defining tiles of $6\times4$, $3\times2$, and $1.5\times1$ degrees. The large grid has tiles of $672\times440$ km^2^ and is used for CBERS-4 AWFI collections at 64 meter resolution; each CBERS-4 AWFI tile contains images of $10,504\times6,865$ pixels. The medium grid is used for Landsat-8 OLI collections at 30 meter resolution; tiles have an extension of $336\times220$ km^2^, and each image has $11,204\times7,324$ pixels. The small grid covers $168\times110$ km^2^ and is used for Sentinel-2 MSI collections at 10m resolutions; each image has $16,806\times10,986$ pixels. The data cubes in the BDC are regularly spaced in time and cloud-corrected [@Ferreira2020a]. 
 
 ```{r, echo = FALSE, out.width="80%", fig.align="center", fig.cap="Hierarchical BDC tiling system showing overlayed on Brazilian Biomes (a), illustrating that one large tile (b) contains four medium tiles (c) and that medium tile contains four small tiles. Source: Ferreira et al.(2020). Reproduction under fair use doctrine."}
 
@@ -209,7 +209,7 @@ The example shows how to define a data cube using files from the `sitsdata` pack
 library(sits)
 # Create a cube based on a stack of CBERS data
 data_dir <- system.file("extdata/Rondonia-20LKP", package = "sitsdata")
-# list the first file
+# List the first file
 list.files(data_dir)[1]
 ```
 
@@ -232,7 +232,7 @@ It is also possible to create local cubes based on results that have been produc
 1. `source`:  name of the original data provider. 
 2. `collection`:  name of the collection from where the data was extracted. 
 3. `data_dir`: local directory for the classified images.
-4. `band`: Band name associated to the type of result. Use: (a) `probs` for probability cubes produced by `sits_classify()`; (b) `bayes`, for cubes produced by `sits_smooth()`; (c) `entropy`, `least`, `ratio` or `margin`, according to the method selected when using `sits_uncertainty()`; and (d) `class` for labeled cubes.
+4. `band`: Band name associated with the type of result. Use: (a) `probs` for probability cubes produced by `sits_classify()`; (b) `bayes`, for cubes produced by `sits_smooth()`; (c) `entropy`, `least`, `ratio` or `margin`, according to the method selected when using `sits_uncertainty()`; and (d) `class` for labeled cubes.
 5. `labels`: Labels associated with the classification results (not required for cubes produced by `sits_uncertainty()`).
 6. `version`: Version of the result (default = `v1`).
 7. `parse_info`: File name parsing information to allow `sits` to deduce the values of `tile`, `start_date`, `end_date`, `band`, and `version` from the file name. Unlike non-classified image files, cubes produced by classification and post-classification have both `start_date` and `end_date`. 
@@ -303,4 +303,4 @@ reg_cube %>%
     plot(red = "B12", green = "B8A", blue = "B05")
 ```
 
-After obtaining a regular data cube, users can perform data analysis and classification operations, as shown in the follwing chapters.
+After obtaining a regular data cube, users can perform data analysis and classification operations, as shown in the following chapters.
