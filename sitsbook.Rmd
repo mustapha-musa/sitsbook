@@ -7,7 +7,7 @@ author:
 - Felipe Souza
 - Charlotte Pelletier
 - Alber Sanchez
-- Pedro Ribeiro Andrade
+- Pedro R. Andrade
 - Karine Ferreira
 - Gilberto Queiroz
 date: "`r Sys.Date()`"
@@ -56,7 +56,7 @@ library(tibble)
 
 <a href="https://github.com/e-sensing/sitsbook"><img class="cover" src="images/cover_sits_book.png" width="326" align="right" alt="Cover image" /></a>
 
-Satellite images provide key information on the Earth’s environment and the impacts caused by human actions. Petabytes of Earth observation data are now open and free, making the full extent of image archives available for researchers and experts.  Remote sensing experts can now track environmental change using satellite image time series.  Using image time series, analysts make best use of the full extent of big Earth observation data collections, capturing subtle changes in ecosystem health and condition and improving the distinction between different land classes.
+Satellite images provide key information on the Earth’s environment and the impacts caused by human actions. Petabytes of Earth observation data are now open and free, making the full extent of image archives available for researchers and experts. Remote sensing experts can now track environmental change using satellite image time series. Using image time series, analysts make best use of the full extent of big Earth observation data collections, capturing subtle changes in ecosystem health and condition and improving the distinction between different land classes.
 
 This book introduces `sits`, an open-source **R** package for land use and land cover classification of big Earth observation data using satellite image time series. Users build regular data cubes from cloud services such as Amazon Web Services, Microsoft Planetary Computer, Brazil Data Cube, and Digital Earth Africa. The `sits` API includes an assessment of training sample quality, machine learning and deep learning classification algorithms, and Bayesian post-processing methods for smoothing and uncertainty assessment. To evaluate results, `sits` supports best practice accuracy assessments.
 

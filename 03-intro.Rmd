@@ -15,27 +15,27 @@ dir.create("./tempdir/chp3")
 
 ## Why work with satellite image time series?{-}
 
-Satellite images are the most comprehensive source of data about our environment.  Covering a large area of the Earth's surface, images allow researchers to study regional and global changes. Sensors capture data in multiple spectral bands to measure the physical, chemical, and biological properties of the Earth's surface. Covering the same location multiple times, satellites provide data on changes in the environment and survey areas that are difficult to observe from the ground. Given its unique features, images provide essential information for many applications, including deforestation, crop production, food security, urban footprints, water scarcity, and land degradation.
+Satellite images are the most comprehensive source of data about our environment.  Covering a large area of the Earth's surface, images allow researchers to study regional and global changes. Sensors capture data in multiple spectral bands to measure the physical, chemical, and biological properties of the Earth's surface. By observing the same location multiple times, satellites provide data on changes in the environment and survey areas that are difficult to observe from the ground. Given its unique features, images offer essential information for many applications, including deforestation, crop production, food security, urban footprints, water scarcity, and land degradation.
 
 A time series is a set of data points collected at regular intervals over time. Time series data is used to analyze trends, patterns, and changes. Satellite image time series refer to time series obtained from a collection of images captured by a satellite over a period of time, typically months or years. Using time series, experts improve their understanding of ecological patterns and processes. Instead of selecting individual images from specific dates and comparing them, researchers track change continuously [@Woodcock2020]. 
 
 ## Time-first, space-later{-}
 
-"Time-first, space-later" is a concept in satellite image classification that takes time series analysis as the first step for analyzing remote sensing data, with spatial information being considered after all time series are classified. The *time-first* approach brings a better understanding of changes in landscapes. Detecting and tracking trends in the data, including seasonal and long-term trends becomes feasible, as well as identifying anomalous events or patterns in the data, such as wildfires, floods, or droughts.
+"Time-first, space-later" is a concept in satellite image classification that takes time series analysis as the first step for analyzing remote sensing data, with spatial information being considered after all time series are classified. The *time-first* approach brings a better understanding of changes in landscapes. Detecting and tracking seasonal and long-term trends becomes feasible, as well as identifying anomalous events or patterns in the data, such as wildfires, floods, or droughts.
 
-The *space-later* part requires spatial data analysis that use the neighborhood of each pixel. The classification assigned to each pixel by time series classification is taken as a prior probability information. Using additional data from the pixel's neighborhood, users obtain the posterior probability distribution per pixel. This Bayesian inference method allows combining the spatial with the temporal information for each pixel.  
+The *space-later* part requires spatial data analysis that uses the neighborhood of each pixel. The classification assigned to each pixel by time series classification is taken as prior probability information. Using additional data from the pixel's neighborhood, users obtain the posterior probability distribution per pixel. This Bayesian inference method allows combining the spatial with the temporal information for each pixel.  
 
 ## How `sits` works {.unnumbered}
 
-The `sits` package uses satellite image time series to for land classification, using  a *time-first, space-later* approach. In the data preparation part, collections of big Earth observation images are organized as data cubes. Each spatial location of a data cube is associated to a time series. Locations with known labels train a machine learning classifier, which classifies all time series of a data cube, as shown in Figure 1.
+The `sits` package uses satellite image time series for land classification, using  a *time-first, space-later* approach. In the data preparation part, collections of big Earth observation images are organized as data cubes. Each spatial location of a data cube is associated with a time series. Locations with known labels train a machine learning classifier, which classifies all time series of a data cube, as shown in Figure 1.
 
 ```{r, echo = FALSE, out.width = "70%", out.height = "70%", fig.align="center", fig.cap="Using time series for land classification (source: authors)"}
 knitr::include_graphics("images/sits_general_view.png")
 ```
 
-The package provides tools for analysis, visualization and classification of satellite image time series. Users follow a typical workflow:
+The package provides tools for analysis, visualization, and classification of satellite image time series. Users follow a typical workflow:
 
-1.  Select an analysis-ready data image collection on cloud providers such as AWS, Microsoft Planetary Computer, Digital Earth Africa and Brazil Data Cube.
+1.  Select an analysis-ready data image collection on cloud providers such as AWS, Microsoft Planetary Computer, Digital Earth Africa, and Brazil Data Cube.
 2.  Build a regular data cube using the chosen image collection.
 3.  Obtain new bands and indices with operations on data cubes.
 4.  Extract time series samples from the data cube to be used as training data.
@@ -46,7 +46,7 @@ The package provides tools for analysis, visualization and classification of sat
 9.  Produce a labeled map from the post-processed probability cube.
 10. Evaluate the accuracy of the classification using best practices.
 
-Each step of workflow corresponds to a function of the `sits` API, as shown in the table and figure below. These functions have convenient default parameters and behavior. A single function builds machine learning (ML) models. The classification function processes big data cubes with efficient parallel processing. Since the `sits` API is simple to learn, users can achieve good results without in-depth knowledge about machine learning and parallel processing.
+Each workflow step corresponds to a function of the `sits` API, as shown in the table and figure below. These functions have convenient default parameters and behavior. A single function builds machine learning (ML) models. The classification function processes big data cubes with efficient parallel processing. Since the `sits` API is simple to learn, users can achieve good results without in-depth knowledge about machine learning and parallel processing.
 
 ```{r, echo = FALSE}
 library(kableExtra)
@@ -97,28 +97,28 @@ knitr::include_graphics("images/sits_api.png")
 
 ## Creating a Data Cube {.unnumbered}
 
-There are two kinds of data cubes in `sits`: (a) irregular data cubes generated by selecting image collections image collections on cloud providers such as AWS and Planetary Computer; (b) regular data cubes with images fully covering a chosen area, where each image has the same spectral bands and spatial resolution, and images follow a set of adjacent and regular time intervals. Machine learning applications need regular data cubes. For further details, please refer to Chapter "Earth Observation Data Cubes".
+There are two kinds of data cubes in `sits`: (a) irregular data cubes generated by selecting image collections on cloud providers such as AWS and Planetary Computer; (b) regular data cubes with images fully covering a chosen area, where each image has the same spectral bands and spatial resolution, and images follow a set of adjacent and regular time intervals. Machine learning applications need regular data cubes. Please refer to Chapter "Earth Observation Data Cubes" for further details.
 
 The first steps in using `sits` are: (a) select an analysis-ready data image collection available in a cloud provider or stored locally using `sits_cube()`; (b) if the collection is not regular, use `sits_regularize()` to build a regular data cube.
 
-This section shows how to build a data cube from local images already organized as a regular data cube. The data cube is composed of of MODIS MOD13Q1 images for the Sinop region in Mato Grosso, Brazil. All images have indexes "NDVI" and "EVI" covering a one-year period from 2013-09-14 to 2014-08-29 (we use "year-month-day" for dates). There are 23 time instances, each covering a 16-day period. The data is available in the R package `sitsdata`.
+This section shows how to build a data cube from local images already organized as a regular data cube. The data cube is composed of MODIS MOD13Q1 images for the Sinop region in Mato Grosso, Brazil. All images have indexes "NDVI" and "EVI" covering a one-year period from 2013-09-14 to 2014-08-29 (we use "year-month-day" for dates). There are 23 time instances, each covering a 16-day period. The data is available in the R package `sitsdata`.
 
-To build a data cube from local files, users need to provide information about the original source from with the data was obtained. In this case, `sits_cube()` needs the parameters:
+To build a data cube from local files, users must provide information about the original source from which the data was obtained. In this case, `sits_cube()` needs the parameters:
 
-(a) `source`, the cloud provider from where the data has been obtained (in this case the Brazil Data Cube "BDC");
+(a) `source`, the cloud provider from where the data has been obtained (in this case, the Brazil Data Cube "BDC");
 (b) `collection`, the collection from where the images have been extracted. In this case, data comes from the MOD13Q1 collection 6; 
 (c) `data_dir`, the local directory where the image files are stored; 
-(d) `parse_info`, stating how file names store information on tile, band and date. In this case, local images stored as `TERRA_MODIS_012010_EVI_2014-07-28.tif`. 
+(d) `parse_info`, stating how file names store information on tile, band, and date. In this case, local images are stored as `TERRA_MODIS_012010_EVI_2014-07-28.tif`. 
 
 ```{r, out.width = "100%", tidy="styler", fig.align = 'center', fig.cap="Color composite image MODIS cube for 2013-09-14 (red = EVI, green = NDVI, blue = EVI)."}
-# create a data cube object based on the information about the files
+# Create a data cube object based on the information about the files
 sinop <- sits_cube(
   source = "BDC", 
   collection  = "MOD13Q1-6",
   data_dir = system.file("extdata/sinop", package = "sitsdata"),  
   parse_info = c("X1", "X2", "tile", "band", "date")
 )
-# plot a the NDVI  for the first date (2013-09-14)
+# Plot a the NDVI  for the first date (2013-09-14)
 plot(sinop, 
      band = "NDVI", 
      dates = "2013-09-14",
@@ -127,10 +127,10 @@ plot(sinop,
 ```
 
 
-The R object returned by `sits_cube()` contains the metadata that describes the the contents of the data cube. The metadata includes data source and collection, satellite, sensor, tile in the collection, bounding box, projection, and list of files. Each file refers to one band of an image at one of the temporal instances of the cube.
+The R object returned by `sits_cube()` contains the metadata describing the contents of the data cube. The metadata includes data source and collection, satellite, sensor, tile in the collection, bounding box, projection, and list of files. Each file refers to one band of an image at one of the temporal instances of the cube.
 
 ```{r}
-# show the R object that describes the data cube
+# Show the R object that describes the data cube
 sinop
 ```
 
@@ -139,16 +139,16 @@ sinop
 To handle time series information, `sits` uses a tabular data structure. The example below shows a table with 1,218 time series obtained from MODIS MOD13Q1 images. Each series has four attributes: two bands ("NIR" and "MIR") and two indexes ("NDVI" and "EVI"). This data set is available in package `sitsdata`.
 
 ```{r}
-# load the MODIS samples for Mato Grosso from the "sitsdata" package
+# Load the MODIS samples for Mato Grosso from the "sitsdata" package
 library(tibble)
 library(sitsdata)
 data("samples_matogrosso_mod13q1", package = "sitsdata")
 samples_matogrosso_mod13q1[1:2,]
 ```
 
-The data structure associated to the time series is a table that contains data and metadata. The first six columns contain the metadata: spatial and temporal information, the label assigned to the sample, and the data cube from where the data has been extracted. The `time_series` column contains the time series data for each spatiotemporal location. This data is also organized as a table, with a column with the dates and the other columns with the values for each spectral band. For more details on how to handle time series data, please see the "Working with Time Series" chapter.
+The data structure associated with the time series is a table that contains data and metadata. The first six columns contain the metadata: spatial and temporal information, the label assigned to the sample, and the data cube from where the data has been extracted. The `time_series` column contains the time series data for each spatiotemporal location. This data is also organized as a table, with a column with the dates and the other columns with the values for each spectral band. For more details on handling time series data, please see the "Working with Time Series" Chapter.
 
-It is useful to plot the dispersion of the time series. In what follows, for brevity we will select only one label ("Forest") and one index ("NDVI"). The resulting plot shows all of the time series associated to the label and attribute, highlighting the median and the first and third quartiles.
+It is helpful to plot the dispersion of the time series. In what follows, for brevity, we will select only one label ("Forest") and one index ("NDVI"). The resulting plot shows all the time series associated with the label and attribute, highlighting the median and the first and third quartiles.
 
 ```{r, out.width = "80%", tidy="styler", fig.align = 'center', fig.cap="Joint plot of all samples in band NDVI for class Forest.", strip.white = FALSE}
 samples_forest <- dplyr::filter(
@@ -164,32 +164,32 @@ plot(samples_forest_ndvi)
 
 ## Training a machine learning model {.unnumbered}
 
-The next step is to train a machine learning (ML) model using `sits_train()`. It takes two inputs, `samples` (a time series table) and `ml_method` (a function that implements a machine learning algorithm). The result is a model that is used for classification. Each ML algorithm requires specific parameters that are user-controllable. For novice users, `sits` provides default parameters which produce a good result. For more details, please see the "Machine Learning for Data Cubes" chapter. 
+The next step is to train a machine learning (ML) model using `sits_train()`. It takes two inputs, `samples` (a time series table) and `ml_method` (a function that implements a machine learning algorithm). The result is a model that is used for classification. Each ML algorithm requires specific parameters that are user-controllable. For novice users, `sits` provides default parameters that produce a good result. Please see the "Machine Learning for Data Cubes" Chapter for more details.
 
-Since the time series data has four attributes ("EVI", "NDVI", "NIR", "MIR") and the data cube images only two, we select the "NDVI" and "EVI" values and use the resulting data for training. To build the classification model, we use a random forest model called by the `sits_rfor()` function.
+Since the time series data has four attributes ("EVI", "NDVI", "NIR", "MIR") and the data cube images are only two, we select the "NDVI" and "EVI" values and use the resulting data for training. To build the classification model, we use a random forest model called by the `sits_rfor()` function.
 
 ```{r, out.width = "80%", tidy="styler", fig.align="center", fig.cap="Most relevant variables of trained random forests model."}
-# select the bands "ndvi", "evi"
+# Select the bands "ndvi", "evi"
 samples_2bands <- sits_select(
     data = samples_matogrosso_mod13q1, 
     bands = c("NDVI", "EVI"))
 
-# train a random forest model
+# Train a random forest model
 rf_model <- sits_train(
     samples = samples_2bands, 
     ml_method = sits_rfor()
 )
-# plot the most important variables of the model
+# Plot the most important variables of the model
 plot(rf_model)
 ```
 
 ## Data cube classification {.unnumbered}
 
-After training the machine learning model, the next step is to classify the data cube using `sits_classify()`. This function produces a set of raster probability maps, one for each class. For each of these maps, the value of a pixel is proportional to the the probability that it belongs to the class. This function has two mandatory parameters: `data`, the data cube or time series tibble to be classified; and `ml_model`, the trained ML model. Optional parameters include: (a) `multicores`, number of cores to be used; (b) `memsize`, RAM used in the classification; (c) `output_dir`, the directory where the classified files will be written. Details of the classification process are available in "Classification of Images in Data Cubes".
+After training the machine learning model, the next step is to classify the data cube using `sits_classify()`. This function produces a set of raster probability maps, one for each class. For each of these maps, the value of a pixel is proportional to the probability that it belongs to the class. This function has two mandatory parameters: `data`, the data cube or time series tibble to be classified; and `ml_model`, the trained ML model. Optional parameters include: (a) `multicores`, number of cores to be used; (b) `memsize`, RAM used in the classification; (c) `output_dir`, the directory where the classified files will be written. Details of the classification process are available in "Classification of Images in Data Cubes".
 
 ```{r, out.width = "90%", tidy="styler", fig.align = 'center', fig.cap = "Probability map for class Forest."}
 
-# classify the raster image
+# Classify the raster image
 sinop_probs <- sits_classify(
     data = sinop, 
     ml_model = rf_model,
@@ -197,18 +197,18 @@ sinop_probs <- sits_classify(
     memsize = 8,
     output_dir = "./tempdir/chp3"
 )
-# plot the probability cube for class Forest
+# Plot the probability cube for class Forest
 plot(sinop_probs, labels = c("Forest"), palette = "BuGn")
 ```
 
-After classification has been completed, we plot the probability maps for class "Forest". Probability maps are useful to visualize the degree of confidence that the classifier assigns to the labels for each pixel and can be used to produce uncertainty information and support active learning, as described in Chapter "Data Cube Classification".
+After completing the classification, we plot the probability maps for class "Forest". Probability maps are helpful to visualize the degree of confidence the classifier assigns to the labels for each pixel and can be used to produce uncertainty information and support active learning, as described in Chapter "Data Cube Classification".
 
 ## Spatial smoothing {.unnumbered}
 
 When working with big EO data, there is much variability in each class. As a result, some pixels will be misclassified. These errors are more likely to occur in transition areas between classes. To address these problems, `sits_smooth()` takes a probability cube as input and  uses the class probabilities of each pixel's neighborhood to reduce labeling uncertainty. Plotting the smoothed probability map for class "Forest" shows that most outliers have been removed.
 
 ```{r, out.width = "90%",  tidy="styler", fig.align = 'center', fig.cap = "Smoothed probability map for class Forest."}
-# perform spatial smoothing
+# Perform spatial smoothing
 sinop_bayes <- sits_smooth(
     cube = sinop_probs,
     multicores = 2,
@@ -220,12 +220,12 @@ plot(sinop_bayes, labels = c("Forest"), palette = "BuGn")
 
 ## Labelling a probability data cube {.unnumbered}
 
-After removing outliers using local smoothing, one can obtain the labeled classification map using the function `sits_label_classification()`. This function assigns each pixel to the class with highest probability.
+After removing outliers using local smoothing, one can obtain the labeled classification map using the function `sits_label_classification()`. This function assigns each pixel to the class with the highest probability.
 \newpage
 
 ```{r, out.width = "100%", out.height = "75%", tidy="styler", fig.cap = "Classification map for Sinop", fig.align="center"}
 
-# label the probability file 
+# Label the probability file 
 sinop_map <- sits_label_classification(
     cube = sinop_bayes, 
     output_dir = "./tempdir/chp3"
@@ -236,10 +236,8 @@ plot(sinop_map, title = "Sinop Classification Map")
 The resulting classification files can be read by QGIS. Links to the associated files are available in the `sinop_map` object in the nested table `file_info`.
 
 ```{r}
-# show the location of the classification file
+# Show the location of the classification file
 sinop_map$file_info[[1]]
 ```
 
-As shown in this "Introduction", `sits` provides an end-to-end API to land use and land cover classification. In what follows, each chapter provides a detailed description of the training, modelling and classification workflow. 
-
-
+As shown in this "Introduction", `sits` provides an end-to-end API to land use and land cover classification. In what follows, each chapter provides a detailed description of the training, modeling, and classification workflow. 

@@ -1,6 +1,6 @@
 # Setup {.unnumbered}
 
-The `sits` package relies on the `sf` and `terra` **R** packages, which in turn require the GDAL and PROJ libraries. Please follow the instructions below for installing `sf` and `terra` together with GDAL, provided by Edzer Pebesma.
+The `sits` package relies on the `sf` and `terra` **R** packages, which require the GDAL and PROJ libraries. Please follow the instructions below for installing `sf` and `terra` together with GDAL, provided by Edzer Pebesma.
 
 ## Support for GDAL and PROJ {.unnumbered}
 
@@ -55,7 +55,7 @@ torch::install_torch()
 
 ## Installing the `sits` package {.unnumbered}
 
-After installing `sf`, `terra`, `torch` and `luz`, please proceed to install `sits`,  which is available on CRAN and should be installed as a normal **R** package.
+After installing `sf`, `terra`, `torch` and `luz`, please proceed to install `sits`,  which is available on CRAN and should be installed as a regular **R** package.
 
 ```{r, eval = FALSE}
 install.packages("sits", dependencies = TRUE)
