@@ -4,44 +4,44 @@
 source("common.R")
 ```
 
-Selecting good training samples for machine learning classification of satellite images is critical to achieving accurate results. Experience with machine learning methods has demonstrated that the number and quality of training samples are critical factors in obtaining accurate results [@Maxwell2018]. Large and accurate datasets are preferable, regardless of the algorithm used, while noisy training samples can negatively impact classification performance [@Frenay2014]. Thus, it is beneficial to use pre-processing methods to improve the quality of samples and eliminate those that may have been incorrectly labeled or possess low discriminatory power.
+Selecting good training samples for machine learning classification of satellite images is critical to achieving accurate results. Experience with machine learning methods has demonstrated that the number and quality of training samples are crucial factors in obtaining accurate results [@Maxwell2018]. Large and accurate datasets are preferable, regardless of the algorithm used, while noisy training samples can negatively impact classification performance [@Frenay2014]. Thus, it is beneficial to use pre-processing methods to improve the quality of samples and eliminate those that may have been incorrectly labeled or possess low discriminatory power.
 
-One needs to distinguish between wrongly labelled samples and differences that result from natural variability of class signatures. When training data is collected over a large geographic region, natural variability of vegetation phenology leads to different patterns being assigned to the same label. A related issue is the limitation of crisp boundaries to describe the natural world. Class definitions use idealized descriptions (e.g., "a savanna woodland has tree cover of 50% to 90% ranging from 8 to 15 meters in height"). In practice, the boundaries between classes are fuzzy and sometimes overlap, making it hard to distinguish between them. To help users improve sample quality, `sits` provides methods for evaluate training data
+One needs to distinguish between wrongly labeled samples and differences resulting from the natural variability of class signatures. When training data belongs to a large geographic region, the natural variability of vegetation phenology leads to different patterns being assigned to the same label. A related issue is the limitation of crisp boundaries to describe the natural world. Class definitions use idealized descriptions (e.g., "a savanna woodland has tree cover of 50% to 90% ranging from 8 to 15 meters in height"). In practice, the boundaries between classes are fuzzy and sometimes overlap, making it hard to distinguish between them. To help users improve sample quality, `sits` provides methods for evaluating the training data.
 
 ## Geographical variability of training samples{-}
 
-When working with machine learning classification of Earth observation data, it is important to evaluate if the training samples are well distributed in the study area. In many cases, training data comes from ground surveys made at chosen location. When working in large areas, ideally one needs a representative sample which captures spatial variability. In practice, however, ground surveys or other means of data collection are limited to selected areas. In many case, the geographical distribution of the training data does not cover the study area equally. Such mismatch can be a problem for achieving a good quality classification. As stated by Meyer and Pebesma[@Meyer2022]: "large gaps in geographic space do not always imply large gaps in feature space". 
+When working with machine learning classification of Earth observation data, it is important to evaluate if the training samples are well distributed in the study area. Training data often comes from ground surveys made at chosen locations. When working in large areas, ideally one needs a representative sample that captures spatial variability. In practice, however, ground surveys or other means of data collection are limited to selected areas. In many cases, the geographical distribution of the training data does not cover the study area equally. Such mismatch can be a problem for achieving a good quality classification. As stated by Meyer and Pebesma[@Meyer2022]: "large gaps in geographic space do not always imply large gaps in feature space". 
 
-Meyer and Pebesma[@Meyer2022] propose the use of spatial distance distribution plot, which display two distributions of nearest-neighbor distances: sample-to-sample and prediction-location-to-sample. The difference between the two distributions reflects the degree of spatial clustering in the reference data. Ideally, the two distributions should be similar. Cases where the sample-to-sample distance distribution does not match prediction-location-to-sample distribution indicate possible problems of training data collection. 
+Meyer and Pebesma[@Meyer2022] propose using a spatial distance distribution plot, which displays two distributions of nearest-neighbor distances: sample-to-sample and prediction-location-to-sample. The difference between the two distributions reflects the degree of spatial clustering in the reference data. Ideally, the two distributions should be similar. Cases where the sample-to-sample distance distribution does not match prediction-location-to-sample distribution indicate possible problems in training data collection. 
 
 `sits` implements spatial distance distribution plots with the `sits_geo_dist()` function. This function asks users to provide their training data in the `samples` parameter, and the study area in the `roi` parameter expressed as an `sf` object. Additional parameters are `n` (maximum number of samples for each distribution) and `crs` (coordinate reference system for the samples). By default, `n` is 1000, and `crs` is "EPSG:4326". The example below shows how to use `sits_geo_dist()`. 
 
 ```{r, tidy = "styler", out.width = "100%", message = FALSE, warning = FALSE, fig.cap = "SOM map for the Cerrado samples"}
-# read a shapefile for the state of Mato Grosso, Brazil
+# Read a shapefile for the state of Mato Grosso, Brazil
 mt_shp <- system.file("extdata/shapefiles/mato_grosso/mt.shp",
                       package = "sits")
-# convert to an sf object
+# Convert to an sf object
 mt_sf <- sf::read_sf(mt_shp)
 
-# calculate sample-to-sample and sample-to-prediction distances
+# Calculate sample-to-sample and sample-to-prediction distances
 distances <- sits_geo_dist(
     samples = samples_modis_ndvi,
     roi = mt_sf)
-# plot sample-to-sample and sample-to-prediction distances
+# Plot sample-to-sample and sample-to-prediction distances
 plot(distances)
 ```
-The plot shows a mismatch between the sample-to-sample and the sample-to-prediction distribution. Most samples are closer to each other then they are close to the locatiom where values need to be predicted. In this case, there are many areas where few or no samples have been collected and where the prediction uncertainty will be higher. In this and similar cases, users should invest in improving the distribution of training samples. If that is not possible, they should be aware that areas with insufficient samples could have lower accuracy, and that fact should be reported to potential users of their results. 
+The plot shows a mismatch between the sample-to-sample and the sample-to-prediction distribution. Most samples are closer to each other than they are close to the location where values need to be predicted. In this case, there are many areas where few or no samples have been collected and where the prediction uncertainty will be higher. In this and similar cases, users should invest in improving the distribution of training samples. If that is not possible, they should be aware that areas with insufficient samples could have lower accuracy. This information must be reported to potential users of their results. 
 
 
-## Hierachical clustering for sample quality control{-}
+## Hierarchical clustering for sample quality control{-}
 
-The package provides two clustering methods to assess sample quality: (a) Agglomerative Hierarchical Clustering (AHC); (b) Self-organizing Maps (SOM). These methods have different computational complexities. AHC has a computational complexity of $\mathcal{O}(n^2)$ given the number of time series $n$, whereas SOM complexity is linear with respect to n. For large data, AHC requires an substantial amount of memory and running time; in these cases, SOM is recommended. In this section, we describe how to run AHC in `sits`. The SOM-based technique is presented in the following section.
+The package provides two clustering methods to assess sample quality: (a) Agglomerative Hierarchical Clustering (AHC); (b) Self-organizing Maps (SOM). These methods have different computational complexities. AHC has a computational complexity of $\mathcal{O}(n^2)$, given the number of time series $n$, whereas SOM complexity is linear. For large data, AHC requires substantial memory and running time; in these cases, SOM is recommended. This section describes how to run AHC in `sits`. The SOM-based technique is presented in the following section.
 
-Agglomerative hierarchical clustering (AHC) computes the dissimilarity between any two elements from a data set. Depending on the distance functions and linkage criteria, the algorithm decides which two clusters are merged at each iteration. This approach is useful for exploring samples due to its visualization power and ease of use [@Keogh2003]. In `sits`, AHC is implemented using `sits_cluster_dendro()`.
+Agglomerative hierarchical clustering (AHC) computes the dissimilarity between any two elements from a data set. Depending on the distance functions and linkage criteria, the algorithm decides which two clusters are merged at each iteration. This approach is helpful for exploring samples due to its visualization power and ease of use [@Keogh2003]. In `sits`, AHC is implemented using `sits_cluster_dendro()`.
 
 ```{r, tidy = "styler", cache=TRUE, fig.align="center", out.width="90%", fig.cap="Example of hierarchical clustering for a two class set of time series", message=FALSE}
-# take a set of patterns for 2 classes
-# create a dendrogram, plot, and get the optimal cluster based on ARI index
+# Take a set of patterns for 2 classes
+# Create a dendrogram, plot, and get the optimal cluster based on ARI index
 clusters <- sits_cluster_dendro(
     samples = cerrado_2classes, 
     bands = c("NDVI", "EVI"),
@@ -50,23 +50,23 @@ clusters <- sits_cluster_dendro(
 )
 ```
 
-The `sits_cluster_dendro()` function has one mandatory parameter (`samples`), where users should provide the samples to be evaluated. Optional parameters include `bands`, `dist_method` and `linkage`. The `dist_method` parameter specifies how to calculate the distance between two time series. We recommend a metric that uses dynamic time warping (DTW)[@Petitjean2012], as DTW is reliable method for measuring differences between satellite image time series [@Maus2016]. The options available in `sits` are based on those provided by package `dtwclust`, which include `dtw_basic`, `dtw_lb`, and `dtw2`. Please check `?dtwclust::tsclust` for more information on DTW distances.
+The `sits_cluster_dendro()` function has one mandatory parameter (`samples`), where users should provide the samples to be evaluated. Optional parameters include `bands`, `dist_method`, and `linkage`. The `dist_method` parameter specifies how to calculate the distance between two time series. We recommend a metric that uses dynamic time warping (DTW)[@Petitjean2012], as DTW is a reliable method for measuring differences between satellite image time series [@Maus2016]. The options available in `sits` are based on those provided by package `dtwclust`, which include `dtw_basic`, `dtw_lb`, and `dtw2`. Please check `?dtwclust::tsclust` for more information on DTW distances.
 
-The `linkage` parameter defines the distance metric between clusters. The recommended linkage criteria are: `complete` or `ward.D2`. Complete linkage prioritizes the within-cluster dissimilarities, producing clusters with shorter distance samples, but results are sensitive to outliers. As an alternative, Ward proposes to use the sum-of-squares error to minimize data variance [@Ward1963]; his method is available as `ward.D2` option to the `linkage` parameter.  To cut the dendrogram, the `sits_cluster_dendro()` function computes the adjusted rand index (ARI) [@Rand1971] and returns the height where the cut of the dendrogram maximizes the index . In the example, the ARI index indicates that six (6) clusters are present. The result of `sits_cluster_dendro()` is a time series tibble with one additional column, called "cluster". The function `sits_cluster_frequency()` provides information on the composition of each cluster.
+The `linkage` parameter defines the distance metric between clusters. The recommended linkage criteria are: `complete` or `ward.D2`. Complete linkage prioritizes the within-cluster dissimilarities, producing clusters with shorter distance samples, but results are sensitive to outliers. As an alternative, Ward proposes to use the sum-of-squares error to minimize data variance [@Ward1963]; his method is available as `ward.D2` option to the `linkage` parameter.  To cut the dendrogram, the `sits_cluster_dendro()` function computes the adjusted rand index (ARI) [@Rand1971] and returns the height where the cut of the dendrogram maximizes the index. In the example, the ARI index indicates that six (6) clusters are present. The result of `sits_cluster_dendro()` is a time series tibble with one additional column called "cluster". The function `sits_cluster_frequency()` provides information on the composition of each cluster.
 
 ```{r}
-# show clusters samples frequency
+# Show clusters samples frequency
 sits_cluster_frequency(clusters)
 ```
 
-The cluster frequency table shows that each cluster has a predominance of either "Cerrado" or "Pasture" class with the exception of cluster 3 which has a mix of samples from both classes. Such confusion may have resulted from incorrect labeling, inadequacy of selected bands and spatial resolution, or even a natural confusion due to the variability of the land classes. To remove cluster 3, use `dplyr::filter()`. The resulting clusters still contained mixed labels, possibly resulting from outliers. In this case, users may want to remove the outliers and leave only the most frequent class using `sits_cluster_clean()`. After cleaning the samples, the result set of samples is likely to improve the classification results.
+The cluster frequency table shows that each cluster has a predominance of either "Cerrado" or "Pasture" class, except for cluster 3, which has a mix of samples from both classes. Such confusion may have resulted from incorrect labeling, inadequacy of selected bands and spatial resolution, or even a natural confusion due to the variability of the land classes. To remove cluster 3, use `dplyr::filter()`. The resulting clusters still contained mixed labels, possibly resulting from outliers. In this case, users may want to remove the outliers and leave only the most frequent class using `sits_cluster_clean()`. After cleaning the samples, the result set of samples is likely to improve the classification results.
 
 ```{r}
-# remove cluster 3 from the samples
+# Remove cluster 3 from the samples
 clusters_new <- dplyr::filter(clusters, cluster != 3)
-# clear clusters, leaving only the majority class
+# Clear clusters, leaving only the majority class
 clean <- sits_cluster_clean(clusters_new)
-# show clusters samples frequency
+# Show clusters samples frequency
 sits_cluster_frequency(clean)
 ```
 
@@ -75,14 +75,14 @@ sits_cluster_frequency(clean)
 
 <a href="https://www.kaggle.com/esensing/using-som-for-sample-quality-control-in-sits" target="_blank"><img src="https://kaggle.com/static/images/open-in-kaggle.svg"></a>
 
-As an alternative for hierarchical clustering for quality control of training samples, SITS provides a clustering technique based on self-organizing maps (SOM). SOM is a dimensionality reduction technique [@Kohonen1990], where high-dimensional data is mapped into a two dimensional map, keeping the topological relations between data patterns. As the shown below, the SOM 2D map is composed by units called neurons. Each neuron has a weight vector, with the same dimension as the training samples. At the start, neurons are assigned a small random value and then trained by competitive learning. The algorithm computes the distances of each member of the training set to all neurons and finds the neuron closest to the input, called the best matching unit.
+SITS provides a clustering technique based on self-organizing maps (SOM) as an alternative to hierarchical clustering for quality control of training samples. SOM is a dimensionality reduction technique [@Kohonen1990], where high-dimensional data is mapped into a two-dimensional map, keeping the topological relations between data patterns. As shown below, the SOM 2D map is composed of units called neurons. Each neuron has a weight vector, with the same dimension as the training samples. At the start, neurons are assigned a small random value and then trained by competitive learning. The algorithm computes the distances of each member of the training set to all neurons and finds the neuron closest to the input, called the best matching unit.
 
 ```{r, out.width = "90%", out.height = "90%", echo = FALSE, fig.align="center", fig.cap="SOM 2D map creation (source: Santos et al.(2021). Reproduction under fair use doctrine."}
 
 knitr::include_graphics("images/som_structure.png")
 ```
 
-The input data for quality assessment is a set of training samples, which are high-dimensional data; for example, a time series with 25 instances of 4 spectral bands has 100 dimensions. When projecting a high-dimensional data set into a 2D SOM map, the units of the map (called neurons) compete for each sample. Each time series will be mapped to one of the neurons. Since the number of neurons is smaller than the number of classes, each neuron will be associated to many time series. The resulting 2D map will be a set of clusters. Given that SOM preserves the topological structure of neighborhoods in multiple dimensions, clusters that contain training samples of a given class will usually be neighbors in 2D space. The neighbors of each neuron of a SOM map provide information on intraclass and interclass variability which is used to detect noisy samples. The methodology of using SOM for sample quality assessment is discussed in detail in the reference paper [@Santos2021a].
+The input data for quality assessment is a set of training samples, which are high-dimensional data; for example, a time series with 25 instances of 4 spectral bands has 100 dimensions. When projecting a high-dimensional data set into a 2D SOM map, the units of the map (called neurons) compete for each sample. Each time series will be mapped to one of the neurons. Since the number of neurons is smaller than the number of classes, each neuron will be associated with many time series. The resulting 2D map will be a set of clusters. Given that SOM preserves the topological structure of neighborhoods in multiple dimensions, clusters that contain training samples of a given class will usually be neighbors in 2D space. The neighbors of each neuron of a SOM map provide information on intraclass and interclass variability, which is used to detect noisy samples. The methodology of using SOM for sample quality assessment is discussed in detail in the reference paper [@Santos2021a].
 
 ```{r, out.width = "90%", out.height = "90%", echo = FALSE, fig.align="center", fig.cap="Using SOM for class noise reduction (source: Santos et al.(2021). Reproduction under fair use doctrine."}
 
@@ -92,12 +92,12 @@ knitr::include_graphics("images/methodology_bayes_som.png")
 As an example, we take a set of time series from the Cerrado region of Brazil, the second largest biome in South America with an area of more than 2 million km2. This data ranges from 2000 to 2017 and includes 50,160 land use and cover samples divided into 12 classes("Dense_Woodland", "Dunes", "Fallow_Cotton", "Millet_Cotton", "Pasture", "Rocky_Savanna", "Savanna", "Savanna_Parkland", "Silviculture", "Soy_Corn", "Soy_Cotton", "Soy_Fallow"). Each time series covers 12 months (23 data points) from MOD13Q1 product, and has 4 bands ("EVI", "NDVI", "MIR", and "NIR"). We use bands "NDVI" and "EVI" for faster processing.
 
 ```{r, message = FALSE, tidy = "styler", warning = FALSE}
-# take only the NDVI and EVI bands
+# Take only the NDVI and EVI bands
 samples_cerrado_mod13q1_2bands <- sits_select(
     data = samples_cerrado_mod13q1, 
     bands = c("NDVI", "EVI")
 )
-# show the summary of the samples
+# Show the summary of the samples
 sits_labels_summary(
   data = samples_cerrado_mod13q1_2bands
 )
@@ -105,11 +105,11 @@ sits_labels_summary(
 
 ## Creating the SOM map{-}
 
-To perform the SOM-based quality assessment, the first step is to run `sits_som_map()` which uses the `kohonen` R package [@Wehrens2018] to compute a SOM grid, controlled by five parameters. The grid size is given by `grid_xdim` and `grid_ydim`. The starting learning rate is `alpha`, which decreases during the interactions. To measure separation between samples, use `distance` (either "sumofsquares" or "euclidean"). The number of iterations is set by `rlen`. For more details, please consult `?kohonen::supersom`.
+To perform the SOM-based quality assessment, the first step is to run `sits_som_map()`, which uses the `kohonen` R package [@Wehrens2018] to compute a SOM grid, controlled by five parameters. The grid size is given by `grid_xdim` and `grid_ydim`. The starting learning rate is `alpha`, which decreases during the interactions. To measure the separation between samples, use `distance` (either "sumofsquares" or "euclidean"). The number of iterations is set by `rlen`. For more details, please consult `?kohonen::supersom`.
 
 
 ```{r, tidy = "styler", out.width = "100%", message = FALSE, warning = FALSE, fig.cap = "SOM map for the Cerrado samples"}
-# clustering time series using SOM
+# Clustering time series using SOM
 som_cluster <- sits_som_map(samples_cerrado_mod13q1_2bands,
     grid_xdim = 15,
     grid_ydim = 15,
@@ -117,47 +117,47 @@ som_cluster <- sits_som_map(samples_cerrado_mod13q1_2bands,
     distance = "euclidean",
     rlen = 20
 )
-# plot the som map
+# Plot the SOM map
 plot(som_cluster)
 ```
 
-The output of the `sits_som_map()` is a list with 3 elements: (a) the original set of time series with two additional columns for each time series: `id_sample` (the original id of each sample) and `id_neuron` (the id of the neuron to which it belongs); (b) a tibble with information on the neurons. For each neuron, it gives the prior and posterior probabilities of all labels which occur in the samples assigned to it; and (c) the SOM grid. To plot the SOM grid, use `plot()`. The neurons are labelled using majority voting.
+The output of the `sits_som_map()` is a list with three elements: (a) the original set of time series with two additional columns for each time series: `id_sample` (the original id of each sample) and `id_neuron` (the id of the neuron to which it belongs); (b) a tibble with information on the neurons. For each neuron, it gives the prior and posterior probabilities of all labels which occur in the samples assigned to it; and (c) the SOM grid. To plot the SOM grid, use `plot()`. The neurons are labeled using majority voting.
 
-The SOM grid shows that most classes are associated to neurons close to each other.  The are exceptions. Some "Pasture" neurons are far from the main cluster, because  the transition between areas of open savanna and pasture is not always well defined and depends on climate and latitude. Also, the neurons associated to "Soy_Fallow" are dispersed in the map; this indicates possible problems in distinguishing this class from the other agricultural classes. The SOM map can be used to remove outliers, as shown below.
+The SOM grid shows that most classes are associated with neurons close to each other.  The are exceptions. Some "Pasture" neurons are far from the main cluster because the transition between open savanna and pasture areas is not always well defined and depends on climate and latitude. Also, the neurons associated with "Soy_Fallow" are dispersed in the map, indicating possible problems in distinguishing this class from the other agricultural classes. The SOM map can be used to remove outliers, as shown below.
 
 ## Measuring confusion between labels using SOM{-}
 
-The second step in SOM-based quality assessment is understanding the confusion between labels. The function `sits_som_evaluate_cluster()` groups neurons by their majority label and produces a tibble. For each label, the tibble show the percentage of samples with a different label that have been mapped to a neuron whose majority is that label.
+The second step in SOM-based quality assessment is understanding the confusion between labels. The function `sits_som_evaluate_cluster()` groups neurons by their majority label and produces a tibble. For each label, the tibble shows the percentage of samples with a different label mapped to a neuron whose majority is that label.
 
 ```{r}
-# produce a tibble with a summary of the mixed labels
+# Produce a tibble with a summary of the mixed labels
 som_eval <- sits_som_evaluate_cluster(som_cluster)
-# show the result
+# Show the result
 som_eval 
 ```
 
-Many labels are associated to clusters where there are some samples with a different label. Such confusion between labels arises because visual labeling of samples is subjective and can be biased. In many cases, interpreters use high-resolution data to identify samples. However, the actual images to be classified are captured by satellites with lower resolution. In our case study, a MOD13Q1 image has pixels with 250 x 250 meter resolution and as such the correspondence between labelled locations in high-resolution images and mid to low-resolution images is not direct. The confusion by class can be visualized in a bar plot using `plot()`, as shown below. The bar plot shows some confusion between the classes associated to the natural vegetation typical of the Brazilian Cerrado ("Savanna", "Savanna_Parkland", "Rocky_Savanna"). This mixture is due to the large variability of the natural vegetation of the Cerrado biome, which makes it difficult to draw sharp boundaries between each label. Some confusion is also visible between the agricultural classes. The "Millet_Cotton" class is a particularly difficult one, since many of the samples assigned to this class are confused with "Soy_Cotton" and "Fallow_Cotton". 
+Many labels are associated with clusters where there are some samples with a different label. Such confusion between labels arises because the visual labeling of samples is subjective and can be biased. In many cases, interpreters use high-resolution data to identify samples. However, the actual images to be classified are captured by satellites with lower resolution. In our case study, a MOD13Q1 image has pixels with 250 x 250 meter resolution. As such, the correspondence between labeled locations in high-resolution images and mid to low-resolution images is not direct. The confusion by class can be visualized in a bar plot using `plot()`, as shown below. The bar plot shows some confusion between the classes associated with the natural vegetation typical of the Brazilian Cerrado ("Savanna", "Savanna_Parkland", "Rocky_Savanna"). This mixture is due to the large variability of the natural vegetation of the Cerrado biome, which makes it difficult to draw sharp boundaries between each label. Some confusion is also visible between the agricultural classes. The "Millet_Cotton" class is a particularly difficult one since many of the samples assigned to this class are confused with "Soy_Cotton" and "Fallow_Cotton". 
 
 ```{r, out.width = "90%", fig.align="center", fig.cap="Confusion between classes as measured by SOM."}
-# plot the confusion between clusters
+# Plot the confusion between clusters
 plot(som_eval)
 ```
 
 ## Detecting noisy samples using SOM{-}
 
-The third step in the quality assessment uses the discrete probability distribution associated to each neuron, which is included in the `labelled_neurons` tibble produced by `sits_som_map()`. More homogeneous neurons (those with a single class of high probability) are assumed to be composed of good quality samples. Heterogeneous neurons (those with two or more classes with significant probability) are likely to contain noisy samples. The algorithm computes two values for each sample:
+The third step in the quality assessment uses the discrete probability distribution associated with each neuron, which is included in the `labeled_neurons` tibble produced by `sits_som_map()`. More homogeneous neurons (those with a single class of high probability) are assumed to be composed of good quality samples. Heterogeneous neurons (those with two or more classes with significant probability) are likely to contain noisy samples. The algorithm computes two values for each sample:
 
-- *prior probability*: the probability that the label assigned to the sample is correct, considering only the samples contained in the same neuron. For example, if a neuron has 20 samples, of which 15 are labeled as "Pasture" and 5 as "Forest", all samples labeled "Forest" are assigned a prior probability of 25%. This is an indication that the "Forest" samples in this neuron may not be of good quality.
+- *prior probability*: the probability that the label assigned to the sample is correct, considering only the samples in the same neuron. For example, if a neuron has 20 samples, of which 15 are labeled as "Pasture" and 5 as "Forest", all samples labeled "Forest" are assigned a prior probability of 25%. This indicates that the "Forest" samples in this neuron may not be of good quality.
 
-- *posterior probability*: the probability that the label assigned to the sample is correct, considering the neighboring neurons. Take the case of the above-mentioned neuron whose samples labeled "Pasture" have a prior probability of 75%. What happens if all the neighboring samples have "Forest" as a majority label? To answer this question, we use Bayesian inference to estimate if these samples are noisy based on the neighboring neurons [@Santos2021]. The Bayesian inference method, described in the Technical Annex, recalculates the class probabilities in a neuron, based in its neighbors. 
+- *posterior probability*: the probability that the label assigned to the sample is correct, considering the neighboring neurons. Take the case of the above-mentioned neuron whose samples labeled "Pasture" have a prior probability of 75%. What happens if all the neighboring samples have "Forest" as a majority label? To answer this question, we use Bayesian inference to estimate if these samples are noisy based on the neighboring neurons [@Santos2021]. The Bayesian inference method, described in the Technical Annex, recalculates the class probabilities in a neuron based on its neighbors. 
 
-To identify noisy samples, we take the result of the `sits_som_map()` function as the first argument to the function `sits_som_clean_samples()`. This function finds out which samples are noisy, those that are clean, and some that need to be further examined by the user. It requires the `prior_threshold` and `posterior_threshold` parameters according to the following rules:
+To identify noisy samples, we take the result of the `sits_som_map()` function as the first argument to the function `sits_som_clean_samples()`. This function finds out which samples are noisy, which are clean, and which need to be further examined by the user. It requires the `prior_threshold` and `posterior_threshold` parameters according to the following rules:
 
 -   If the prior probability of a sample is less than `prior_threshold`, the sample is assumed to be noisy and tagged as "remove";
 -   If the prior probability is greater or equal to `prior_threshold` and the posterior probability calculated by Bayesian inference is greater or equal to `posterior_threshold`, the sample is assumed not to be noisy and thus is tagged as "clean";
--   If the prior probability is greater or equal to `prior_threshold` and the posterior probability is less than `posterior_threshold`, we have a situation the sample is part of the majority level of those assigned to its neuron, but its label is not consistent with most of its neighbors. This is an anomalous condition and is tagged as "analyze". Users are encouraged to inspect such samples to find out whether they are in fact noisy or not.
+-   If the prior probability is greater or equal to `prior_threshold` and the posterior probability is less than `posterior_threshold`, we have a situation when the sample is part of the majority level of those assigned to its neuron, but its label is not consistent with most of its neighbors. This is an anomalous condition and is tagged as "analyze". Users are encouraged to inspect such samples to find out whether they are in fact noisy or not.
 
-The default value for both `prior_threshold` and `posterior_threshold` is 60%. The `sits_som_clean_samples()` has an additional parameter (`keep`) which indicates which samples should be kept in the set based on their prior and posterior probabilities. The default for `keep` is `c("clean", "analyze")`. As a result of the cleaning, about 900 samples have been considered to be noisy and thus removed.
+The default value for both `prior_threshold` and `posterior_threshold` is 60%. The `sits_som_clean_samples()` has an additional parameter (`keep`), which indicates which samples should be kept in the set based on their prior and posterior probabilities. The default for `keep` is `c("clean", "analyze")`. As a result of the cleaning, about 900 samples have been considered to be noisy and thus removed.
 
 ```{r, tidy = "styler", message = FALSE, warning = FALSE}
 new_samples <- sits_som_clean_samples(
@@ -166,14 +166,14 @@ new_samples <- sits_som_clean_samples(
     posterior_threshold = 0.6,
     keep = c("clean", "analyze")
 )
-# print the new sample distribution
+# Print the new sample distribution
 sits_labels_summary(new_samples)
 ```
 
-All samples of the class which had the highest confusion with others("Millet_Cotton") have been removed. Most samples of class "Silviculture" (planted forests) have also been removed, since in the SOM map they have been confused with natural forests and woodlands. Further analysis includes calculating the SOM map and confusion matrix for the new set, as shown in the following example. 
+All samples of the class which had the highest confusion with others("Millet_Cotton") have been removed. Most samples of class "Silviculture" (planted forests) have also been removed since they have been confused with natural forests and woodlands in the SOM map. Further analysis includes calculating the SOM map and confusion matrix for the new set, as shown in the following example. 
 
 ```{r, tidy = "styler", message = FALSE, warning = FALSE}
-# evaluate the misture in the SOM clusters of new samples
+# Evaluate the mixture in the SOM clusters of new samples
 new_cluster <- sits_som_map(
    data = new_samples,
    grid_xdim = 15,
@@ -185,22 +185,22 @@ new_cluster <- sits_som_map(
 
 ```{r, out.width="90%", fig.align="center", fig.cap="Cluster confusion plot for samples cleaned by SOM"}
 new_cluster_mixture <- sits_som_evaluate_cluster(new_cluster)
-# plot the mixture information.
+# Plot the mixture information.
 plot(new_cluster_mixture)
 ```
 
-As expected, the new confusion map shows a significant improvement over the previous one. This result should be interpreted carefully, since it may be due to different effects. The most direct interpretation is that "Millet_Cotton" and "Silviculture" cannot be easily separated from the other classes, given the current attributes (a time series of "NDVI" and "EVI" indices from MODIS images). In such situations, users should consider improving the number of samples from the less represented classes, including more MODIS bands, or working with higher resolution satellites. Results of the SOM method should be interpreted based on the users' understanding of the ecosystems and agricultural practices of the study region. 
+As expected, the new confusion map shows a significant improvement over the previous one. This result should be interpreted carefully since it may be due to different effects. The most direct interpretation is that "Millet_Cotton" and "Silviculture" cannot be easily separated from the other classes, given the current attributes (a time series of "NDVI" and "EVI" indices from MODIS images). In such situations, users should consider improving the number of samples from the less represented classes, including more MODIS bands, or working with higher resolution satellites. The results of the SOM method should be interpreted based on the users' understanding of the ecosystems and agricultural practices of the study region. 
 
-A further comparison between the original and clean samples is to run a 5-fold validation on the original and on the cleaned sample sets using `sits_kfold_validate()` and a random forests model. The SOM procedure improves the validation results from 95% on the original data set to 99% in the cleaned one. This improvement should not be interpreted as providing better fit for the final map accuracy. A 5-fold validation procedure only measures how well the machine learning model fits the samples; it is not an accuracy assessment of classification results. The result only indicates that the resulting training set after the SOM sample removal procedure is more internally consistent than the original one. For more details on accuracy measures, please see chapter on "Validation and Accuracy Measures".
+A further comparison between the original and clean samples is to run a 5-fold validation on the original and the cleaned sample sets using `sits_kfold_validate()` and a random forests model. The SOM procedure improves the validation results from 95% on the original data set to 99% in the cleaned one. This improvement should not be interpreted as providing a better fit for the final map accuracy. A 5-fold validation procedure only measures how well the machine learning model fits the samples; it is not an accuracy assessment of classification results. The result only indicates that the training set after the SOM sample removal procedure is more internally consistent than the original one. For more details on accuracy measures, please see chapter on "Validation and Accuracy Measures".
 
 ```{r, tidy = "styler", message = FALSE, warning = FALSE}
-# run a k-fold validation
+# Run a k-fold validation
 assess_orig <- sits_kfold_validate(
     samples = samples_cerrado_mod13q1_2bands, 
     folds = 5,
     ml_method = sits_rfor()
 )
-# print summary 
+# Print summary 
 sits_accuracy_summary(assess_orig)
 ```
 
@@ -210,24 +210,24 @@ assess_new <- sits_kfold_validate(
     folds = 5,
     ml_method = sits_rfor()
 )
-# print summary 
+# Print summary 
 sits_accuracy_summary(assess_new)
 ```
 
-The SOM-based analysis discards samples which can be confused with samples of other classes. After removing noisy samples or uncertain classes, the data set obtains a better validation score since there is less confusion between classes. Users should analyse the results with care. Not all discarded samples are low quality ones. Confusion between samples of different classes can result from inconsistent labeling or from the lack of capacity of satellite data to distinguish between chosen classes. When many samples are discarded, as in the current example, it is advisable to revise the whole classification schema. The aim of selecting training data should always be to match the reality in the ground to the power  of remote sensing data to identify differences. No analysis procedure can replace actual user experience and knowledge of the study region. 
+The SOM-based analysis discards samples that can be confused with samples of other classes. After removing noisy samples or uncertain classes, the data set obtains a better validation score since there is less confusion between classes. Users should analyze the results with care. Not all discarded samples are low-quality ones. Confusion between samples of different classes can result from inconsistent labeling or from the lack of capacity of satellite data to distinguish between chosen classes. When many samples are discarded, as in the current example, revising the whole classification schema is advisable. The aim of selecting training data should always be to match the reality on the ground to the power of remote sensing data to identify differences. No analysis procedure can replace actual user experience and knowledge of the study region. 
 
 ## Reducing sample imbalance{-} 
 
-Many training samples for Earth observation data analysis are imbalanced. This situation arises when the distribution of samples associated to each class is uneven. One example is the Cerrado data set used in this chapter. The three most frequent classes ("Dense Woodland", "Savanna" and "Pasture") include 53% of all samples, while the three least frequent classes ("Millet-Cotton", "Silviculture", and "Dunes") comprise only 2.5% of the data set. Sample imbalance is an undesirable property of a training set. Since machine learning algorithms tend to be more accurate for classes with many samples. The instances belonging to the minority group are misclassified more often than those belonging to the majority group. Thus, reducing sample imbalance can have a positive effect on classification accuracy[@Johnson2019]. 
+Many training samples for Earth observation data analysis are imbalanced. This situation arises when the distribution of samples associated with each class is uneven. One example is the Cerrado data set used in this chapter. The three most frequent classes ("Dense Woodland", "Savanna" and "Pasture") include 53% of all samples, while the three least frequent classes ("Millet-Cotton", "Silviculture", and "Dunes") comprise only 2.5% of the data set. Sample imbalance is an undesirable property of a training set since machine learning algorithms tend to be more accurate for classes with many samples. The instances belonging to the minority group are misclassified more often than those belonging to the majority group. Thus, reducing sample imbalance can positively affect classification accuracy[@Johnson2019]. 
 
-The function `sits_reduce_imbalance()` deals with class imbalance; it oversamples minority classes and undersamples majority ones. Oversampling requires generation of synthetic samples. The package uses the SMOTE method that estimates new samples by considering the cluster formed by the nearest neighbors of each minority class. SMOTE takes two samples from this cluster and produces a new one by a random interpolation between them [@Chawla2002].
+The function `sits_reduce_imbalance()` deals with class imbalance; it oversamples minority classes and undersamples majority ones. Oversampling requires generating synthetic samples. The package uses the SMOTE method that estimates new samples by considering the cluster formed by the nearest neighbors of each minority class. SMOTE takes two samples from this cluster and produces a new one by randomly interpolating them [@Chawla2002].
 
-To perform undersampling, `sits_reduce_imbalance()` builds a SOM map for each majority class, based on the required number of samples to be selected. Each dimension of the SOM is set to `ceiling(sqrt(new_number_samples/4))` to allow a reasonable number of neurons to group similar samples. After calculating the SOM map, the algorithm extracts four samples per neuron to generate a reduced set of samples that approximates the variation of the original one. 
+To perform undersampling, `sits_reduce_imbalance()` builds a SOM map for each majority class based on the required number of samples to be selected. Each dimension of the SOM is set to `ceiling(sqrt(new_number_samples/4))` to allow a reasonable number of neurons to group similar samples. After calculating the SOM map, the algorithm extracts four samples per neuron to generate a reduced set of samples that approximates the variation of the original one. 
 
-The `sits_reduce_imbalance()` algorithm has two parameters: `n_samples_over` and `n_samples_under`. The first parameter ensures that all classes with samples less than its value are oversampled. The second parameter  controls undersampling; all classes with more samples than its value are undersampled. The following example shows the use of `sits_reduce_imbalance()` in the Cerrado data set used in this chapter. We generate a balanced data set where all classes have between 1000 and 1500 samples. We use `sits_som_evaluate_cluster()` to estimate the confusion between classes of the balanced data set.
+The `sits_reduce_imbalance()` algorithm has two parameters: `n_samples_over` and `n_samples_under`. The first parameter ensures that all classes with samples less than its value are oversampled. The second parameter controls undersampling; all classes with more samples than its value are undersampled. The following example shows the use of `sits_reduce_imbalance()` in the Cerrado data set used in this chapter. We generate a balanced data set where all classes have between 1000 and 1500 samples. We use `sits_som_evaluate_cluster()` to estimate the confusion between classes of the balanced data set.
 
 ```{r, tidy = "styler"}
-# reducing imbalances in the Cerrado data set
+# Reducing imbalances in the Cerrado data set
 balanced_samples <- sits_reduce_imbalance(
     samples = samples_cerrado_mod13q1_2bands,
     n_samples_over = 1000,
@@ -237,14 +237,14 @@ balanced_samples <- sits_reduce_imbalance(
 ```
 
 ```{r, tidy = "styler"}
-# print the balanced samples
-# some classes have more than 1500 samples due to the SOM map
-# each class has betwen 10% and 6% of the full set
+# Print the balanced samples
+# Some classes have more than 1500 samples due to the SOM map
+# Each class has between 10% and 6% of the full set
 sits_labels_summary(balanced_samples)
 ```
 
 ```{r, tidy = "styler", message = FALSE, warning = FALSE}
-# clustering time series using SOM
+# Clustering time series using SOM
 som_cluster_bal <- sits_som_map(
     data = balanced_samples,
     grid_xdim = 10,
@@ -257,22 +257,22 @@ som_cluster_bal <- sits_som_map(
 
 
 ```{r}
-# produce a tibble with a summary of the mixed labels
+# Produce a tibble with a summary of the mixed labels
 som_eval <- sits_som_evaluate_cluster(som_cluster_bal)
 ```
 
 ```{r, fig.align="center", out.width="90%", fig.cap="Confusion by cluster for the balanced data set"}
-# show the result
+# Show the result
 plot(som_eval) 
 ```
 
-As shown in the Figure, the balanced data set shows less confusion per class than the unbalanced one. In this case, many of the classes which were confused with other in the original confusion map are now better represented. Reducing class imbalance should be tried as an alternative to reducing the number of samples of the classes using SOM. In general, users should try to balance their training data for better performance. 
+As shown in the Figure, the balanced data set shows less confusion per class than the unbalanced one. In this case, many classes that were confused with others in the original confusion map are now better represented. Reducing class imbalance should be tried as an alternative to reducing the number of samples of the classes using SOM. In general, users should balance their training data for better performance. 
 
 ## Conclusion{-}
 
-The quality of training data is critical to improve the accuracy of maps resulting from machine learning classification methods. To address this challenge, the `sits` package provides three methods for improving training samples. For large datasets, we recommend using both imbalance reducing and SOM-based algorithms. The SOM-based method identifies potential mislabeled samples and outliers that require further investigation. The results demonstrate a positive impact on the overall classification accuracy.
+The quality of training data is critical to improving the accuracy of maps resulting from machine learning classification methods. To address this challenge, the `sits` package provides three methods for improving training samples. For large datasets, we recommend using both imbalance-reducing and SOM-based algorithms. The SOM-based method identifies potential mislabeled samples and outliers that require further investigation. The results demonstrate a positive impact on the overall classification accuracy.
 
-Users need to take care when defining their classification schema. The complexity and diversity of our planet defies simple class names with hard boundaries. Due to representational and data handling issues, all classification systems have a limited number of categories, which inevitably fail to properly describe the nuances of the planet's landscapes. All representation systems are thus limited and application-dependent. As stated by Janowicz [@Janowicz2012]: "geographical concepts are situated and context-dependent and can be described from different, equally valid, points of view; thus, ontological commitments are arbitrary to a large extent". 
+Users need to take care when defining their classification schema. The complexity and diversity of our planet defies simple class names with hard boundaries. Due to representational and data handling issues, all classification systems have a limited number of categories, which inevitably fail to adequately describe the nuances of the planet's landscapes. All representation systems are thus limited and application-dependent. As stated by Janowicz [@Janowicz2012]: "geographical concepts are situated and context-dependent and can be described from different, equally valid, points of view; thus, ontological commitments are arbitrary to a large extent". 
 
-The availability of big data and satellite image time series is a further challenge. In principle, image time series can capture more subtle changes for land classification. In practice, experts need to conceive classification systems and training data collection by understanding how time series information relate to actual land change. Methods for quality analysis such as those presented in this chapter cannot replace user understanding and informed choices. 
+The availability of big data and satellite image time series is a further challenge. In principle, image time series can capture more subtle changes for land classification. Experts must conceive classification systems and training data collection by understanding how time series information relates to actual land change. Methods for quality analysis, such as those presented in this chapter, cannot replace user understanding and informed choices. 
 
