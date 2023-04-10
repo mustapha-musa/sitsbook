@@ -23,7 +23,6 @@
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
-samples_*.rds
 .DS_Store
 # add bookdown files
 _bookdown_files
