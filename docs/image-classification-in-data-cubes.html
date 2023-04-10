@@ -132,7 +132,7 @@
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-110"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-110-1.png" alt="Patterns associated to the training samples" width="90%"><p class="caption">
-Figure 62: Patterns associated to the training samples
+Figure 63: Patterns associated to the training samples
 </p>
 </div>
 <p>The patterns show different temporal responses for the selected classes. They match the typical behavior of deforestation in the Amazon. First, the forest is cut at the start of the dry season (June/July). At the end of the dry season, some clear-cut areas are burned to clean the remains; this action is reflected in the steep fall of the response of “B8A” values of burned area samples after July. In areas that are cleared but not burned, response in the middle infra-red band “B11” increases significantly at the end of the dry season, while “B8A” values remain high. This is a sign of mixed pixels which combine forest remains with bare soil. Forest areas show a constant spectral response during the year. Degraded areas show an increase in values of middle infra-red band “B11” compared to native forests, showing a mixed response of vegetation and soil.</p>
@@ -157,7 +157,7 @@ Figure 62: Patterns associated to the training samples
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-111"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-111-1.png" alt="Color composite image of the cube for date 2021-07-25" width="90%"><p class="caption">
-Figure 63: Color composite image of the cube for date 2021-07-25
+Figure 64: Color composite image of the cube for date 2021-07-25
 </p>
 </div>
 </div>
@@ -184,7 +184,7 @@ Figure 63: Color composite image of the cube for date 2021-07-25
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-112"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-112-1.png" alt="Training evolution of LightTAE model." width="80%"><p class="caption">
-Figure 64: Training evolution of LightTAE model.
+Figure 65: Training evolution of LightTAE model.
 </p>
 </div>
 </div>
@@ -206,7 +206,7 @@ Figure 64: Training evolution of LightTAE model.
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-113"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-113-1.png" alt="Probability maps produced by LightTAE model." width="80%"><p class="caption">
-Figure 65: Probability maps produced by LightTAE model.
+Figure 66: Probability maps produced by LightTAE model.
 </p>
 </div>
 <p>The probability cube is a useful tool for data analysis. It is used for post-processing smoothing, as described in this Chapter, but also in uncertainty estimates and active learning, as described in the “Uncertainty and Active Learning” Chapter.</p>
@@ -223,7 +223,7 @@ Figure 65: Probability maps produced by LightTAE model.
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-114"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-114-1.png" alt="Final classification map." width="100%"><p class="caption">
-Figure 66: Final classification map.
+Figure 67: Final classification map.
 </p>
 </div>
 <p>The labelled map generated from the pixel-based time series classification method exhibits a number of misclassified pixels, which are depicted as small patches that appear surrounded by a different class. This occurrence of outliers is a common issue that arises due to the inherent nature of this classification approach. Mixed pixels are prevalent in images, regardless of their resolution, and each class exhibits a considerable degree of data variability. As a result, these factors can lead to outliers that have a higher probability of being misclassified. To overcome this limitation, <code>sits</code> employs post-processing smoothing techniques that leverage the spatial context of the probability cubes to refine the results. These techniques will be discussed in the next chapter.</p>
@@ -254,7 +254,7 @@ Figure 66: Final classification map.
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-115"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-115-1.png" alt="original classification map." width="100%"><p class="caption">
-Figure 67: original classification map.
+Figure 68: original classification map.
 </p>
 </div>
 <p>The above map shows the total extent of deforestation by clear cuts estimated by the <code>sits</code> random forest algorithm in an area in Rondonia, Brasil, based on an time series of Sentinel-2 images for the period <code>2020-06-04</code> to <code>2021-08-26</code>. Suppose we want to estimate the deforestation that ocurred period from June 2020 to August 2021. We need a reference map that contains information on forest cuts prior to 2020.</p>
@@ -311,7 +311,7 @@ Figure 67: original classification map.
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-117"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-117-1.png" alt="Deforestation map produced by PRODES." width="100%"><p class="caption">
-Figure 68: Deforestation map produced by PRODES.
+Figure 69: Deforestation map produced by PRODES.
 </p>
 </div>
 <p>Taking the PRODES map as our refence, we can include new labels in the classified map produced by <code>sits</code> using <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code>. The new label “Defor_2020” will be applied to all pixels that PRODES considers that have been deforested prior to July 2020. We also include a new label “Non_Forest” to include all pixels that PRODES takes as not covered by native vegetation, such as wetlands and rocky areas. The PRODES classes will be used as a mask over the <code>sits</code> deforestation map.</p>
@@ -348,7 +348,7 @@ Figure 68: Deforestation map produced by PRODES.
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-118"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-118-1.png" alt="Deforestation map by sits masked by PRODES map." width="100%"><p class="caption">
-Figure 69: Deforestation map by sits masked by PRODES map.
+Figure 70: Deforestation map by sits masked by PRODES map.
 </p>
 </div>
 <p>The reclassified map has been split into deforestation prior to mid-2020 (using the PRODES map) and the areas classified by <code>sits</code> that are taken as being deforested on the period mid-2020 to mid-2021. This allows the experts to measure how much deforestation occurred in this period according to <code>sits</code> and compare the result with that of the PRODES visual interpretation map.</p>
@@ -371,7 +371,7 @@ Figure 69: Deforestation map by sits masked by PRODES map.
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-119"></span>
 <img src="images/sits_parallel.png" alt="Parallel processing in sits (source: Simoes et al.,2021)." width="90%" height="90%"><p class="caption">
-Figure 70: Parallel processing in sits (source: Simoes et al.,2021).
+Figure 71: Parallel processing in sits (source: Simoes et al.,2021).
 </p>
 </div>
 <p>This approach has many advantages. It works in any virtual machine that supports R and has no dependencies on proprietary software. Processing is done in a concurrent and independent way, with no communication between workers. Failure of one worker does not cause failure of the big data processing. The software is prepared to resume classification processing from the last processed chunk, preventing against failures such as memory exhaustion, power supply interruption, or network breakdown.</p>
@@ -408,7 +408,7 @@ Figure 70: Parallel processing in sits (source: Simoes et al.,2021).
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-08.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

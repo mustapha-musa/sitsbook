@@ -215,7 +215,7 @@ x_{i,k} +
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-121"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-121-1.png" alt="Probability map produced for classes Forest and Water." width="100%"><p class="caption">
-Figure 71: Probability map produced for classes Forest and Water.
+Figure 72: Probability map produced for classes Forest and Water.
 </p>
 </div>
 <p>The probability map for class “Forest” shows high values associated to compact patches as well linear stretches in riparian areas. By contrast, the probability map for class “Water” has mostly low values, except in a few places with high chance of occurrence of this class. To further understand the behavior of the Bayesian estimator, it is useful to examine the local variance associated the logits of the probabilities.</p>
@@ -234,7 +234,7 @@ Figure 71: Probability map produced for classes Forest and Water.
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-122"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-122-1.png" alt="Variance map for class Forest." width="100%"><p class="caption">
-Figure 72: Variance map for class Forest.
+Figure 73: Variance map for class Forest.
 </p>
 </div>
 <p>The plot for the “Forest” class shows that the areas of low variance are associated both to dense forest patches as well as areas where trees have been completely remove. Areas of high variance are mostly associated with the borders between forest areas and the other classes. These high values By contrast, the plot for the “Water” class is not informative, with small areas of high variance located near the areas of high water probability. Both plots show that most variance values are low, and high values reach 30. This information is relevant for setting the values of the prior variance <span class="math inline">\(\sigmaˆ2\)</span> as discussed below.</p>
@@ -259,7 +259,7 @@ Figure 72: Variance map for class Forest.
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-123"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-123-1.png" alt="Classified map without smoothing." width="100%"><p class="caption">
-Figure 73: Classified map without smoothing.
+Figure 74: Classified map without smoothing.
 </p>
 </div>
 <p>To remove the outliers and classification errors, we will run a smoothing procedure where all prior variances are set the same value of 20 which is relatively high compared with the maximum local class variance shown above. In this case, for most situations, the new value of the</p>
@@ -280,7 +280,7 @@ Figure 73: Classified map without smoothing.
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-124"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-124-1.png" alt="Probability maps after bayesian smoothing." width="100%"><p class="caption">
-Figure 74: Probability maps after bayesian smoothing.
+Figure 75: Probability maps after bayesian smoothing.
 </p>
 </div>
 <p>Bayesian smoothing has removed some of local variability associated to misclassified pixels which are different from their neighbors. There is a side effect: the water areas surrounded by forests have not been preserved in the forest probability map. The impact of smoothing is best appreciated comparing the labelled map produced without smoothing to the one that follows the procedure, as shown below.</p>
@@ -297,7 +297,7 @@ Figure 74: Probability maps after bayesian smoothing.
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-125"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-125-1.png" alt="Final classification map after Bayesian smoothing with 7 x 7 window, neigh_fraction = 0.5 and smoothness = 20." width="100%"><p class="caption">
-Figure 75: Final classification map after Bayesian smoothing with 7 x 7 window, neigh_fraction = 0.5 and smoothness = 20.
+Figure 76: Final classification map after Bayesian smoothing with 7 x 7 window, neigh_fraction = 0.5 and smoothness = 20.
 </p>
 </div>
 <p>In the smoothed map, the outliers have been removed by the expansion of forest areas. Small corridors of water and soil encircled by trees have been replaced by forests. This effect is due to high probability of forest detection in the training data. To keep the water areas and reducing the expansion of the forest area, a viable alternative is to reduce the smoothness (<span class="math inline">\(\sigma^2\)</span>) for the “Forest” and “Water” classes. In this way, the local influence of the forest in the other classes is reduced. As for the water areas, since they are narrow, their neighborhoods will have many low probability values, which would reduce the expected value of the bayesian estimator.</p>
@@ -329,7 +329,7 @@ Figure 75: Final classification map after Bayesian smoothing with 7 x 7 window, 
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-126"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-126-1.png" alt="Probability maps after bayesian smoothing with 7 x 7 window with low smoothness for classes Water and Forest" width="100%"><p class="caption">
-Figure 76: Probability maps after bayesian smoothing with 7 x 7 window with low smoothness for classes Water and Forest
+Figure 77: Probability maps after bayesian smoothing with 7 x 7 window with low smoothness for classes Water and Forest
 </p>
 </div>
 <p>Comparing the two maps, the narrow water streams inside the forest area have been better preserved. Small corridors between forest areas have also been maintained. A better comparison between the two maps requires importing them into QGIS. Exporting data from <code>sits</code> to QGIS is discussed in the chapter “Visualising and Exporting data”.</p>
@@ -366,7 +366,7 @@ Figure 76: Probability maps after bayesian smoothing with 7 x 7 window with low 
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-08.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

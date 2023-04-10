@@ -119,7 +119,7 @@
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-146"></span>
 <img src="images/active_learning.png" alt="Active learning approach (source: Crawford et al., 2013)" width="100%"><p class="caption">
-Figure 80: Active learning approach (source: Crawford et al., 2013)
+Figure 81: Active learning approach (source: Crawford et al., 2013)
 </p>
 </div>
 <p>Active learning aims to reduce bias and errors in sample selection and as such improve the accuracy of the result. At each interaction, experts are asked to review pixels where the ML classifier indicates a high value of uncertainty. Source of classification uncertainty include missing classes and or mislabeled samples. In <code>sits</code>, active learning is supported by the combination of three functions: <code><a href="https://rdrr.io/pkg/sits/man/sits_uncertainty.html">sits_uncertainty()</a></code>, <code><a href="https://rdrr.io/pkg/sits/man/sits_uncertainty_sampling.html">sits_uncertainty_sampling()</a></code> and <code><a href="https://rdrr.io/pkg/sits/man/sits_confidence_sampling.html">sits_confidence_sampling()</a></code>.</p>
@@ -197,7 +197,7 @@ Ratio of confidence is the measure of the ratio between the two most confident p
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-147"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-147-1.png" alt="Area in Rondonia near Samuel dam (source: authors)" width="100%"><p class="caption">
-Figure 81: Area in Rondonia near Samuel dam (source: authors)
+Figure 82: Area in Rondonia near Samuel dam (source: authors)
 </p>
 </div>
 <p>The second image is from “2020-11-09” and shows that most of the inundation area dries during the dry season. In early November 2020, after the end of the dry season, the inundation area is dry and has a response similar to bare soil and to burned areas. The Madeira river can be seen running through the dried inundation area.</p>
@@ -211,7 +211,7 @@ Figure 81: Area in Rondonia near Samuel dam (source: authors)
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-148"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-148-1.png" alt="Area in Rondonia near Samuel dam in November 2021 (source: authors)" width="100%"><p class="caption">
-Figure 82: Area in Rondonia near Samuel dam in November 2021 (source: authors)
+Figure 83: Area in Rondonia near Samuel dam in November 2021 (source: authors)
 </p>
 </div>
 <p>The third image is from “2021-08-08”. In early August 2021, after the wet season, the inundation area is again covered by a shallow water layer. A number of burned and clear cut areas can also be seen in the August 2021 image compared with the July 2020 one. Given the contrast between the wet and dry seasons, correct land cover classification of this area is hard.</p>
@@ -220,7 +220,7 @@ Figure 82: Area in Rondonia near Samuel dam in November 2021 (source: authors)
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-149"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-149-1.png" alt="Area in Rondonia near Samuel dam in August 2021 (source: authors)" width="100%"><p class="caption">
-Figure 83: Area in Rondonia near Samuel dam in August 2021 (source: authors)
+Figure 84: Area in Rondonia near Samuel dam in August 2021 (source: authors)
 </p>
 </div>
 <p>The next step is to classify this study area using a training set with 480 times series collected over the state of Rondonia (Brasil) for detecting deforestation. The training set uses 4 classes (“Burned_Area”, “Forest”, “Highly_Degraded” and “Cleared_Area”). The cube is classified using a LightTAE model, post-processed by a Bayesian smoothing, and then labelled.</p>
@@ -264,7 +264,7 @@ Figure 83: Area in Rondonia near Samuel dam in August 2021 (source: authors)
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-150"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-150-1.png" alt="Classified map for area in Rondonia near Samuel dam (source: authors)" width="100%"><p class="caption">
-Figure 84: Classified map for area in Rondonia near Samuel dam (source: authors)
+Figure 85: Classified map for area in Rondonia near Samuel dam (source: authors)
 </p>
 </div>
 <p>The resulting map correctly identifies the forest area and the deforestation. However, it wrongly classifies the area covered by the Samuel hydroelectric dam. The reason is the lack of samples for classes related to surface water and wetlands. To improve the classification, we need to improve our samples. To do that, the first step is calculate the uncertainty of the classification.</p>
@@ -281,7 +281,7 @@ Figure 84: Classified map for area in Rondonia near Samuel dam (source: authors)
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-151"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-151-1.png" alt="Uncertainty map for classification in Rondonia near Samuel dam (source: authors)" width="100%"><p class="caption">
-Figure 85: Uncertainty map for classification in Rondonia near Samuel dam (source: authors)
+Figure 86: Uncertainty map for classification in Rondonia near Samuel dam (source: authors)
 </p>
 </div>
 <p>As expected, the places of highest uncertainty are those covered by surface water or associated to wetlands. These places are likely to be misclassified. For this reason, <code>sits</code> provides the function <code><a href="https://rdrr.io/pkg/sits/man/sits_uncertainty_sampling.html">sits_uncertainty_sampling()</a></code> which takes the uncertainty cube as its input and produces a tibble with locations in WGS84 that have high uncertainty. The function has three parameters: <code>n</code>, number of uncertain points to be included; <code>min_uncert</code>, minimum value of uncertainty for pixels to be included in the list; and <code>sampling_window</code>, to improve the spatial distribution of the new samples by avoiding points in the same neighborhood to be included. After running the function, we can use <code><a href="https://rdrr.io/pkg/sits/man/sits_view.html">sits_view()</a></code> to visualize the location of the samples.</p>
@@ -298,7 +298,7 @@ Figure 85: Uncertainty map for classification in Rondonia near Samuel dam (sourc
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-153"></span>
 <img src="images/uncertain_pixels.png" alt="Location of uncertain pixel for classification in Rondonia near Samuel dam (source: authors)" width="100%"><p class="caption">
-Figure 86: Location of uncertain pixel for classification in Rondonia near Samuel dam (source: authors)
+Figure 87: Location of uncertain pixel for classification in Rondonia near Samuel dam (source: authors)
 </p>
 </div>
 <p>The visualization shows that the samples are located in the areas covered by the Samuel data. As a first approximation, one can use the label “Wetlands” to designate these samples. A more detailed evaluation, which is recommended in practices, requires analysing these samples with an exploration software such as QGIS and individually labelling each sample. In our case, we will take a direct approach for illustration purposes.</p>
@@ -350,7 +350,7 @@ Figure 86: Location of uncertain pixel for classification in Rondonia near Samue
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-154"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-154-1.png" alt="New land classification in Rondonia near Samuel dam (source: authors)" width="100%"><p class="caption">
-Figure 87: New land classification in Rondonia near Samuel dam (source: authors)
+Figure 88: New land classification in Rondonia near Samuel dam (source: authors)
 </p>
 </div>
 <p>The results shows a significant quality gain over the earlier classification. There are still some confusion areas in the exposed soils inside the inundation area, some of which have been classified as burned areas. It is useful also to show the uncertainty map associated with the second model.</p>
@@ -368,7 +368,7 @@ Figure 87: New land classification in Rondonia near Samuel dam (source: authors)
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-155"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-155-1.png" alt="Uncertainty map for classification in Rondonia near Samuel dam - improved model (source: authors)" width="100%"><p class="caption">
-Figure 88: Uncertainty map for classification in Rondonia near Samuel dam - improved model (source: authors)
+Figure 89: Uncertainty map for classification in Rondonia near Samuel dam - improved model (source: authors)
 </p>
 </div>
 <p>As the new uncertainty map shows, there is a significant improvement in the quality of the classification. The remaining areas of high uncertainty are those places affected by the contrast between wet and dry season close to the inundation area. These areas are low-laying places that sometimes are covered by water and sometimes are bare soil areas throughout the year, depending on the intensity of the rainy season. To further improve the quality of the classification, we could obtain new samples of those uncertain areas, label them and add them to samples. In general, as this section shows, combining uncertainty measurements with active learning is a recommended practice for improving classification results.</p>
@@ -400,7 +400,7 @@ Figure 88: Uncertainty map for classification in Rondonia near Samuel dam - impr
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-08.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

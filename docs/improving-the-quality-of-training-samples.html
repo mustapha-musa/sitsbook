@@ -129,7 +129,7 @@
 <div class="figure">
 <span style="display:block;" id="fig:unnamed-chunk-60"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-60-1.png" alt="SOM map for the Cerrado samples" width="100%"><p class="caption">
-Figure 35: SOM map for the Cerrado samples
+Figure 36: SOM map for the Cerrado samples
 </p>
 </div>
 <p>The plot shows a mismatch between the sample-to-sample and the sample-to-prediction distribution. Most samples are closer to each other than they are close to the location where values need to be predicted. In this case, there are many areas where few or no samples have been collected and where the prediction uncertainty will be higher. In this and similar cases, users should invest in improving the distribution of training samples. If that is not possible, they should be aware that areas with insufficient samples could have lower accuracy. This information must be reported to potential users of their results.</p>
@@ -151,7 +151,7 @@ Figure 35: SOM map for the Cerrado samples
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-61"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-61-1.png" alt="Example of hierarchical clustering for a two class set of time series" width="90%"><p class="caption">
-Figure 36: Example of hierarchical clustering for a two class set of time series
+Figure 37: Example of hierarchical clustering for a two class set of time series
 </p>
 </div>
 <p>The <code><a href="https://rdrr.io/pkg/sits/man/sits_clustering.html">sits_cluster_dendro()</a></code> function has one mandatory parameter (<code>samples</code>), where users should provide the samples to be evaluated. Optional parameters include <code>bands</code>, <code>dist_method</code>, and <code>linkage</code>. The <code>dist_method</code> parameter specifies how to calculate the distance between two time series. We recommend a metric that uses dynamic time warping (DTW)<span class="citation"><a href="references.html#ref-Petitjean2012" role="doc-biblioref">[30]</a></span>, as DTW is a reliable method for measuring differences between satellite image time series <span class="citation"><a href="references.html#ref-Maus2016" role="doc-biblioref">[31]</a></span>. The options available in <code>sits</code> are based on those provided by package <code>dtwclust</code>, which include <code>dtw_basic</code>, <code>dtw_lb</code>, and <code>dtw2</code>. Please check <code><a href="https://rdrr.io/pkg/dtwclust/man/tsclust.html">?dtwclust::tsclust</a></code> for more information on DTW distances.</p>
@@ -186,14 +186,14 @@ Figure 36: Example of hierarchical clustering for a two class set of time series
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-64"></span>
 <img src="images/som_structure.png" alt="SOM 2D map creation (source: Santos et al.(2021). Reproduction under fair use doctrine." width="90%" height="90%"><p class="caption">
-Figure 37: SOM 2D map creation (source: Santos et al.(2021). Reproduction under fair use doctrine.
+Figure 38: SOM 2D map creation (source: Santos et al.(2021). Reproduction under fair use doctrine.
 </p>
 </div>
 <p>The input data for quality assessment is a set of training samples, which are high-dimensional data; for example, a time series with 25 instances of 4 spectral bands has 100 dimensions. When projecting a high-dimensional data set into a 2D SOM map, the units of the map (called neurons) compete for each sample. Each time series will be mapped to one of the neurons. Since the number of neurons is smaller than the number of classes, each neuron will be associated with many time series. The resulting 2D map will be a set of clusters. Given that SOM preserves the topological structure of neighborhoods in multiple dimensions, clusters that contain training samples of a given class will usually be neighbors in 2D space. The neighbors of each neuron of a SOM map provide information on intraclass and interclass variability, which is used to detect noisy samples. The methodology of using SOM for sample quality assessment is discussed in detail in the reference paper <span class="citation"><a href="references.html#ref-Santos2021a" role="doc-biblioref">[35]</a></span>.</p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-65"></span>
 <img src="images/methodology_bayes_som.png" alt="Using SOM for class noise reduction (source: Santos et al.(2021). Reproduction under fair use doctrine." width="90%" height="90%"><p class="caption">
-Figure 38: Using SOM for class noise reduction (source: Santos et al.(2021). Reproduction under fair use doctrine.
+Figure 39: Using SOM for class noise reduction (source: Santos et al.(2021). Reproduction under fair use doctrine.
 </p>
 </div>
 <p>As an example, we take a set of time series from the Cerrado region of Brazil, the second largest biome in South America with an area of more than 2 million km2. This data ranges from 2000 to 2017 and includes 50,160 land use and cover samples divided into 12 classes(“Dense_Woodland”, “Dunes”, “Fallow_Cotton”, “Millet_Cotton”, “Pasture”, “Rocky_Savanna”, “Savanna”, “Savanna_Parkland”, “Silviculture”, “Soy_Corn”, “Soy_Cotton”, “Soy_Fallow”). Each time series covers 12 months (23 data points) from MOD13Q1 product, and has 4 bands (“EVI”, “NDVI”, “MIR”, and “NIR”). We use bands “NDVI” and “EVI” for faster processing.</p>
@@ -241,7 +241,7 @@ Figure 38: Using SOM for class noise reduction (source: Santos et al.(2021). Rep
 <div class="figure">
 <span style="display:block;" id="fig:unnamed-chunk-67"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-67-1.png" alt="SOM map for the Cerrado samples" width="100%"><p class="caption">
-Figure 39: SOM map for the Cerrado samples
+Figure 40: SOM map for the Cerrado samples
 </p>
 </div>
 <p>The output of the <code><a href="https://rdrr.io/pkg/sits/man/sits_som.html">sits_som_map()</a></code> is a list with three elements: (a) the original set of time series with two additional columns for each time series: <code>id_sample</code> (the original id of each sample) and <code>id_neuron</code> (the id of the neuron to which it belongs); (b) a tibble with information on the neurons. For each neuron, it gives the prior and posterior probabilities of all labels which occur in the samples assigned to it; and (c) the SOM grid. To plot the SOM grid, use <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code>. The neurons are labeled using majority voting.</p>
@@ -277,7 +277,7 @@ Figure 39: SOM map for the Cerrado samples
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-69"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-69-1.png" alt="Confusion between classes as measured by SOM." width="90%"><p class="caption">
-Figure 40: Confusion between classes as measured by SOM.
+Figure 41: Confusion between classes as measured by SOM.
 </p>
 </div>
 </div>
@@ -336,7 +336,7 @@ Figure 40: Confusion between classes as measured by SOM.
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-72"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-72-1.png" alt="Cluster confusion plot for samples cleaned by SOM" width="90%"><p class="caption">
-Figure 41: Cluster confusion plot for samples cleaned by SOM
+Figure 42: Cluster confusion plot for samples cleaned by SOM
 </p>
 </div>
 <p>As expected, the new confusion map shows a significant improvement over the previous one. This result should be interpreted carefully since it may be due to different effects. The most direct interpretation is that “Millet_Cotton” and “Silviculture” cannot be easily separated from the other classes, given the current attributes (a time series of “NDVI” and “EVI” indices from MODIS images). In such situations, users should consider improving the number of samples from the less represented classes, including more MODIS bands, or working with higher resolution satellites. The results of the SOM method should be interpreted based on the users’ understanding of the ecosystems and agricultural practices of the study region.</p>
@@ -422,7 +422,7 @@ Figure 41: Cluster confusion plot for samples cleaned by SOM
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-79"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-79-1.png" alt="Confusion by cluster for the balanced data set" width="90%"><p class="caption">
-Figure 42: Confusion by cluster for the balanced data set
+Figure 43: Confusion by cluster for the balanced data set
 </p>
 </div>
 <p>As shown in the Figure, the balanced data set shows less confusion per class than the unbalanced one. In this case, many classes that were confused with others in the original confusion map are now better represented. Reducing class imbalance should be tried as an alternative to reducing the number of samples of the classes using SOM. In general, users should balance their training data for better performance.</p>
@@ -467,7 +467,7 @@ Figure 42: Confusion by cluster for the balanced data set
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-08.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

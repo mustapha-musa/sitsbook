@@ -193,7 +193,7 @@ Figure 12: Conceptual view of data cubes (source: authors)
 <p>Amazon Web Services (AWS) holds two kinds of collections: <em>open-data</em> and <em>requester-pays</em>. Open data collections can be accessed without cost. Requester-pays collections require payment to an AWS account. Currently, <code>sits</code> supports collections <code>SENTINEL-S2-L2A</code> (requester-pays) and <code>SENTINEL-S2-L2A-COGS</code> (open-data). Both collections include all Sentinel-2/2A bands. The bands in 10m resolution are <code>B02</code>, <code>B03</code>, <code>B04</code>, and <code>B08</code>. The 20m bands are <code>B05</code>, <code>B06</code>, <code>B07</code>, <code>B8A</code>, <code>B11</code>, and <code>B12</code>. Bands <code>B01</code> and <code>B09</code> are available at 60m resolution. A <code>CLOUD</code> band is also available. The example below shows how to access one tile of the open data <code>SENTINEL-S2-L2A-COGS</code> collection. The <code>tiles</code> parameter allows selecting the desired area according to the MGRS reference system.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a data cube covering an area in Brazil</span></span>
-<span><span class="va">s2_23MMU_cube</span> <span class="op">&lt;-</span> <span class="fu">sits_cube</span><span class="op">(</span></span>
+<span><span class="va">s2_23MMU_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"AWS"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"SENTINEL-S2-L2A-COGS"</span>,</span>
 <span>  tiles <span class="op">=</span> <span class="st">"23MMU"</span>,</span>
@@ -202,7 +202,12 @@ Figure 12: Conceptual view of data cubes (source: authors)
 <span>  end_date <span class="op">=</span> <span class="st">"2019-07-28"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">s2_23MMU_cube</span>, red <span class="op">=</span> <span class="st">"B11"</span>, blue <span class="op">=</span> <span class="st">"B02"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>, date <span class="op">=</span> <span class="st">"2018-10-05"</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="sitsbook_files/figure-html/unnamed-chunk-22-1.png" width="2100"></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-22"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-22-1.png" alt="Sentinel-2 image in an area of the Northeastern coast of Brazil" width="100%"><p class="caption">
+Figure 13: Sentinel-2 image in an area of the Northeastern coast of Brazil
+</p>
+</div>
 </div>
 <div id="assessing-microsofts-planetary-computer" class="section level2 unnumbered">
 <h2>Assessing Microsoft’s Planetary Computer<a class="anchor" aria-label="anchor" href="#assessing-microsofts-planetary-computer"><i class="fas fa-link"></i></a>
@@ -210,7 +215,7 @@ Figure 12: Conceptual view of data cubes (source: authors)
 <p>Microsoft’s Planetary Computer (MPC) hosts two open data collections: <code>SENTINEL-2-L2A</code> and <code>LANDSAT-C2-L2</code>. The first collection contains SENTINEL-2/2A ARD images, with the same bands and resolutions as those available in AWS (see above). The example below shows how to access the <code>SENTINEL-2-L2A</code> collection.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a data cube covering an area in the Brazilian Amazon</span></span>
-<span><span class="va">s2_20LKP_cube_MPC</span> <span class="op">&lt;-</span> <span class="fu">sits_cube</span><span class="op">(</span></span>
+<span><span class="va">s2_20LKP_cube_MPC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"MPC"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"SENTINEL-2-L2A"</span>,</span>
 <span>  tiles <span class="op">=</span> <span class="st">"20LKP"</span>,</span>
@@ -226,7 +231,7 @@ Figure 12: Conceptual view of data cubes (source: authors)
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-23"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-23-1.png" alt="Sentinel-2 image in an area of the state of Rondonia, Brazil" width="100%"><p class="caption">
-Figure 13: Sentinel-2 image in an area of the state of Rondonia, Brazil
+Figure 14: Sentinel-2 image in an area of the state of Rondonia, Brazil
 </p>
 </div>
 <p>The <code>LANDSAT-C2-L2</code> collection provides access to data from Landsat-4, 5, 7, 8, and 9 satellites. Images from these satellites have been intercalibrated to ensure data consistency. For compatibility between the different Landsat sensors, the band names are <code>BLUE</code>, <code>GREEN</code>, <code>RED</code>, <code>NIR08</code>, <code>SWIR16</code>, and <code>SWIR22</code>. All images have 30m resolution. For this collection, tile search is not supported; the <code>roi</code> parameter should be used. The example shows how to retrieve data from a region of interest covering the city of Brasilia in Brazil.</p>
@@ -237,7 +242,7 @@ Figure 13: Sentinel-2 image in an area of the state of Rondonia, Brazil
 <span><span class="op">)</span></span>
 <span><span class="va">sf_bsb</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">read_sf</a></span><span class="op">(</span><span class="va">shp_file</span><span class="op">)</span></span>
 <span><span class="co"># Select the cube</span></span>
-<span><span class="va">s2_L8_cube_MPC</span> <span class="op">&lt;-</span> <span class="fu">sits_cube</span><span class="op">(</span></span>
+<span><span class="va">s2_L8_cube_MPC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"MPC"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"LANDSAT-C2-L2"</span>,</span>
 <span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"BLUE"</span>, <span class="st">"NIR08"</span>, <span class="st">"SWIR16"</span>, <span class="st">"CLOUD"</span><span class="op">)</span>,</span>
@@ -253,7 +258,7 @@ Figure 13: Sentinel-2 image in an area of the state of Rondonia, Brazil
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-24"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-24-1.png" alt="Landsat-8 image in an area of the city of Brasilia, Brazil" width="100%"><p class="caption">
-Figure 14: Landsat-8 image in an area of the city of Brasilia, Brazil
+Figure 15: Landsat-8 image in an area of the city of Brasilia, Brazil
 </p>
 </div>
 </div>
@@ -262,7 +267,7 @@ Figure 14: Landsat-8 image in an area of the city of Brasilia, Brazil
 </h2>
 <p>Digital Earth Africa (DEAFRICA) is a cloud service that provides open-access Earth Observation data for the African continent. The ARD image collections in <code>sits</code> are <code>S2_L2A</code> (Sentinel-2 level 2A) and <code>LS8_SR</code> (Landsat-8). Since the STAC interface for DEAFRICA does not implement the concept of tiles, users need to specify their area of interest using the <code>roi</code> parameter. The requested <code>roi</code> produces a cube that contains three MGRS tiles (“35HLD”, “35HKD”, and “35HLC”) covering part of South Africa.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dea_cube</span> <span class="op">&lt;-</span> <span class="fu">sits_cube</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">dea_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"DEAFRICA"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"S2_L2A"</span>,</span>
 <span>  roi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
@@ -277,7 +282,7 @@ Figure 14: Landsat-8 image in an area of the city of Brasilia, Brazil
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-25"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-25-1.png" alt="Sentinel-2 image in an area over South Africa" width="100%"><p class="caption">
-Figure 15: Sentinel-2 image in an area over South Africa
+Figure 16: Sentinel-2 image in an area over South Africa
 </p>
 </div>
 </div>
@@ -288,7 +293,7 @@ Figure 15: Sentinel-2 image in an area over South Africa
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-26"></span>
 <img src="images/bdc_grid.png" alt="Hierarchical BDC tiling system showing overlayed on Brazilian Biomes (a), illustrating that one large tile (b) contains four medium tiles (c) and that medium tile contains four small tiles. Source: Ferreira et al.(2020). Reproduction under fair use doctrine." width="80%"><p class="caption">
-Figure 16: Hierarchical BDC tiling system showing overlayed on Brazilian Biomes (a), illustrating that one large tile (b) contains four medium tiles (c) and that medium tile contains four small tiles. Source: Ferreira et al.(2020). Reproduction under fair use doctrine.
+Figure 17: Hierarchical BDC tiling system showing overlayed on Brazilian Biomes (a), illustrating that one large tile (b) contains four medium tiles (c) and that medium tile contains four small tiles. Source: Ferreira et al.(2020). Reproduction under fair use doctrine.
 </p>
 </div>
 <p>The collections available in the BDC are: <code>LC8_30_16D_STK-1</code> (Landsat-8 OLI, 30m resolution, 16-day intervals), <code>S2-SEN2COR_10_16D_STK-1</code> (Sentinel-2 MSI images at 10 meter resolution, 16-day intervals), <code>CB4_64_16D_STK-1</code> (CBERS 4/4A AWFI, 64m resolution, 16 days intervals), <code>CB4_20_1M_STK-1</code> (CBERS 4/4A MUX, 20m resolution, one month intervals) and <code>MOD13Q1-6</code> (MODIS MOD13SQ1 product, collection 6, 250m resolution, 16-day intervals). For more details, use <code>sits_list_collections(source = "BDC")</code>.</p>
@@ -299,7 +304,7 @@ Figure 16: Hierarchical BDC tiling system showing overlayed on Brazilian Biomes 
 <p>In the example below, the data cube is defined as one tile (“022024”) of <code>CB4_64_16D_STK-1</code> collection, which holds CBERS AWFI images at 16 days resolution.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define a tile from the CBERS-4/4A AWFI collection</span></span>
-<span><span class="va">cbers_tile</span> <span class="op">&lt;-</span> <span class="fu">sits_cube</span><span class="op">(</span></span>
+<span><span class="va">cbers_tile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"BDC"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"CB4_64_16D_STK-1"</span>,</span>
 <span>  tiles <span class="op">=</span> <span class="st">"022024"</span>,</span>
@@ -312,7 +317,7 @@ Figure 16: Hierarchical BDC tiling system showing overlayed on Brazilian Biomes 
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-29"></span>
 <img src="images/cbers_4_image_bdc.png" alt="Plot of CBERS-4 image obtained from the BDC with a single tile covering an area in the Brazilian Cerrado." width="100%"><p class="caption">
-Figure 17: Plot of CBERS-4 image obtained from the BDC with a single tile covering an area in the Brazilian Cerrado.
+Figure 18: Plot of CBERS-4 image obtained from the BDC with a single tile covering an area in the Brazilian Cerrado.
 </p>
 </div>
 </div>
@@ -355,7 +360,7 @@ Figure 17: Plot of CBERS-4 image obtained from the BDC with a single tile coveri
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-31"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-31-1.png" alt="CBERS-4 NDVI in an area over Brazil" width="100%"><p class="caption">
-Figure 18: CBERS-4 NDVI in an area over Brazil
+Figure 19: CBERS-4 NDVI in an area over Brazil
 </p>
 </div>
 </div>
@@ -403,7 +408,7 @@ Figure 18: CBERS-4 NDVI in an area over Brazil
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-32"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-32-1.png" alt="Classified data cube for the year 2020/2021 in Rondonia, Brazil" width="100%"><p class="caption">
-Figure 19: Classified data cube for the year 2020/2021 in Rondonia, Brazil
+Figure 20: Classified data cube for the year 2020/2021 in Rondonia, Brazil
 </p>
 </div>
 </div>
@@ -442,7 +447,7 @@ Figure 19: Classified data cube for the year 2020/2021 in Rondonia, Brazil
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-34"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-34-1.png" alt="Sentinel-2 tile 20LLP for date 2018-07-03" width="100%"><p class="caption">
-Figure 20: Sentinel-2 tile 20LLP for date 2018-07-03
+Figure 21: Sentinel-2 tile 20LLP for date 2018-07-03
 </p>
 </div>
 <p>Because of the different acquisition orbits of the Sentinel-2 and Sentinel-2A satellites, the two tiles also have different timelines. Tile <code>20LKP</code> has 12 instances, and tile <code>20LLP</code> has 24 instances for the chosen period. The function <code><a href="https://rdrr.io/pkg/sits/man/sits_regularize.html">sits_regularize()</a></code> builds a data cube with a regular timeline and a best estimate of a valid pixel for each interval. The <code>period</code> parameter sets the time interval between two images. Values of <code>period</code> use the ISO8601 time period specification, which defines time intervals as <code>P[n]Y[n]M[n]D</code>, where Y stands for years, “M” for months, and “D” for days. Thus, <code>P1M</code> stands for a one-month period, <code>P15D</code> for a fifteen-day period. When joining different images to get the best image for a period, <code><a href="https://rdrr.io/pkg/sits/man/sits_regularize.html">sits_regularize()</a></code> uses an aggregation method that organizes the images for the chosen interval in order of increasing cloud cover and selects the first cloud-free pixel in the sequence.</p>
@@ -466,7 +471,7 @@ Figure 20: Sentinel-2 tile 20LLP for date 2018-07-03
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-35"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-35-1.png" alt="Regularized image for tile Sentinel-2 tile 20LLP" width="100%"><p class="caption">
-Figure 21: Regularized image for tile Sentinel-2 tile 20LLP
+Figure 22: Regularized image for tile Sentinel-2 tile 20LLP
 </p>
 </div>
 <p>After obtaining a regular data cube, users can perform data analysis and classification operations, as shown in the following chapters.</p>
@@ -507,7 +512,7 @@ Figure 21: Regularized image for tile Sentinel-2 tile 20LLP
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-08.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

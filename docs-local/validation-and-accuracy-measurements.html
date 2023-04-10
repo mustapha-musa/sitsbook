@@ -142,7 +142,7 @@
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-129"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-129-1.png" alt="Color composite image of first date of the cube" width="80%"><p class="caption">
-Figure 77: Color composite image of first date of the cube
+Figure 78: Color composite image of first date of the cube
 </p>
 </div>
 <p>To classify the Cerrado, we use a training data set produced by by Simoes et al.<span class="citation"><a href="references.html#ref-Simoes2021" role="doc-biblioref">[60]</a></span>. The authors carried out a systematic sampling using a grid of 5 x 5 km throughout the Cerrado biome, collecting 85,026 samples. The training data labels were extracted from three sources: the 2018 pastureland map from Parente et al. <span class="citation"><a href="references.html#ref-Parente2019" role="doc-biblioref">[85]</a></span>, MapBiomas Collection 5 for 2018 <span class="citation"><a href="references.html#ref-Souza2020" role="doc-biblioref">[86]</a></span>, and~Brazil’s National Mapping Agency IBGE land maps for 2016–2018. Out of the 85,026 samples, the authors selected those where there was no disagreement between the labels assigned by the three sources. The final training set consists of 48,850 points from which the authors extracted the time series using the Landsat-8 data cube available in the BDC. The classes for this training set are: <code>Annual Crop</code>, <code>Cerradao</code>, <code>Cerrado</code>, <code>Open Cerrado</code>, <code>Nat_NonVeg</code> (Dunes), <code>Pasture</code>, <code>Perennial_Crop</code>, <code>Silviculture</code> (Planted Forests), <code>Sugarcane</code>, and <code>Water</code>. This data set is available in the package <code>sitsdata</code> as <code>samples_cerrado_lc8</code>.</p>
@@ -276,7 +276,7 @@ Figure 77: Color composite image of first date of the cube
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-136"></span>
 <img src="images/k_fold_validation_xlsx.png" alt="Result of 5-fold cross validation of Mato Grosso data using LightTAE" width="90%" height="90%"><p class="caption">
-Figure 78: Result of 5-fold cross validation of Mato Grosso data using LightTAE
+Figure 79: Result of 5-fold cross validation of Mato Grosso data using LightTAE
 </p>
 </div>
 <p>The scores for overall accuracy are similar between the models. However, there are significant differences between the models, as shown by comparing their F1 scores, as shown below.</p>
@@ -383,7 +383,7 @@ This unbiased area estimator includes the effect of false negatives (omission er
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-142"></span>
 <img src="sitsbook_files/figure-html/unnamed-chunk-142-1.png" alt="Classification of tile 044048 from the Landsat data cube for the Brazilian Cerrado in 2017/2018." width="100%"><p class="caption">
-Figure 79: Classification of tile 044048 from the Landsat data cube for the Brazilian Cerrado in 2017/2018.
+Figure 80: Classification of tile 044048 from the Landsat data cube for the Brazilian Cerrado in 2017/2018.
 </p>
 </div>
 <p>The next step is to provide a CSV file with the validation points, as described above.</p>
@@ -499,7 +499,7 @@ Figure 79: Classification of tile 044048 from the Landsat data cube for the Braz
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-08.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

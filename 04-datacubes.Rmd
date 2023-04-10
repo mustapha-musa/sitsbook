@@ -80,7 +80,7 @@ The result of `sits_cube()` is a tibble with a description of the selected image
 
 Amazon Web Services (AWS) holds two kinds of collections: *open-data* and *requester-pays*. Open data collections can be accessed without cost. Requester-pays collections require payment to an AWS account. Currently, `sits` supports collections `SENTINEL-S2-L2A` (requester-pays) and `SENTINEL-S2-L2A-COGS` (open-data). Both collections include all Sentinel-2/2A bands.  The bands in 10m resolution are `B02`, `B03`, `B04`, and `B08`. The  20m bands are `B05`, `B06`, `B07`, `B8A`, `B11`, and `B12`. Bands `B01` and `B09` are available at 60m resolution. A `CLOUD` band is also available. The example below shows how to access one tile of the open data `SENTINEL-S2-L2A-COGS` collection.  The `tiles` parameter allows selecting the desired area according to the MGRS reference system. 
 
-```{r, tidy="styler"}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap= "Sentinel-2 image in an area of the Northeastern coast of Brazil"}
 # Create a data cube covering an area in Brazil
 s2_23MMU_cube <- sits_cube(
     source = "AWS",
