@@ -4,12 +4,12 @@
 source("common.R")
 ```
 
-This section is intended for programmers and experts that would like to extend the capabilities of `sits`, either by including new data sources, ML algorithms, exporting data to be used in Python or QGIS, or including new display colors. 
+This section is intended for programmers and experts who would like to extend the capabilities of `sits` by including new data sources, ML algorithms, exporting data to be used in Python or QGIS, or including new display colors. 
 
 
 ## How colors work in sits{-}
 
-In examples provided in the book, the color legend is taken for the predefined color table provided by `sits`.  This default color table is displayed using the command `sits_colors_show`. This color definition file assigns colors to 99 class names, including the IPCC and IGBP land use classes. 
+In examples provided in the book, the color legend is taken for the predefined color table provided by `sits`. This default color table is displayed using the command `sits_colors_show`. This color definition file assigns colors to 99 class names, including the IPCC and IGBP land use classes. 
 
 ```{r, tidy = "styler", out.width = "100%", out.height = "100%", echo = FALSE, fig.align="center", fig.cap="Default colors used in the sits package"}
 # Display default sits colors
@@ -18,15 +18,15 @@ sits_colors_show()
 
 The color table can be extended or adjusted by accessing and modifying the default color table, using the commands `sits_colors()` to retrieve the table and `sits_colors_set()` to update the table according to user choices, as shown in the example below.
 ```{r}
-# retrieve the color table
+# Retrieve the color table
 color_tb <- sits_colors()
-# show the color table
+# Show the color table
 color_tb
 ```
 
 As an example of a user-defined color table, consider a definition that covers level 1 of the Anderson Classification System used in the US National Land Cover Data, obtained by defining a new color table, as shown below. The colors can be defined by HEX values or by names accepted as R color codes.
 ```{r, tidy = "styler", out.width = "80%", out.height = "80%", fig.align="center", fig.cap="Example of Anderson Land Classification Scheme use in sits"}
-# define a color table based on the Anderson Land Classification System
+# Define a color table based on the Anderson Land Classification System
 us_nlcd <- tibble::tibble(name = character(), color = character())
 us_nlcd <- us_nlcd %>% 
   tibble::add_row(name = "Urban Built Up", color =  "#85929E") %>% 
@@ -38,18 +38,18 @@ us_nlcd <- us_nlcd %>%
   tibble::add_row(name = "Barren Land", color = "#FDEBD0") %>% 
   tibble::add_row(name = "Tundra", color = "#EBDEF0") %>% 
   tibble::add_row(name = "Snow and Ice", color = "#F7F9F9")
-# load the color table into `sits`
+# Load the color table into `sits`
 sits_colors_set(us_nlcd)
-# show the new color table used by sits
+# Show the new color table used by sits
 sits_colors_show()
 ```
 
 ```{r, eval = TRUE, echo = FALSE, warning = FALSE, message = FALSE} 
-# reset the color table
+# Reset the color table
 sits_colors_reset()
 ```
 
-As an alternative, users may define their own legends and pass them as parameters to to the `plot` function. Please see the example provided in Section "Map Reclassification" on Chapter "Image Classification in Data Cubes". 
+As an alternative, users may define legends and pass them as parameters to the `plot` function. Please see the example provided in Section "Map Reclassification" in the Chapter "Image Classification in Data Cubes". 
 
 ## Exporting data to JSON{-}
 
@@ -57,13 +57,13 @@ Both the data cube and the time series tibble can be exported to exchange format
 
 ```{r, tidy = "styler", eval = FALSE}
 library(jsonlite)
-# export the data cube to JSON
+# Export the data cube to JSON
 jsonlite::write_json(
   x = s2_20LKP_cube_MPC,
   path = "./data_cube.json",
   pretty = TRUE
 )
-# export the time series to JSON
+# Export the time series to JSON
 jsonlite::write_json(
   x = samples_prodes_4classes,
   path = "./time_series.json",
