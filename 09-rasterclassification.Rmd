@@ -199,6 +199,7 @@ ro_def_2021 <- sits_reclassify(
     cube = ro_class,
     mask = prodes2021,
     rules = list(
+        "Non_Forest" = mask %in% c("NonForest", "NonForest2"),
         "Deforestation_Mask" = mask %in% c(
             "d2007", "d2008", "d2009",
             "d2010", "d2011", "d2012",
@@ -210,8 +211,8 @@ ro_def_2021 <- sits_reclassify(
             "r2016", "r2017", "r2018",
             "r2019", "r2020", "r2021"
         ),
-        "Water" = mask == "Water",
-        "Non_Forest" = mask %in% c("NonForest", "NonForest2")
+        "Water" = mask == "Water"
+        
     ),
     memsize = 8,
     multicores = 2,

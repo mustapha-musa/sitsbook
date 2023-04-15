@@ -104,18 +104,18 @@
 <h1>Ensemble Prediction from Multiple Models<a class="anchor" aria-label="anchor" href="#ensemble-prediction-from-multiple-models"><i class="fas fa-link"></i></a>
 </h1>
 <p>Ensemble prediction is a powerful technique for combining predictions from multiple models to produce more accurate and robust predictions. In general, ensemble predictions produce better predictions than using a single model. This is because the errors of individual models can cancel out or be reduced when combined with the predictions of other models. As a result, ensemble predictions can lead to better overall accuracy and reduce the risk of overfitting.</p>
-<p>Ensemble predictions are more robust to changes in the data or the model. If a single model is sensitive to certain types of data or errors, ensemble predictions can help reduce the impact of these issues by combining the predictions of multiple models. Ensemble predictions can help you choose the best model or models for a given task. By comparing the predictions of different models, you can identify which models perform best on different types of data or tasks. This can be especially useful when working with complex or uncertain data. By combining the predictions of multiple models, users can identify which features or factors are most important for making accurate predictions. When using ensemble methods, it’s important to choose models that are diverse and have different sources of error. This can help ensure that the ensemble predictions are more accurate and robust.</p>
-<p>Overall, ensemble predictions are a powerful tool for improving the accuracy and robustness of machine learning models. By combining the predictions of multiple models, users can reduce errors and uncertainty, and gain new insights into the underlying patterns in the data.</p>
-<p>The <code>sits</code> package provides the function <code><a href="https://rdrr.io/pkg/sits/man/sits_combine_predictions.html">sits_combine_predictions()</a></code> to estimate ensemble predictions using probability cubes produced by <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code> and optionally post-processed with <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code>. There are two ways to do ensemble predictions from multiple models in <code>sits</code>:</p>
+<p>Ensemble predictions are more robust to changes in the data or the model. If a single model is sensitive to certain types of data or errors, ensemble predictions can help reduce the impact of these issues by combining the predictions of multiple models. Ensemble predictions can help you choose the best model or models for a given task. By comparing the predictions of different models, you can identify which models perform best on different types of data or tasks. This can be especially useful when working with complex or uncertain data. By combining the predictions of multiple models, users can identify which features or factors are most important for making accurate predictions. When using ensemble methods, it is important to choose diverse models with different sources of error. This can help ensure that the ensemble predictions are more accurate and robust.</p>
+<p>Overall, ensemble predictions are a powerful tool for improving the accuracy and robustness of machine learning models. By combining the predictions of multiple models, users can reduce errors and uncertainty and gain new insights into the underlying patterns in the data.</p>
+<p>The <code>sits</code> package provides the function <code><a href="https://rdrr.io/pkg/sits/man/sits_combine_predictions.html">sits_combine_predictions()</a></code> to estimate ensemble predictions using probability cubes produced by <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code> and optionally post-processed with <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code>. There are two ways to make ensemble predictions from multiple models in <code>sits</code>:</p>
 <ul>
 <li><p>Averaging: In this approach, the predictions of each model are averaged to produce the final prediction. This method works well when the models have similar accuracy and errors.</p></li>
 <li><p>Uncertainty: Predictions from different models are compared in terms of their uncertainties on a pixel-by-pixel basis; predictions with lower uncertainty are chosen as the more likely ones to be valid.</p></li>
 </ul>
-<p>In what follows, we will use the same data used as in the “Image Classification in Data Cubes” chapter section to illustrate how to produce an ensemble prediction. For simplicity, we repeat the steps taken for classify an image in that chapter: create a data cube, train a model using the lightweight temporal attention encoder algorithm (<code><a href="https://rdrr.io/pkg/sits/man/sits_lighttae.html">sits_lighttae()</a></code>), then classify, post-process and label the data cube. As a starting point, we plot two instances of the data cube, at the start and at the end of the time series.</p>
-<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># files are available in a local directory</span></span>
+<p>In what follows, we will use the same data used in the “Image Classification in Data Cubes” Chapter to illustrate how to produce an ensemble prediction. For simplicity, we repeat the steps taken to classify an image in that chapter: create a data cube, train a model using the lightweight temporal attention encoder algorithm (<code><a href="https://rdrr.io/pkg/sits/man/sits_lighttae.html">sits_lighttae()</a></code>), then classify, post-process and label the data cube. As a starting point, we plot two instances of the data cube at the start and end of the time series.</p>
+<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Files are available in a local directory</span></span>
 <span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/Rondonia-20LKP/"</span>, package <span class="op">=</span> <span class="st">"sitsdata"</span><span class="op">)</span></span>
-<span><span class="co"># read data cube</span></span>
+<span><span class="co"># Read data cube</span></span>
 <span><span class="va">ro_cube_20LKP</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"MPC"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"SENTINEL-2-L2A"</span>,</span>
@@ -134,8 +134,8 @@
 Figure 90: Color composite image for date 2020-07-06.
 </p>
 </div>
-<p>The image from 2020-07-06 shows many areas under deforestation, especially a large one located in top center of the image. It is useful to compare to an image one year later, which shows a number of burned areas resulting from forest removal followed by fire.</p>
-<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
+<p>The image from 2020-07-06 shows many areas under deforestation, especially a large one located in the top center of the image. It is helpful to compare to an image one year later, which shows several burned areas resulting from forest removal followed by fire.</p>
+<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_cube_20LKP</span>,</span>
 <span>  date <span class="op">=</span> <span class="st">"2021-08-10"</span>,</span>
 <span>  red <span class="op">=</span> <span class="st">"B11"</span>,</span>
@@ -149,23 +149,23 @@ Figure 91: Color composite image for date 2021-08-10.
 </p>
 </div>
 <p>The samples used in the classification are the same as those used in the “Image Classification in Data Cubes” chapter. Please refer to that chapter for a more detailed description of the temporal response of the samples. We first reproduce the result obtained in that chapter using the <code><a href="https://rdrr.io/pkg/sits/man/sits_tempcnn.html">sits_tempcnn()</a></code> algorithm.</p>
-<div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># get the samples from library "sitsdata"</span></span>
+<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get the samples from library "sitsdata"</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/e-sensing/sitsdata/">sitsdata</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">samples_prodes_4classes</span><span class="op">)</span></span>
-<span><span class="co"># use only the bands available in the cube</span></span>
+<span><span class="co"># Use only the bands available in the cube</span></span>
 <span><span class="va">samples_3bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">samples_prodes_4classes</span>,</span>
 <span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_bands.html">sits_bands</a></span><span class="op">(</span><span class="va">ro_cube_20LKP</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># train model using LightTAE algorithm</span></span>
+<span><span class="co"># Train model using LightTAE algorithm</span></span>
 <span><span class="va">tcnn_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_train.html">sits_train</a></span><span class="op">(</span></span>
 <span>  samples <span class="op">=</span> <span class="va">samples_3bands</span>,</span>
 <span>  ml_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_tempcnn.html">sits_tempcnn</a></span><span class="op">(</span></span>
 <span>    opt_hparams <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>lr <span class="op">=</span> <span class="fl">0.001</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># classify data cube</span></span>
+<span><span class="co"># Classify data cube</span></span>
 <span><span class="va">ro_cube_probs_tcnn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">ro_cube_20LKP</span>,</span>
 <span>  ml_model <span class="op">=</span> <span class="va">tcnn_model</span>,</span>
@@ -174,7 +174,7 @@ Figure 91: Color composite image for date 2021-08-10.
 <span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  memsize <span class="op">=</span> <span class="fl">12</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># smooth data cube</span></span>
+<span><span class="co"># Smooth data cube</span></span>
 <span><span class="va">ro_cube_bayes_tcnn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">ro_cube_probs_tcnn</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp13"</span>,</span>
@@ -182,7 +182,7 @@ Figure 91: Color composite image for date 2021-08-10.
 <span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  memsize <span class="op">=</span> <span class="fl">12</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># generate thematic map</span></span>
+<span><span class="co"># Generate a thematic map</span></span>
 <span><span class="va">defor_map_tcnn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">ro_cube_bayes_tcnn</span>,</span>
 <span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
@@ -197,16 +197,16 @@ Figure 91: Color composite image for date 2021-08-10.
 Figure 92: Image Classification using TempCNN model.
 </p>
 </div>
-<p>The deforestation map produced by the <code><a href="https://rdrr.io/pkg/sits/man/sits_tempcnn.html">sits_tempcnn()</a></code> algorithm has spatial consistency; arguably, it underestimates the burned areas in the right-hand corner of the image. The method tries to modelling temporal behavior of the reflectances. For this reason, it sometimes fails to detect changes that occur in the last dates of the time series, as it occurs when areas are burned in August.</p>
-<p>To build a two-member ensemble, we now classify the same image using a random forests algorithm.</p>
-<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># train model using random forests algorithm</span></span>
+<p>The deforestation map produced by the <code><a href="https://rdrr.io/pkg/sits/man/sits_tempcnn.html">sits_tempcnn()</a></code> algorithm has spatial consistency; arguably, it underestimates the burned areas in the right-hand corner of the image. The method tries to model the temporal behavior of the reflectances. For this reason, it sometimes fails to detect changes in the last dates of the time series, as it occurs when areas are burned in August.</p>
+<p>To build a two-member ensemble, we now classify the same image using a random forest algorithm.</p>
+<div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Train model using random forests algorithm</span></span>
 <span><span class="va">rfor_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_train.html">sits_train</a></span><span class="op">(</span></span>
 <span>  samples <span class="op">=</span> <span class="va">samples_3bands</span>,</span>
 <span>  ml_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_rfor.html">sits_rfor</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># classify the data cube using the tempCNN model</span></span>
+<span><span class="co"># Classify the data cube using the tempCNN model</span></span>
 <span><span class="va">ro_cube_probs_rfor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">ro_cube_20LKP</span>,</span>
 <span>  ml_model <span class="op">=</span> <span class="va">rfor_model</span>,</span>
@@ -215,7 +215,7 @@ Figure 92: Image Classification using TempCNN model.
 <span>  memsize <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  multicores <span class="op">=</span> <span class="fl">4</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># post-process the probability cube</span></span>
+<span><span class="co"># Post-process the probability cube</span></span>
 <span><span class="va">ro_cube_bayes_rfor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">ro_cube_probs_rfor</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp13/"</span>,</span>
@@ -223,7 +223,7 @@ Figure 92: Image Classification using TempCNN model.
 <span>  memsize <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  multicores <span class="op">=</span> <span class="fl">4</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># label the post-processed  probability cube</span></span>
+<span><span class="co"># Label the post-processed  probability cube</span></span>
 <span><span class="va">ro_cube_label_rfor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">ro_cube_bayes_rfor</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp13/"</span>,</span>
@@ -231,7 +231,7 @@ Figure 92: Image Classification using TempCNN model.
 <span>  memsize <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  multicores <span class="op">=</span> <span class="fl">4</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># plot the random forests version of the classified cube</span></span>
+<span><span class="co"># Plot the random forests version of the classified cube</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_cube_label_rfor</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-160"></span>
@@ -239,10 +239,10 @@ Figure 92: Image Classification using TempCNN model.
 Figure 93: Land classification in Rondonia using a random forests algorithm.
 </p>
 </div>
-<p>Comparing the two results, while most of the land areas have been classified equally, there are places of disagreement concerning the places classified as “Burned_Area” and “Highly Degraded”. Since the random forests model is sensitive to the response of images in the end of the period, it tends to be better to distinguish burned areas. However, it tends to reduce the forest areas, classifying some of them as highly degraded. Such misclassification happens because the random forests algorithm disregards the temporal correlation of the input data. Values from a single date are used to distinguish between natural and degraded forest areas.</p>
-<p>Given the differences and complementarities between the two predicted outcomes, it is useful to combine them using <code><a href="https://rdrr.io/pkg/sits/man/sits_combine_predictions.html">sits_combine_predictions()</a></code>. The first option for ensemble prediction is to take the average of the probability maps to reduce noise.</p>
-<div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># combine the two predictions by taking the average of the probabilities for each class</span></span>
+<p>Comparing the two results, while most of the land areas have been classified equally, there are places of disagreement concerning the places classified as “Burned_Area” and “Highly Degraded”. Since the random forests model is sensitive to the response of images at the end of the period, it tends to be better to distinguish burned areas. However, it tends to reduce the forest areas, classifying some of them as highly degraded. Such misclassification happens because the random forests algorithm disregards the temporal correlation of the input data. Values from a single date are used to distinguish between natural and degraded forest areas.</p>
+<p>Given the differences and complementarities between the two predicted outcomes, combining them using <code><a href="https://rdrr.io/pkg/sits/man/sits_combine_predictions.html">sits_combine_predictions()</a></code> is useful. The first option for ensemble prediction is to take the average of the probability maps to reduce noise.</p>
+<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Combine the two predictions by taking the average of the probabilities for each class</span></span>
 <span><span class="va">s2_cube_average_probs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_combine_predictions.html">sits_combine_predictions</a></span><span class="op">(</span></span>
 <span>  cubes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">ro_cube_bayes_tcnn</span>, <span class="va">ro_cube_bayes_rfor</span><span class="op">)</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"average"</span>,</span>
@@ -251,7 +251,7 @@ Figure 93: Land classification in Rondonia using a random forests algorithm.
 <span>  memsize <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  multicores <span class="op">=</span> <span class="fl">4</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># label the average probability cube</span></span>
+<span><span class="co"># Label the average probability cube</span></span>
 <span><span class="va">s2_cube_average_class</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">s2_cube_average_probs</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp13/"</span>,</span>
@@ -259,7 +259,7 @@ Figure 93: Land classification in Rondonia using a random forests algorithm.
 <span>  memsize <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>  multicores <span class="op">=</span> <span class="fl">4</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># plot the second version of the classified cube</span></span>
+<span><span class="co"># Plot the second version of the classified cube</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">s2_cube_average_class</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-161"></span>
@@ -267,7 +267,7 @@ Figure 93: Land classification in Rondonia using a random forests algorithm.
 Figure 94: Land classification in Rondonia near Samuel dam using the average of the probabilities produced by lightTAE and tempCNN algorithms.
 </p>
 </div>
-<p>Compared with the initial map, the result has increased the number of pixels classified as burned areas and highly degraded. Not all areas classified as degraded forest by the random forests method have been included in the final map. Only those places where the random forests algorithm has high confidence have been included. In general, the average map results on a better classification than the individual results.</p>
+<p>Compared with the initial map, the result has increased the number of pixels classified as burned areas and highly degraded. Not all areas classified as degraded forest by the random forests method have been included in the final map. Only those places where the random forests algorithm has high confidence have been included. The average map generally results in a better classification than the individual results.</p>
 
 </div>
   <div class="chapter-nav">
@@ -291,7 +291,7 @@ Figure 94: Land classification in Rondonia near Samuel dam using the average of 
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-10.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -13,15 +13,15 @@
 <meta name="author" content="Pedro Ribeiro Andrade">
 <meta name="author" content="Karine Ferreira">
 <meta name="author" content="Gilberto Queiroz">
-<meta name="description" content="This section is intended for programmers and experts that would like to extend the capabilities of sits, either by including new data sources, ML algorithms, exporting data to be used in Python or...">
+<meta name="description" content="This section is intended for programmers and experts who would like to extend the capabilities of sits by including new data sources, ML algorithms, exporting data to be used in Python or QGIS, or...">
 <meta name="generator" content="bookdown 0.33 with bs4_book()">
 <meta property="og:title" content="Visualising and Exporting data | sits: Satellite Image Time Series Analysis on Earth Observation Data Cubes">
 <meta property="og:type" content="book">
 <meta property="og:image" content="/images/cover_sits_book.png">
-<meta property="og:description" content="This section is intended for programmers and experts that would like to extend the capabilities of sits, either by including new data sources, ML algorithms, exporting data to be used in Python or...">
+<meta property="og:description" content="This section is intended for programmers and experts who would like to extend the capabilities of sits by including new data sources, ML algorithms, exporting data to be used in Python or QGIS, or...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Visualising and Exporting data | sits: Satellite Image Time Series Analysis on Earth Observation Data Cubes">
-<meta name="twitter:description" content="This section is intended for programmers and experts that would like to extend the capabilities of sits, either by including new data sources, ML algorithms, exporting data to be used in Python or...">
+<meta name="twitter:description" content="This section is intended for programmers and experts who would like to extend the capabilities of sits by including new data sources, ML algorithms, exporting data to be used in Python or QGIS, or...">
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -103,7 +103,7 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="visualising-and-exporting-data" class="section level1 unnumbered">
 <h1>Visualising and Exporting data<a class="anchor" aria-label="anchor" href="#visualising-and-exporting-data"><i class="fas fa-link"></i></a>
 </h1>
-<p>This section is intended for programmers and experts that would like to extend the capabilities of <code>sits</code>, either by including new data sources, ML algorithms, exporting data to be used in Python or QGIS, or including new display colors.</p>
+<p>This section is intended for programmers and experts who would like to extend the capabilities of <code>sits</code> by including new data sources, ML algorithms, exporting data to be used in Python or QGIS, or including new display colors.</p>
 <div id="how-colors-work-in-sits" class="section level2 unnumbered">
 <h2>How colors work in sits<a class="anchor" aria-label="anchor" href="#how-colors-work-in-sits"><i class="fas fa-link"></i></a>
 </h2>
@@ -115,10 +115,10 @@ Figure 95: Default colors used in the sits package
 </p>
 </div>
 <p>The color table can be extended or adjusted by accessing and modifying the default color table, using the commands <code><a href="https://rdrr.io/pkg/sits/man/sits_colors.html">sits_colors()</a></code> to retrieve the table and <code><a href="https://rdrr.io/pkg/sits/man/sits_colors_set.html">sits_colors_set()</a></code> to update the table according to user choices, as shown in the example below.</p>
-<div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># retrieve the color table</span></span>
+<div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Retrieve the color table</span></span>
 <span><span class="va">color_tb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_colors.html">sits_colors</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co"># show the color table</span></span>
+<span><span class="co"># Show the color table</span></span>
 <span><span class="va">color_tb</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; # A tibble: 99 × 3
 #&gt;    name                       color   group          
@@ -135,8 +135,8 @@ Figure 95: Default colors used in the sits package
 #&gt; 10 Sparse_Forest              #27AE60 Tropical_Forest
 #&gt; # … with 89 more rows</code></pre>
 <p>As an example of a user-defined color table, consider a definition that covers level 1 of the Anderson Classification System used in the US National Land Cover Data, obtained by defining a new color table, as shown below. The colors can be defined by HEX values or by names accepted as R color codes.</p>
-<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># define a color table based on the Anderson Land Classification System</span></span>
+<div class="sourceCode" id="cb161"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Define a color table based on the Anderson Land Classification System</span></span>
 <span><span class="va">us_nlcd</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">us_nlcd</span> <span class="op">&lt;-</span> <span class="va">us_nlcd</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Urban Built Up"</span>, color <span class="op">=</span> <span class="st">"#85929E"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -148,9 +148,9 @@ Figure 95: Default colors used in the sits package
 <span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Barren Land"</span>, color <span class="op">=</span> <span class="st">"#FDEBD0"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Tundra"</span>, color <span class="op">=</span> <span class="st">"#EBDEF0"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/add_row.html">add_row</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Snow and Ice"</span>, color <span class="op">=</span> <span class="st">"#F7F9F9"</span><span class="op">)</span></span>
-<span><span class="co"># load the color table into `sits`</span></span>
+<span><span class="co"># Load the color table into `sits`</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_colors_set.html">sits_colors_set</a></span><span class="op">(</span><span class="va">us_nlcd</span><span class="op">)</span></span>
-<span><span class="co"># show the new color table used by sits</span></span>
+<span><span class="co"># Show the new color table used by sits</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_colors_show.html">sits_colors_show</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-165"></span>
@@ -158,21 +158,21 @@ Figure 95: Default colors used in the sits package
 Figure 96: Example of Anderson Land Classification Scheme use in sits
 </p>
 </div>
-<p>As an alternative, users may define their own legends and pass them as parameters to to the <code>plot</code> function. Please see the example provided in Section “Map Reclassification” on Chapter “Image Classification in Data Cubes”.</p>
+<p>As an alternative, users may define legends and pass them as parameters to the <code>plot</code> function. Please see the example provided in Section “Map Reclassification” in the Chapter “Image Classification in Data Cubes”.</p>
 </div>
 <div id="exporting-data-to-json" class="section level2 unnumbered">
 <h2>Exporting data to JSON<a class="anchor" aria-label="anchor" href="#exporting-data-to-json"><i class="fas fa-link"></i></a>
 </h2>
 <p>Both the data cube and the time series tibble can be exported to exchange formats such as JSON.</p>
-<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://arxiv.org/abs/1403.2805">jsonlite</a></span><span class="op">)</span></span>
-<span><span class="co"># export the data cube to JSON</span></span>
+<span><span class="co"># Export the data cube to JSON</span></span>
 <span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/read_json.html">write_json</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="va">s2_20LKP_cube_MPC</span>,</span>
 <span>  path <span class="op">=</span> <span class="st">"./data_cube.json"</span>,</span>
 <span>  pretty <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co"># export the time series to JSON</span></span>
+<span><span class="co"># Export the time series to JSON</span></span>
 <span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/read_json.html">write_json</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="va">samples_prodes_4classes</span>,</span>
 <span>  path <span class="op">=</span> <span class="st">"./time_series.json"</span>,</span>
@@ -206,7 +206,7 @@ Figure 96: Example of Anderson Land Classification Scheme use in sits
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-10.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
