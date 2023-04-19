@@ -63,7 +63,7 @@ Random forest is a machine learning algorithm that uses an ensemble learning met
 knitr::include_graphics("images/random_forest.png") 
 ```
 
-SITS provides `sits_rfor()`, which uses the R `randomForest` package [@Wright2017]; its main parameter is `num_trees`, which is the number of trees to grow with a default value of 100. The model can be visualized using `plot()`.
+`sits` provides `sits_rfor()`, which uses the R `randomForest` package [@Wright2017]; its main parameter is `num_trees`, which is the number of trees to grow with a default value of 100. The model can be visualized using `plot()`.
 
 ```{r, echo = FALSE}
 set.seed(290356)
@@ -137,7 +137,7 @@ The boosting method starts from a weak predictor and then improves performance s
 
 Gradient boosting is a variant of boosting methods that minimize the cost function by gradient descent. Extreme gradient boosting [@Chen2016], called XGBoost, efficiently approximates the gradient loss function. Some recent papers show that it outperforms random forests for remote sensing image classification[@Jafarzadeh2021]. However, this result is not generalizable since actual performance is controlled by the quality of the training data set.
 
-In SITS, the XGBoost method is implemented by the `sits_xbgoost()` function, based on `XGBoost` R package, and has five hyperparameters that require tuning. The `sits_xbgoost()` function takes the user choices as input to a cross-validation to determine suitable values for the predictor.
+In `sits`, the XGBoost method is implemented by the `sits_xbgoost()` function, based on `XGBoost` R package, and has five hyperparameters that require tuning. The `sits_xbgoost()` function takes the user choices as input to a cross-validation to determine suitable values for the predictor.
 
 The learning rate `eta` varies from 0.0 to 1.0 and should be kept small (default is 0.3) to avoid overfitting. The minimum loss value `gamma` specifies the minimum reduction required to make a split. Its default is 0; increasing it makes the algorithm more conservative. The `max_depth` value controls the maximum depth of the trees. Increasing this value will make the model more complex and likely to overfit (default is 6). The `subsample` parameter controls the percentage of samples supplied to a tree. Its default is 1 (maximum). Setting it to lower values means that xgboost randomly collects only part of the data instances to grow trees, thus preventing overfitting. The `nrounds` parameter controls the maximum number of boosting interactions; its default is 100, which has proven to be enough in most cases. To follow the convergence of the algorithm, users can turn the `verbose` parameter on. In general, the results using the extreme gradient boosting algorithm are similar to the random forests method.
 

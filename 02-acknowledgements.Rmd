@@ -23,7 +23,7 @@ The authors acknowledge the funders that supported the development of `sits`:
 
 The authors thank the R-spatial community for their foundational work, including Marius Appel, Tim Appelhans, Robert Hijmans, Edzer Pebesma, 	Martijn Tennekes for their R packages `gdalcubes`,  `leafem`, `terra`, `sf`/`stars`, and `tmap`. We are grateful for the work of Dirk Eddelbuettel on `Rcpp` and `RcppArmadillo` and Ron Wehrens in package `kohonen`. We are much indebted to Hadley Wickham for the `tidyverse`, Daniel Falbel for the `torch` and `luz` packages, and the RStudio team for package `leaflet`. The multiple authors of machine learning packages `randomForest`, `e1071` and `xgboost` provided robust algorithms. We would like to thank Python developers who shared their deep learning algorithms for image time series classification: Vivien Sainte Fare Garnot, Zhiguang Wang, Maja Schneider, and Marc Rußwurm. The first author also thanks Roger Bivand for his benign influence in all things related to **R**.  
 
-## Reproducible papers used in building sits {-}
+## Reproducible papers used in building `sits` {-}
 
 We thank the authors of these papers for making their code available. 
 
@@ -46,9 +46,9 @@ We thank the authors of these papers for making their code available.
 - Maja Schneider, Marco Körner, "[Re] Satellite Image Time Series Classification with Pixel-Set Encoders and Temporal Self-Attention." ReScience C 7 (2), 2021. <doi:10.5281/zenodo.4835356>.
 
 
-## Publications using sits {-}
+## Publications using `sits` {-}
 
-This section gathers the publications that have used **sits** to generate their results.
+This section gathers the publications that have used `sits` to generate their results.
 
 **2023**
 

@@ -4,7 +4,7 @@ output:
   html_document: default
 ---
 
-# Introduction to SITS{-}
+# Introduction to `sits`{-}
 
 ```{r, include = FALSE}
 source("common.R")
@@ -90,7 +90,7 @@ kableExtra::kbl(sits_api,
 ```
 
 
-```{r, echo = FALSE, out.width = "100%", out.height = "100%", fig.align="center", fig.cap="Main functions of the SITS API (source: authors)."}
+```{r, echo = FALSE, out.width = "100%", out.height = "100%", fig.align="center", fig.cap="Main functions of the sits API (source: authors)."}
 
 knitr::include_graphics("images/sits_api.png") 
 ```

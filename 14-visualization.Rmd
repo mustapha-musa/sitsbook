@@ -12,7 +12,7 @@ This section is intended for programmers and experts who would like to extend th
 In examples provided in the book, the color legend is taken for the predefined color table provided by `sits`. This default color table is displayed using the command `sits_colors_show`. This color definition file assigns colors to 99 class names, including the IPCC and IGBP land use classes. 
 
 ```{r, tidy = "styler", out.width = "100%", out.height = "100%", echo = FALSE, fig.align="center", fig.cap="Default colors used in the sits package"}
-# Display default sits colors
+# Display default `sits` colors
 sits_colors_show()
 ```
 
