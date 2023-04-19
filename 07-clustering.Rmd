@@ -1,4 +1,4 @@
-# Improving the Quality of Training Samples{-}
+# Improving the quality of training samples{-}
 
 ```{r, echo = FALSE}
 source("common.R")

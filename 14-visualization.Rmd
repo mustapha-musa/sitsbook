@@ -1,4 +1,4 @@
-# Visualising and Exporting data{-}
+# Visualising and exporting data{-}
 
 ```{r, include = FALSE}
 source("common.R")

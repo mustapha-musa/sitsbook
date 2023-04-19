@@ -1,4 +1,4 @@
-# Ensemble Prediction from Multiple Models{-}
+# Ensemble prediction from multiple models{-}
 
 ```{r, echo = FALSE}
 source("common.R")

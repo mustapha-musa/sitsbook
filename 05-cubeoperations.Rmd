@@ -1,4 +1,4 @@
-# Operations on Data Cubes{-}
+# Operations on data cubes{-}
 
 ```{r, echo = FALSE}
 source("common.R")
