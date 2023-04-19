@@ -1931,21 +1931,21 @@ dir.create("./tempdir/chp9")
 
 <a href="https://www.kaggle.com/esensing/raster-classification-in-sits" target="_blank"><img src="https://kaggle.com/static/images/open-in-kaggle.svg"/></a>
 
-In this chapter, we discuss how to classify data cubes by providing a step-by-step example. Our study area is the state of Rondonia, Brazil, that underwent substantial deforestation in the last decades. The objective of the case study is to detect deforested areas. 
+This Chapter discusses how to classify data cubes by providing a step-by-step example. Our study area is the state of Rondonia, Brazil, which underwent substantial deforestation in the last decades. The objective of the case study is to detect deforested areas. 
 
 ## Training the classification model{-}
 
-The case study uses the training data set `samples_prodes_4bands`, available in package `sitsdata`. This data set consists of 480 samples collected from Sentinel-2 images covering the state of Rondonia. The samples are intended to detect deforestation events, and include four classes: "Forest", "Burned_Area",   "Cleared_Area", and "Highly_Degraded". The time series cover a set of 29 dates with a period of 16 days, ranging from "2020-06-04" to "2021-08-26". The data has 12 attributes, including original bands ("B02", "B03", "B04", "B05", "B08", "B8A", "B11", and "B12") and indices ("NDVI", "EVI" and "NBR").
+The case study uses the training data set `samples_prodes_4bands`, available in package `sitsdata`. This data set consists of 480 samples collected from Sentinel-2 images covering the state of Rondonia. The samples are intended to detect deforestation events and include four classes: "Forest", "Burned_Area",   "Cleared_Area", and "Highly_Degraded". The time series cover a set of 29 dates with a period of 16 days, ranging from "2020-06-04" to "2021-08-26". The data has 12 attributes, including original bands ("B02", "B03", "B04", "B05", "B08", "B8A", "B11", and "B12") and indices ("NDVI", "EVI" and "NBR").
 
 ```{r, tidy = "styler"}
 library(sitsdata)
-# obtain the samples 
+# Obtain the samples 
 data("samples_prodes_4classes")
-# show the contents of the samples
+# Show the contents of the samples
 sits_labels_summary(samples_prodes_4classes)
 ```
 
-To better understand the training set, its is useful to plot the basic patterns associated to the samples. The function `sits_patterns()` uses a generalized additive model (GAM) to predict a smooth, idealized approximation to the time series associated to the each label, for all bands. Since the data cube used in the classification has only three bands ("B02", "B8A", and "B11"), we filter the samples for these bands before showing the patterns. 
+It is helpful to plot the basic patterns associated with the samples to understand the training set better. The function `sits_patterns()` uses a generalized additive model (GAM) to predict a smooth, idealized approximation to the time series associated with each label for all bands. Since the data cube used in the classification has only three bands ("B02", "B8A", and "B11"), we filter the samples for these bands before showing the patterns. 
 
 ```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Patterns associated to the training samples"}
 samples_3bands <- sits_select(
@@ -1955,18 +1955,18 @@ samples_3bands <- sits_select(
 plot(sits_patterns(samples_3bands))
 ```
 
-The patterns show different temporal responses for the selected classes. They match the typical behavior of deforestation in the Amazon. First, the forest is cut at the start of the dry season (June/July). At the end of the dry season, some clear-cut areas are burned to clean the remains; this action is reflected in the steep fall of the response of "B8A" values of burned area samples after July. In areas that are cleared but not burned, response in the middle infra-red band "B11" increases significantly at the end of the dry season, while "B8A" values remain high. This is a sign of mixed pixels which combine forest remains with bare soil. Forest areas show a constant spectral response during the year. Degraded areas show an increase in values of middle infra-red band "B11" compared to native forests, showing a mixed response of vegetation and soil.
+The patterns show different temporal responses for the selected classes. They match the typical behavior of deforestation in the Amazon. First, the forest is cut at the start of the dry season (June/July). At the end of the dry season, some clear-cut areas are burned to clean the remains; this action is reflected in the steep fall of the response of "B8A" values of burned area samples after July. In cleared but not burned areas, response in the middle infra-red band "B11" increases significantly at the end of the dry season, while "B8A" values remain high. This is a sign of mixed pixels, which combine forest remains with bare soil. Forest areas show a constant spectral response during the year. Degraded areas show an increase in values of the middle infra-red band "B11" compared to native forests, showing a mixed response of vegetation and soil.
 
 
 ## Building a data cube{-}
 
-We now build a data cube from the Sentinel-2 images available in the package `sitsdata`. These images were downloaded from the `SENTINEL-2-L2A` collection in Microsoft Planetary Computer (`MPC`). We have chosen bands "BO2", "B8A" and "B11" images in a small area of 1000 x 1000 pixels the state of Rondonia. As explained in the "Earth observation data cubes" chapter, we need to inform `sits` how to parse these file names to obtain tile, date and band information. Image files are named according to the convention "cube_tile_band_date" (e.g., `cube_20LKP_BO2_2020_06_04.tif`).
+We now build a data cube from the Sentinel-2 images available in the package `sitsdata`. These images are from the `SENTINEL-2-L2A` collection in Microsoft Planetary Computer (`MPC`). We have chosen bands "BO2", "B8A" and "B11" images in a small area of 1000 x 1000 pixels in the state of Rondonia. As explained in the "Earth observation data cubes" Chapter, we must inform `sits` how to parse these file names to obtain tile, date, and band information. Image files are named according to the convention "cube_tile_band_date" (e.g., `cube_20LKP_BO2_2020_06_04.tif`).
 
 
 ```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Color composite image of the cube for date 2021-07-25"}
-# files are available in a local directory 
+# Files are available in a local directory 
 data_dir <- system.file("extdata/Rondonia-20LKP/", package = "sitsdata")
-# read data cube
+# Read data cube
 ro_cube_20LKP <- sits_cube(
     source = "MPC",
     collection = "SENTINEL-2-L2A",
@@ -1974,40 +1974,39 @@ ro_cube_20LKP <- sits_cube(
     parse_info = c('X1', "tile", "band", "date")
 )
 
-# plot the cube
+# Plot the cube
 plot(ro_cube_20LKP, dates = "2021-07-25", red = "B11", green = "B8A", blue = "B02")
 ```
 
 ## Training a deep learning model{-}
 
-The next step is to train a Lightweigth Temporal Attentiona Enconder model model, using the `adamw` optimizer and a learning rate of 0.001. Since the data cube to be classified has bands `BO2`, `B8A` and `B11`,  we select these bands from the training data.
+The next step is to train a Lightweigth Temporal Attention Enconder model, using the `adamw` optimizer and a learning rate of 0.001. Since the data cube to be classified has bands `BO2`, `B8A`, and `B11`,  we select these bands from the training data.
 
 ```{r, tidy = "styler", out.width = "80%", fig.align="center", fig.cap="Training evolution of LightTAE model."}
-# use only the bands available in the cube
+# Use only the bands available in the cube
 samples_3bands <- sits_select(
     data = samples_prodes_4classes, 
     bands = sits_bands(ro_cube_20LKP)
 )
 
-# train model using LightTAE algorithm
+# Train model using LightTAE algorithm
 ltae_model <- sits_train(
     samples = samples_3bands, 
     ml_method = sits_lighttae(
         opt_hparams = list(lr = 0.001)
         )
 )
-# plot the evolution of the model
+# Plot the evolution of the model
 plot(ltae_model)
 ```
 
-
 ## Classification using parallel processing{-}
 
-To classify both data cubes and sets of time series, use the function `sits_classify()`, which uses parallel processing for speed up performance, as described in the end of this Chapter. Its most relevant parameters are: (a) `data`, either a data cube or a set of time series; (b) `ml_model`, a trained model using one of the machine learning methods provided; (c) `multicores`, number of CPU cores that will be used for processing; (d) `memsize`, memory available for classification; (e) `output_dir`, directory where results will be stored; (f) `version`, for version control. If users want to follow the processing steps, they should turn on the parameters `verbose` to print information and `progress` to get a progress bar. The result of the classification is a data cube with a set of probability layers, one for each output class. Each probability layer contains the model's assessment of how likely is each pixel to belong to the related class. The probability cube can be visualized with `plot()`. 
+To classify both data cubes and sets of time series, use the function `sits_classify()`, which uses parallel processing to speed up the performance, as described at the end of this Chapter. Its most relevant parameters are: (a) `data`, either a data cube or a set of time series; (b) `ml_model`, a trained model using one of the machine learning methods provided; (c) `multicores`, number of CPU cores that will be used for processing; (d) `memsize`, memory available for classification; (e) `output_dir`, directory where results will be stored; (f) `version`, for version control. If users want to follow the processing steps, they should turn on the parameters `verbose` to print information and `progress` to get a progress bar. The classification result is a data cube with a set of probability layers, one for each output class. Each probability layer contains the model's assessment of how likely each pixel belongs to the related class. The probability cube can be visualized with `plot()`. 
 
 ```{r, tidy = "styler", out.width = "80%", fig.align="center", fig.cap="Probability maps produced by LightTAE model."}
 
-# classify data cube
+# Classify data cube
 ro_cube_20LKP_probs <- sits_classify(
     data     = ro_cube_20LKP,
     ml_model = ltae_model,
@@ -2019,10 +2018,10 @@ ro_cube_20LKP_probs <- sits_classify(
 plot(ro_cube_20LKP_probs, palette = "YlGn")
 ```
 
-The probability cube is a useful tool for data analysis. It is used for post-processing smoothing, as described in this Chapter, but also in uncertainty estimates and active learning, as described in the "Uncertainty and Active Learning" Chapter.
+A probability cube is a helpful tool for data analysis. It is used for post-processing smoothing, as described in this Chapter, but also in uncertainty estimates and active learning, as described in the "Uncertainty and Active Learning" Chapter.
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Final classification map."}
-# generate thematic map
+# Generate a thematic map
 defor_map <- sits_label_classification(
     cube = ro_cube_20LKP_probs,
     multicores = 4,
@@ -2033,13 +2032,13 @@ defor_map <- sits_label_classification(
 plot(defor_map)
 ```
 
-The labelled map generated from the pixel-based time series classification method exhibits a number of misclassified pixels, which are depicted as small patches that appear surrounded by a different class. This occurrence of outliers is a common issue that arises due to the inherent nature of this classification approach. Mixed pixels are prevalent in images, regardless of their resolution, and each class exhibits a considerable degree of data variability. As a result, these factors can lead to outliers that have a higher probability of being misclassified. To overcome this limitation, `sits` employs post-processing smoothing techniques that leverage the spatial context of the probability cubes to refine the results. These techniques will be discussed in the next chapter.
+The labeled map generated from the pixel-based time series classification method exhibits several misclassified pixels, which are small patches surrounded by a different class. This occurrence of outliers is a common issue that arises due to the inherent nature of this classification approach. Regardless of their resolution, mixed pixels are prevalent in images, and each class exhibits considerable data variability. As a result, these factors can lead to outliers that are more likely to be misclassified. To overcome this limitation, `sits` employs post-processing smoothing techniques that leverage the spatial context of the probability cubes to refine the results. These techniques will be discussed in the next Chapter.
 
 ## Map Reclassification{-}
 
-Reclassification of a remote sensing map refers to the process of changing the classes assigned to different pixels in the image. The purpose of reclassification is to modify the information contained in the image to better suit a specific use case. In `sits`, reclassification involves assigning new class labels to pixels based on additional information provided a reference map. Based on the labels of the classification and the reference map, the users defines rules based on the desired outcome. These rules are then applied to the classified map. The result is a new map with updated labels.
+Reclassification of a remote sensing map refers to changing the classes assigned to different pixels in the image. The purpose of reclassification is to modify the information contained in the image to better suit a specific use case. In `sits`, reclassification involves assigning new class labels to pixels based on additional information from a reference map. Based on the classification labels and the reference map, the users define rules according to the desired outcome. These rules are then applied to the classified map. The result is a new map with updated labels.
 
-To illustrate the reclassification operation in `sits`, we take a classified data cube, stored in the `sitsdata` package. As discussed in the "Earth observation data cubes" chapter, `sits` can create a data cube from a classified image file. Users need to provide the original data source and collection, the directory where  data is stored (`data_dir`), the information on how to retrieve data cube parameters from file names (`parse_info`), and the labels associated to the classified image. 
+To illustrate the reclassification operation in `sits`, we take a classified data cube stored in the `sitsdata` package. As discussed in the "Earth observation data cubes" Chapter, `sits` can create a data cube from a classified image file. Users need to provide the original data source and collection, the directory where data is stored (`data_dir`), the information on how to retrieve data cube parameters from file names (`parse_info`), and the labels associated with the classified image. 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="original classification map."}
 # Open classification map
@@ -2057,9 +2056,9 @@ ro_class <- sits_cube(
 plot(ro_class)
 ```
 
-The above map shows the total extent of deforestation by clear cuts estimated by the `sits` random forest algorithm in an area in Rondonia, Brasil, based on an time series of Sentinel-2 images for the period `2020-06-04` to `2021-08-26`. Suppose we want to estimate the deforestation that ocurred period from June 2020 to August 2021. We need a reference map that contains information on forest cuts prior to 2020. 
+The above map shows the total extent of deforestation by clear cuts estimated by the `sits` random forest algorithm in an area in Rondonia, Brazil, based on a time series of Sentinel-2 images for the period `2020-06-04` to `2021-08-26`. Suppose we want to estimate the deforestation that occurred period from June 2020 to August 2021. We need a reference map containing information on forest cuts before 2020. 
 
-In this example, we the PRODES deforestation map of Amazonia created by Brazil's National Institute for Space Research (INPE) as our refence. This map is produced by visual interpretation. PRODES measures deforestation on an yearly basis, starting from August of one year to July of the following year. The contains classes that represent the natural world ("Forest", "Water", "NonForest", and  "NonForest2") and classes that capture the yearly deforestation increments. These classes are labelled "dYYYY" and "rYYYY"; the first label refers to deforestation on a given year (e.g., "d2008" for deforestation for August 2007 to July 2008); the second to places where the satellite data is not sufficient to determine the land cover (e.g, "r2010" for 2010). This map is available on package "sitsdata", as shown below.
+In this example, we use as a reference the PRODES deforestation map of Amazonia created by Brazil's National Institute for Space Research (INPE). This map is produced by visual interpretation. PRODES measures deforestation every year, starting from August of one year to July of the following year. The contains classes that represent the natural world ("Forest", "Water", "NonForest", and  "NonForest2") and classes that capture the yearly deforestation increments. These classes are labeled "dYYYY" and "rYYYY"; the first label refers to deforestation in a given year (e.g., "d2008" for deforestation for August 2007 to July 2008); the second to places where the satellite data is not sufficient to determine the land cover (e.g, "r2010" for 2010). This map is available on package "sitsdata", as shown below.
 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Deforestation map produced by sits."}
@@ -2082,15 +2081,15 @@ prodes2021 <- sits_cube(
                "r2019", "d2020", "NoClass", "r2020",
                "Clouds2021", "d2021", "r2021")
 )
-
 ```
-Since the labels of the deforestation map are specialized and are not part of the default `sits` color table, we define a legend for better visualisation of the different deforestation classes. Using this new legend, we can plot the PRODES deforestation map.
+
+Since the labels of the deforestation map are specialized and are not part of the default `sits` color table, we define a legend for better visualization of the different deforestation classes. Using this new legend, we can plot the PRODES deforestation map.
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Deforestation map produced by PRODES."}
 
-# use the RColorBrewer pallete "YlOrBr" for the deforestation years
+# Use the RColorBrewer palette "YlOrBr" for the deforestation years
 colors <- grDevices::hcl.colors(n = 15, palette = "YlOrBr")
-# define the legend for the deforestation map
+# Define the legend for the deforestation map
 def_legend <- c(
     "Forest" = "forestgreen", "Water" = "dodgerblue3", 
     "NonForest" = "bisque2", "NonForest2" = "bisque2",
@@ -2113,9 +2112,9 @@ def_legend <- c(
 plot(prodes2021, legend = def_legend)
 ```
 
-Taking the PRODES map as our refence, we can include new labels in the classified map produced by `sits` using `sits_reclassify()`. The new label "Defor_2020" will be applied to all pixels that PRODES considers that have been deforested prior to July 2020. We also include a new label "Non_Forest" to include all pixels that PRODES takes as not covered by native vegetation, such as wetlands and rocky areas. The PRODES classes will be used as a mask over the `sits` deforestation map.
+Taking the PRODES map as our reference, we can include new labels in the classified map produced by `sits` using `sits_reclassify()`. The new label "Defor_2020" will be applied to all pixels that PRODES considers that have been deforested before July 2020. We also include a new label, "Non_Forest" to include all pixels that PRODES takes as not covered by native vegetation, such as wetlands and rocky areas. The PRODES classes will be used as a mask over the `sits` deforestation map.
 
-The `sits_reclassify()` operation requires the parameters: (a) `cube`, the classified data cube whose pixels will be reclassified; (b) `mask`, the reference data cube used as a mask; (c) `rules`, a named list. The names of the `rules` list will be the new labels of the classified cube.  Each new label is associated to a `mask` vector that includes the labels of the reference map that will be joined. `sits_reclassify()` then compares the original and reference map pixel by pixel. For each pixel of the reference map whose labels in one of the `rules`, the algorithm relabels the original map. The result will be a reclassified map that has the original labels plus the new labels that have been masked using the reference map.
+The `sits_reclassify()` operation requires the parameters: (a) `cube`, the classified data cube whose pixels will be reclassified; (b) `mask`, the reference data cube used as a mask; (c) `rules`, a named list. The names of the `rules` list will be the new labels of the classified cube. Each new label is associated with a `mask` vector that includes the labels of the reference map that will be joined. `sits_reclassify()` then compares the original and reference map pixel by pixel. For each pixel of the reference map whose labels are in one of the `rules`, the algorithm relabels the original map. The result will be a reclassified map with the original labels plus the new labels that have been masked using the reference map.
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Deforestation map by sits masked by PRODES map."}
 # Reclassify cube
@@ -2123,6 +2122,7 @@ ro_def_2021 <- sits_reclassify(
     cube = ro_class,
     mask = prodes2021,
     rules = list(
+        "Non_Forest" = mask %in% c("NonForest", "NonForest2"),
         "Deforestation_Mask" = mask %in% c(
             "d2007", "d2008", "d2009",
             "d2010", "d2011", "d2012",
@@ -2134,48 +2134,45 @@ ro_def_2021 <- sits_reclassify(
             "r2016", "r2017", "r2018",
             "r2019", "r2020", "r2021"
         ),
-        "Water" = mask == "Water",
-        "Non_Forest" = mask %in% c("NonForest", "NonForest2")
+        "Water" = mask == "Water"
+        
     ),
     memsize = 8,
     multicores = 2,
     output_dir = "./tempdir/chp9",
     version = "reclass"
 )
-# plot the reclassified map
+# Plot the reclassified map
 plot(ro_def_2021)
 ```
-The reclassified map has been split into deforestation prior to mid-2020 (using the PRODES map) and the areas classified by `sits` that are taken as being deforested on the period mid-2020 to mid-2021. This allows the experts to measure how much deforestation occurred in this period according to `sits` and compare the result with that of the PRODES visual interpretation map. 
 
-The `sits_reclassify()` operation is not restricted to the comparison between deforestation maps. It can be used in any case that requires masking of a result based on a reference map. 
+The reclassified map has been split into deforestation before mid-2020 (using the PRODES map) and the areas classified by `sits` that are taken as being deforested from mid-2020 to mid-2021. This allows the experts to measure how much deforestation occurred in this period according to `sits` and compare the result with the PRODES visual interpretation map. 
+
+The `sits_reclassify()` operation is not restricted to comparing deforestation maps. It can be used in any case that requires masking of a result based on a reference map. 
 
 ## How parallel processing works{-}
 
-This section provides an overview of how the functions `sits_classify()`, `sits_smooth()` and `sits_label_classification()` process images in parallel. To achieve efficiency, `sits` implements a fault tolerant multitasking procedure for big EO data classification. Users are not burdened with the need to learn how to do multiprocessing. Thus, their learning curve is shortened. Image classification in `sits` is done by a cluster of independent workers linked to a virtual machine. To avoid communication overhead, all large payloads are read and stored independently; direct interaction between the main process and the workers is kept at a minimum. 
+This section provides an overview of how the functions `sits_classify()`, `sits_smooth()`, and `sits_label_classification()` process images in parallel. To achieve efficiency, `sits` implements a fault-tolerant multitasking procedure for big EO data classification. Users are not burdened with the need to learn how to do multiprocessing. Thus, their learning curve is shortened. Image classification in `sits` is done by a cluster of independent workers linked to a virtual machine. To avoid communication overhead, all large payloads are read and stored independently; direct interaction between the main process and the workers is kept at a minimum. 
 
-The classification procedure benefits from the fact that most images available in cloud collections are stored as COGs (cloud-optimized Geotiff). COGs are a regular GeoTIFF files organized in regular square blocks to improve visualization and access for large data sets. Thus, data requests can be optimized to access only portions of the images. All cloud services supported by `sits` use COG files. The classification algorithm in `sits` uses COGs to ensure optimal data access, reducing I/O demand as much as possible.
+The classification procedure benefits from the fact that most images available in cloud collections are stored as COGs (cloud-optimized Geotiff). COGs are regular GeoTIFF files organized in regular square blocks to improve visualization and access for large data sets. Thus, data requests can be optimized to access only portions of the images. All cloud services supported by `sits` use COG files. The classification algorithm in `sits` uses COGs to ensure optimal data access, reducing I/O demand as much as possible.
 
 The approach for parallel processing in `sits`, depicted in the figure below, has the following steps:
 
-1. Based on the block size of individual COG files, calculate the size of each chunk that has to be loaded in memory, considering the number of bands and the length of the timeline. Chunk access is optimized for efficient transfer of data blocks.
-2. Divide the total memory available by the chunk size to find out how many processes can be run in parallel. 
+1. Based on the block size of individual COG files, calculate the size of each chunk that must be loaded in memory, considering the number of bands and the timeline's length. Chunk access is optimized for the efficient transfer of data blocks.
+2. Divide the total memory available by the chunk size to determine how many processes can run in parallel. 
 3. Each core processes a chunk and produces a subset of the result.
 4. Repeat the process until all chunks in the cube have been processed.
 5. Check that subimages have been produced correctly. If there is a problem with one or more subimages, run a failure recovery procedure to ensure all data is processed.
-6. After all subimages are generated, join them to obtain the result.
+6. After generating all subimages, join them to obtain the result.
 
 ```{r, out.width = "90%", out.height = "90%", echo = FALSE, fig.align="center", fig.cap="Parallel processing in sits (source: Simoes et al.,2021)."}
 
 knitr::include_graphics("images/sits_parallel.png")
 ```
 
-This approach has many advantages. It works in any virtual machine that supports R and has no dependencies on proprietary software. Processing is done in a concurrent and independent way, with no communication between workers. Failure of one worker does not cause failure of the big data processing. The software is prepared to resume classification processing from the last processed chunk, preventing against failures such as memory exhaustion, power supply interruption, or network breakdown. 
+This approach has many advantages. It works in any virtual machine that supports R and has no dependencies on proprietary software. Processing is done in a concurrent and independent way, with no communication between workers. Failure of one worker does not cause the failure of big data processing. The software is prepared to resume classification processing from the last processed chunk, preventing failures such as memory exhaustion, power supply interruption, or network breakdown. 
 
-To reduce processing time, it is necessary to adjust `sits_classify()`, `sits_smooth()`, and `sits_label_classification()`  according to the capabilities of the host environment. The `memsize` parameter controls the size of the main memory (in GBytes) to be used for classification. A practical approach is to set `memsize` to the maximum memory available in the virtual machine for classification and to chose `multicores` as the largest number of cores available. Based on the memory available and the size of blocks in COG files, `sits` will access the images in an optimized way. In this way, `sits` tries to ensure best possible use of the available resources. 
-
-
-
-
+To reduce processing time, it is necessary to adjust `sits_classify()`, `sits_smooth()`, and `sits_label_classification()`  according to the capabilities of the host environment. The `memsize` parameter controls the size of the main memory (in GBytes) to be used for classification. A practical approach is to set `memsize` to the maximum memory available in the virtual machine for classification and to choose `multicores` as the largest number of cores available. Based on the memory available and the size of blocks in COG files, `sits` will access the images in an optimized way. In this way, `sits` tries to ensure the best possible use of the available resources. 
 
 <!--chapter:end:09-rasterclassification.Rmd-->
 
@@ -2191,24 +2188,24 @@ sits:::.conf_set_options("tmap_max_cells" = 1e+09)
 
 ## Introduction{-}
 
-Image classification post-processing has been defined as "a refinement of the labelling in a classified image in order to enhance its classification accuracy" [@Huang2014]. In remote sensing image analysis, these procedures are used  to combine pixel-based classification methods with a spatial post-processing method to remove outliers and misclassified pixels. For pixel-based classifiers, post-processing methods enable the inclusion of spatial information in the final results. 
+Image classification post-processing has been defined as "a refinement of the labeling in a classified image to enhance its classification accuracy" [@Huang2014]. In remote sensing image analysis, these procedures combine pixel-based classification methods with a spatial post-processing method to remove outliers and misclassified pixels. For pixel-based classifiers, post-processing methods enable the inclusion of spatial information in the final results. 
 
-The `sits` package uses a *time-first, space-later* approach. Since machine learning classifiers in `sits` are mostly pixel-based, it is necessary to complement them with spatial smoothing methods. These methods improve the accuracy of land-cover classification by incorporating spatial and contextual information into the classification process. Smoothing methods use the neighborhood data to remove outliers and enhance consistency in the resulting product. 
+The `sits` package uses a *time-first, space-later* approach. Since machine learning classifiers in `sits` are mostly pixel-based, it is necessary to complement them with spatial smoothing methods. These methods improve the accuracy of land-cover classification by incorporating spatial and contextual information into the classification process. Smoothing methods use neighborhood data to remove outliers and enhance consistency in the resulting product. 
 
-Most statistical classifiers use training samples derived from "pure" pixels, that have been selected by users as representative of the desired output classes. However, images contain many mixed pixels irrespective of the resolution. Also, there is a considerable degree of data variability in each class. These effects lead to outliers whose chance of misclassification is significant. To offset these problems, most post-processing methods use the "smoothness assumption" [@Schindler2012]: nearby pixels tend to have the same label. To put this assumption in practice, smoothing methods in `sits` use the neighborhood information to remove outliers and enhance consistency in the resulting product.
+Most statistical classifiers use training samples derived from "pure" pixels that users have selected to represent the desired output classes. However, images contain many mixed pixels irrespective of the resolution. Also, there is a considerable degree of data variability in each class. These effects lead to outliers whose chance of misclassification is significant. To offset these problems, most post-processing methods use the "smoothness assumption" [@Schindler2012]: nearby pixels tend to have the same label. To put this assumption in practice, smoothing methods in `sits` use the neighborhood information to remove outliers and enhance consistency in the resulting product.
 
 
 ## Motivation{-}
 
-The smoothing method available in `sits` uses Bayesian inference. Bayesian inference can be thought of as way of allowing the inclusion of expert knowledge on the derivation of probabilities. As stated by [@Spiegelhalter2009]: "In the Bayesian paradigm, degrees of belief in states of nature are specified. Bayesian statistical methods start with existing 'prior' beliefs, and update these using data to give 'posterior' beliefs, which may be used as the basis for inferential decisions". Bayesian inference has now been established as a major method for assessing probability. 
+The smoothing method available in `sits` uses Bayesian inference. Bayesian inference is a way of allowing the inclusion of expert knowledge on the derivation of probabilities. As stated by [@Spiegelhalter2009]: "In the Bayesian paradigm, degrees of belief in states of nature are specified. Bayesian statistical methods start with existing 'prior' beliefs and update these using data to give 'posterior' beliefs, which may be used as the basis for inferential decisions". Bayesian inference has now been established as a major method for assessing probability. 
 
-Bayesian inference allows the inclusion of expert knowledge. The assumption is that, at local level, class probabilities should be similar and provide the baseline for comparison with the pixel values produced by the classifier. Based on these two elements, Bayesian smoothing adjusts the probabilities for the pixels including spatial dependence.  
+Bayesian inference allows the inclusion of expert knowledge. The assumption is that class probabilities at the local level should be similar and provide the baseline for comparison with the pixel values produced by the classifier. Based on these two elements, Bayesian smoothing adjusts the probabilities for the pixels, including spatial dependence.  
 
 ## Bayesian estimation{-}
 
-The Bayesian estimate is based on two random variables: (a) The observed class probabilities for each pixel denoted by a random variable $p_{i,k}$ where $i$ is the index of the pixel and $k$ indicates the class; (b) The underlying class probabilities for each pixel, denoted by a random variable $\phi_{i,k}$. The probabilities $p_{i,k}$ are the output of the classifier and are subject to noise, outliers, and classification errors. Our estimation aims to remove these effects and obtain $\phi_{i,k}$ which would be a better approximation to the actual class probability. 
+The Bayesian estimate is based on two random variables: (a) The observed class probabilities for each pixel denoted by a random variable $p_{i,k}$ where $i$ is the index of the pixel and $k$ indicates the class; (b) The underlying class probabilities for each pixel, denoted by a random variable $\phi_{i,k}$. The probabilities $p_{i,k}$ are the classifier's output and are subject to noise, outliers, and classification errors. Our estimation aims to remove these effects and obtain $\phi_{i,k}$ to approximate the actual class probability better. 
 
-To more our inference tractable, we first convert the class probability values $p_{i,k}$  to log-odds values using the logit function, as shown below. The logit function converts probability values from 0 to 1 to values from negative infinity to infinity. The conversion from probabilities ranging from $0$ to $1$ to logit values is useful to support our assumption of normal distribution functions for our data. 
+To more our inference tractable, we first convert the class probability values $p_{i,k}$  to log-odds values using the logit function, as shown below. The logit function converts probability values from 0 to 1 to values from negative infinity to infinity. The conversion from probabilities ranging from $0$ to $1$ to logit values is helpful to support our assumption of normal distribution functions for our data. 
 
 
 $$
@@ -2221,12 +2218,12 @@ $$
 $$
 To estimate the conditional posterior distribution $\pi(\theta{}|x)$, we combine two distributions: (a) the distribution $\pi(x|\mu)$, known as the likelihood function, which expresses the dependency of the measured values $x_{i,k}$ in the underlying values $\mu_{i,k}$; and (b) $\pi(\mu)$, which is our guess on the actual data distribution, known as the prior. For simplicity, we will also assume independence between the different classes $k$, instead of considering a multivariate distribution. Therefore, the update will be performed for each class $k$ separately. 
 
-We assume that the likelihood $x_{i,k} | \mu_{i,k}$ follows a normal distribution, $N(\mu_{i,k}, \sigma^2_{k})$, with parameters $\mu_{i,k}$ and $\sigma^2_{k}$. The variance $\sigma^2_{k}$ will be estimated by users based on their expertise and will be used as a hyperparameter to control the level of smoothness of the resulting estimate. Therefore
+We assume that the likelihood $x_{i,k} | \mu_{i,k}$ follows a normal distribution, $N(\mu_{i,k}, \sigma^2_{k})$, with parameters $\mu_{i,k}$ and $\sigma^2_{k}$. The variance $\sigma^2_{k}$ will be estimated by users based on their expertise and used as a hyperparameter to control the smoothness of the resulting estimate. Therefore
 
 $$
 x_{i,k} | \mu_{i,k} \sim N(\mu_{i,k}, \sigma^2_{k})
 $$
-is the likelihood function. We will assume a nomrmal local prior for the parameter $\mu_{i,k}$ with parameters $m_{i,k}$ and $s^2_{i,k}$:
+is the likelihood function. We will assume a normal local prior for the parameter $\mu_{i,k}$ with parameters $m_{i,k}$ and $s^2_{i,k}$:
 
 $$
 \mu_{i,k} \sim N(m_{i,k}, s^2_{i,k}).
@@ -2265,33 +2262,33 @@ where
 3. $s^2_{i,k}$ is the variance of logit values for pixels of class $k$ in the neighborhood of pixel $i$.
 4. $sigma^2_{k}$ is the prior variance of the logit values for class $k$.
 
-The above equation is weighted average between the value $x_{i,k}$ for the pixel and the mean $m_{i,k}$ for the neighboring pixels. When the variance $s^2_{i,k}$ for the neighbors is too high, the smoothing algorithm gives more weight to the pixel value $x_{i,k}$. On the other hand, when the noise $\sigma^2_k$ increases, the method gives more weight to the neighborhood mean $m_{i,k}$.
+The above equation is a weighted average between the value $x_{i,k}$ for the pixel and the mean $m_{i,k}$ for the neighboring pixels. When the variance $s^2_{i,k}$ for the neighbors is too high, the smoothing algorithm gives more weight to the pixel value $x_{i,k}$. On the other hand, when the noise $\sigma^2_k$ increases, the method gives more weight to the neighborhood mean $m_{i,k}$.
 
-The parameter $\sigma^2_k$ controls the level of smoothness. If $\sigma^2_k$ is zero, the smoothed value ${E}[\mu_{i,k} | x_{i,k}]$ will be equal to the pixel value $x_{i,k}$. Making $\sigma^2_k$ high leads to a lot of smoothness. Values of the prior variance $sigma^2_{k}$ which are small relative to the local variance $s^2_{i,k}$ increase our confidence in the original probabilities. Conversely, values of the prior variance $\sigma^2_{k}$ which are big relative to the local variance $s^2_{i,k}$ increase our confidence in the average probability of the neighborhood. 
+The parameter $\sigma^2_k$ controls the level of smoothness. If $\sigma^2_k$ is zero, the smoothed value ${E}[\mu_{i,k} | x_{i,k}]$ will be equal to the pixel value $x_{i,k}$. Making $\sigma^2_k$ high leads to much smoothness. Values of the prior variance $sigma^2_{k}$, which are small relative to the local variance $s^2_{i,k}$ increase our confidence in the original probabilities. Conversely, values of the prior variance $\sigma^2_{k}$, which are big relative to the local variance $s^2_{i,k}$ increase our confidence in the average probability of the neighborhood. 
 
-Thus, the parameter $\sigma^2_{k}$ expresses our confidence on the inherent variability of the distribution of values of a class $k$. The smaller the parameter $\sigma^2_{k}$, the more we trust the estimated probability values produced by the classifier for class $k$. Conversely, higher values of $\sigma^2_{k}$ indicate lower confidence on the outputs of the classifier and improved confidence on the values of the local average.
+Thus, the parameter $\sigma^2_{k}$ expresses our confidence in the inherent variability of the distribution of values of a class $k$. The smaller the parameter $\sigma^2_{k}$, the more we trust the estimated probability values produced by the classifier for class $k$. Conversely, higher values of $\sigma^2_{k}$ indicate lower confidence in the classifier outputs and improved confidence in the local average values.
 
-Consider the following two-class example. Take a pixel with probability 0.4 (logit $x_{i,1}$ = -0.4054) for class A, and probability 0.6 (logit $x_{i,2}$ = 0.4054) for class B. Without post-processing, the pixel will be labelled as class B. Consider that the local average is 0.6 (logit $m_{i,1}$ = 0.4054) for class A and 0.4 (logit $m_{i,2}$ = -0.4054) for class B. This is a case of an outlier classified originally as class B in the midst of a set of pixels of class A. Take the local variance of logits to be $s^2_{i,1}$ = 5 for class A and $s^2_{i,2}$ = 10 and for class B. This difference is to be expected if the local variability of class A is smaller than that of class B. 
+Consider the following two-class example. Take a pixel with probability 0.4 (logit $x_{i,1}$ = -0.4054) for class A, and probability 0.6 (logit $x_{i,2}$ = 0.4054) for class B. Without post-processing, the pixel will be labeled as class B. Consider that the local average is 0.6 (logit $m_{i,1}$ = 0.4054) for class A and 0.4 (logit $m_{i,2}$ = -0.4054) for class B. This is a case of an outlier classified originally as class B in the midst of a set of pixels of class A. Take the local variance of logits to be $s^2_{i,1}$ = 5 for class A and $s^2_{i,2}$ = 10 and for class B. This difference is to be expected if the local variability of class A is smaller than that of class B. 
 
-To complete the estimate, we need to set the parameter $\sigma^2_{k}$, which represents our prior belief in the variability of the probability values for each class. If we take both $\sigma^2_{A}$ for class A and $\sigma^2_{B}$ for class B to be both 10, the Bayesian estimated probability for class A is 0.52  and for class B is 0.48. In this case, the pixel will be relabeled as being of class A. However, if our belief in the original values is higher, we will get a different result. If we set a value of $\sigma^2$ to be 5 for both classes A and B, the Bayesian probability estimate will be 0.48 for class A and will be 0.52 for class B. In this case, the original label will be kept. 
+To complete the estimate, we need to set the parameter $\sigma^2_{k}$, representing our prior belief in the variability of the probability values for each class. If we take both $\sigma^2_{A}$ for class A and $\sigma^2_{B}$ for class B to be both 10, the Bayesian estimated probability for class A is 0.52  and for class B is 0.48. In this case, the pixel will be relabeled as being class A. However, if our belief in the original values is higher, we will get a different result. If we set $\sigma^2$ to be 5 for both classes A and B, the Bayesian probability estimate will be 0.48 for class A and 0.52 for class B. In this case, the original label will be kept. 
 
 We make the following recommendations for setting the $\sigma^2_{k}$ parameter:
     
 1. Set the $\sigma^2_{k}$ parameter with high values (20 or above) to increase the neighborhood influence compared with the probability values for each pixel. Classes whose probabilities have strong spatial autocorrelation will tend to replace outliers of different classes.
 
-2. Set the $\sigma^2_{k}$ parameter with low values (5 or below) to reduce the neighborhood influence compared with the probabilities for each pixel of class $k$. In this way, classes which have low spatial autocorrelation are more likely not to be relabeled.
+2. Set the $\sigma^2_{k}$ parameter with low values (5 or below) to reduce the neighborhood influence compared with the probabilities for each pixel of class $k$. In this way, classes with low spatial autocorrelation are more likely not to be relabeled.
 
-Consider the case of forest areas and watersheds. If an expert wishes to have compact areas classified as forests, without many outliers inside them, she would set the $\sigma^2$ parameter for the class "Forest" to be high. For comparison, one usually wants to avoid that small watersheds which have few similar neighbors be relabeled. In this case, it is advisable to avoid a strong influence of the neighbors and $\sigma^2$ should be set as low as possible. 
+Consider the case of forest areas and watersheds. If an expert wishes to have compact areas classified as forests without many outliers inside them, she will set the $\sigma^2$ parameter for the class "Forest" to be high. For comparison, one usually wants to avoid that small watersheds with few similar neighbors being relabeled. In this case, it is advisable to avoid a strong influence of the neighbors, and $\sigma^2$ should be set as low as possible. 
 
 ## Defining the neighborhood{-}
 
 The intuition for Bayesian smoothing is that homogeneous neighborhoods should have the same class. In homogeneous neighborhoods, the dominant class has both higher average probabilities and lower variance than the other classes. In these neighborhoods, a pixel of a different class is likely to be associated to lower average probabilities and higher local variance. Mixed pixels at the limits between areas with different classes pose a problem for classification. These pixels contain signatures of two classes. To account for these cases, Bayesian smoothing in `sits` uses a special definition of a neighborhood.
 
-To be reliable, local class statistics should only include pixels that are likely to belong to such class. Windows centered on border pixels contain only some pixels belonging to same class as the central pixel; the others belongs to a different class. Consider a window of size 7 x 7 around a pixel in the probability map of class "Forest". It will contain the central pixel and 80 neighbors. Instead of using all those neighbors to compute the local statistics, `sits` uses only some of them. The neighbors used to calculate the local statistics is set by the taking only those with the highest probability of belonging to class "Forest". Such percentage of pixels per windows to calculate the local statistics is user-controllable. 
+To be reliable, local class statistics should only include pixels likely to belong to such class. Windows centered on border pixels contain only some pixels belonging to the same class as the central pixel; the others belong to a different class. Consider a window of size 7 x 7 around a pixel in the probability map of class "Forest". It will contain the central pixel and 80 neighbors. Instead of using all those neighbors to compute the local statistics, `sits` uses only some. The neighbors used to calculate the local statistics is set by taking only those with the highest probability of belonging to the class "Forest". Such a percentage of pixels per window to calculate the local statistics is user-controllable. 
 
 ## Measuring the local variance{-}
 
-As discussed above, the effect of the Bayesian estimator depends on the values of the a priori variance $sigma^2_{k}$ set by the user and of the local variance $s^2_{i,1}$ measured for each pixel. To illustrate the impact of the choices of the $sigma^2_{k}$ parameter, we present a detailed example. The first step is to take a probability cube for a deforestation detection application in an area of the Brazilian Amazon. This cube has been produced by a random forest model with 6 classes. We first build the data cube and then plot the probabilities for classes "Water" and "Forest". 
+As discussed above, the effect of the Bayesian estimator depends on the values of the a priori variance $sigma^2_{k}$ set by the user and of the local variance $s^2_{i,1}$ measured for each pixel. To illustrate the impact of the choices of the $sigma^2_{k}$ parameter, we present a detailed example. The first step is to take a probability cube for a deforestation detection application in an area of the Brazilian Amazon. This cube has been produced by a random forest model with six classes. We first build the data cube and then plot the probabilities for classes "Water" and "Forest". 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Probability map produced for classes Forest and Water."}
 # define the classes of the probability cube
@@ -2311,9 +2308,9 @@ probs_cube <- sits_cube(
 # plot the probabilities for water and forest
 plot(probs_cube, labels = c("Water", "Forest"))
 ```
-The probability map for class "Forest" shows high values associated to compact patches as well linear stretches in riparian areas. By contrast, the probability map for class "Water" has mostly low values, except in a few places with high chance of occurrence of this class. To further understand the behavior of the Bayesian estimator, it is useful to examine the local variance associated the logits of the probabilities. 
+The probability map for class "Forest" shows high values associated with compact patches and linear stretches in riparian areas. By contrast, the probability map for class "Water" has mostly low values, except in a few places with a high chance of occurrence of this class. To further understand the behavior of the Bayesian estimator, it is helpful to examine the local variance associated with the logits of the probabilities. 
 
-The `sits_variance` function estimates the local variances for the logits, which correspond to the $s^2_{i,k}$ parameter in the Bayesian estimator. It has the following parameters: (a) `cube`, a probability cube; (b) `window_size`, dimension of the local neighborhood; (c) `neigh_fraction`, percentage of pixels in the neighborhood which will be used to calculate the variance; (d) `multicores`, number of CPU cores that will be used for processing; (e) `memsize`, memory available; (f) `output_dir`, directory where results will be stored; (g) `version`, for version control. In the example below, we will use half of the pixels of a 7x7 window to estimate the variance. The chosen pixels will be those with highest probability pixels, to be more representative of the actual class distribution. The output values are the variances of the logits.
+The `sits_variance` function estimates the local variances for the logits, which correspond to the $s^2_{i,k}$ parameter in the Bayesian estimator. It has the following parameters: (a) `cube`, a probability cube; (b) `window_size`, the dimension of the local neighborhood; (c) `neigh_fraction`, the percentage of pixels in the neighborhood which will be used to calculate the variance; (d) `multicores`, number of CPU cores that will be used for processing; (e) `memsize`, memory available; (f) `output_dir`, directory where results will be stored; (g) `version`, for version control. In the example below, we will use half of the pixels of a 7x7 window to estimate the variance. The chosen pixels will be those with the highest probability pixels to be more representative of the actual class distribution. The output values are the variances of the logits.
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Variance map for class Forest."}
 var_cube <- sits_variance(
@@ -2327,18 +2324,19 @@ var_cube <- sits_variance(
 )
 plot(var_cube, labels = c("Water", "Forest"))
 ```
-The plot for the "Forest" class shows that the areas of low variance are associated both to dense forest patches as well as areas where trees have been completely remove. Areas of high variance are mostly associated with the borders between forest areas and the other classes. These high values  By contrast, the plot for the "Water" class is not informative, with small areas of high variance located near the areas of high water probability. Both plots show that most variance values are low, and high values reach 30. This information is relevant for setting the values of the prior variance $\sigmaˆ2$ as discussed below.
+
+The plot for the "Forest" class shows that the areas of low variance are associated both with dense forest patches as well as areas where trees have been completely removed. Areas of high variance are primarily associated with the borders between forest areas and the other classes. These high values  By contrast, the plot for the "Water" class is not informative, with small areas of high variance located near the areas of high water probability. Both plots show that most variance values are low, and high values reach 30. This information is relevant for setting the values of the prior variance $\sigmaˆ2$ as discussed below.
 
 ## Running Bayesian smoothing {-}
 
-To run Bayesian smoothing we use the function `sits_smooth()` with parameters: (a) `cube`, a probability cube produced by `sits_classify()`; (b) `window_size`, the local window to compute the neighborhood probabilities; (d) `neigh_fraction`, fraction of local neighbors used to calculate local statistics; (e) `smoothness`, a vector with estimates of the prior variance of each class; (f) `multicores`, number of CPU cores that will be used for processing; (g) `memsize`, memory available for classification; (h) `output_dir`, directory where results will be stored; (i) `version`, for version control. The resulting cube can be visualized with `plot()`. In what follows, we compare the smoothing effect  by varying the `window_size` and `smoothness` parameters. 
+To run Bayesian smoothing we use the function `sits_smooth()` with parameters: (a) `cube`, a probability cube produced by `sits_classify()`; (b) `window_size`, the local window to compute the neighborhood probabilities; (d) `neigh_fraction`, fraction of local neighbors used to calculate local statistics; (e) `smoothness`, a vector with estimates of the prior variance of each class; (f) `multicores`, number of CPU cores that will be used for processing; (g) `memsize`, memory available for classification; (h) `output_dir`, a directory where results will be stored; (i) `version`, for version control. The resulting cube can be visualized with `plot()`. In what follows, we compare the smoothing effect by varying the `window_size` and `smoothness` parameters. 
 
 Together, the parameters `window_size` and `neigh_fraction` control how many pixels in a neighborhood are used to calculate the local statistics used by the Bayesian estimator. For example, setting `window size` to 7 and `neigh_fraction` to 0.5 (the defaults) ensures that 25 samples are used to estimate the local statistics. 
 
-Our first reference is the classified map without smoothing which shows the presence of outliers and classification errors. To obtain it, we use the function `sits_label_classification` taking the probability map as an input, as follows.
+Our first reference is the classified map without smoothing which shows the presence of outliers and classification errors. To obtain it, we use the function `sits_label_classification`, taking the probability map as an input, as follows.
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Classified map without smoothing."}
-# generate thematic map
+# Generate the thematic map
 class_map <- sits_label_classification(
     cube = probs_cube,
     multicores = 4,
@@ -2346,13 +2344,13 @@ class_map <- sits_label_classification(
     output_dir = "./tempdir/chp10",
     version = "no_smooth"
 )
-# plot the result
+# Plot the result
 plot(class_map)
 ```
-To remove the outliers and classification errors, we will run a smoothing procedure where all prior variances are set the same value of 20 which is relatively high compared with the maximum local class variance shown above. In this case, for most situations, the new value of the 
+To remove the outliers and classification errors, we will run a smoothing procedure where all prior variances are set to the same value of 20, which is relatively high compared with the maximum local class variance shown above. In this case, for most situations, the new value of the 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Probability maps after bayesian smoothing."}
-# compute Bayesian smoothing
+# Compute Bayesian smoothing
 cube_smooth_w7_f05_s20 <- sits_smooth(
     cube = probs_cube,
     window_size = 7,
@@ -2363,13 +2361,13 @@ cube_smooth_w7_f05_s20 <- sits_smooth(
     version = "w7-f05-s20",
     output_dir = "./tempdir/chp10"
 )
-# plot the result
+# Plot the result
 plot(cube_smooth_w7_f05_s20, labels = c("Water", "Forest"), palette = "YlGn")
 ```
-Bayesian smoothing has removed some of local variability associated to misclassified pixels which are different from their neighbors. There is a side effect: the water areas surrounded by forests have not been preserved in the forest probability map. The impact of smoothing is best appreciated comparing the labelled map produced without smoothing to the one that follows the procedure, as shown below.
+Bayesian smoothing has removed some of the local variability associated with misclassified pixels that differ from their neighbors. There is a side effect: the water areas surrounded by forests have not been preserved in the forest probability map. The smoothing impact is best appreciated by comparing the labeled map produced without smoothing to the one that follows the procedure, as shown below.
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Final classification map after Bayesian smoothing with 7 x 7 window, neigh_fraction = 0.5 and smoothness = 20."}
-# generate thematic map
+# Generate the thematic map
 defor_map_w7_f05_20 <- sits_label_classification(
     cube = cube_smooth_w7_f05_s20,
     multicores = 4,
@@ -2380,14 +2378,14 @@ defor_map_w7_f05_20 <- sits_label_classification(
 plot(defor_map_w7_f05_20)
 ```
 
-In the smoothed map, the outliers have been removed by the expansion of forest areas. Small corridors of water and soil encircled by trees have been replaced by forests. This effect is due to high probability of forest detection in the training data. To keep the water areas and reducing the expansion of the forest area, a viable alternative is to reduce the smoothness ($\sigma^2$) for the "Forest" and "Water" classes. In this way, the local influence of the forest in the other classes is reduced. As for the water areas, since they are narrow, their neighborhoods will have many low probability values, which would reduce the expected value of the bayesian estimator. 
+In the smoothed map, the outliers have been removed by expanding forest areas. Forests have replaced small corridors of water and soil encircled by trees. This effect is due to the high probability of forest detection in the training data. To keep the water areas and reduce the expansion of the forest area, a viable alternative is to reduce the smoothness ($\sigma^2$) for the "Forest" and "Water" classes. In this way, the local influence of the forest in the other classes is reduced. As for the water areas, since they are narrow, their neighborhoods will have many low probability values, which would reduce the expected value of the Bayesian estimator. 
 
-```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Probability maps after bayesian smoothing with 7 x 7 window with low smoothness for classes Water and Forest"}
-# reduce smoothing for classes Water and Forest
-# labels:  "Water", "ClearCut_Burn", "ClearCut_Soil", 
+```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Probability maps after Bayesian smoothing with 7 x 7 window with low smoothness for classes Water and Forest"}
+# Reduce smoothing for classes Water and Forest
+# Labels:  "Water", "ClearCut_Burn", "ClearCut_Soil", 
 #          "ClearCut_Veg", "Forest", "Wetland"
 smooth_water_forest <- c(5, 20, 20, 20, 5, 20)
-# compute Bayesian smoothing
+# Compute Bayesian smoothing
 cube_smooth_w7_f05_swf <- sits_smooth(
     cube = probs_cube,
     window_size = 7,
@@ -2398,7 +2396,7 @@ cube_smooth_w7_f05_swf <- sits_smooth(
     version = "w7-f05-swf",
     output_dir = "./tempdir/chp10"
 )
-# computed labelled map
+# Computed labeled map
 defor_map_w7_f05_swf <- sits_label_classification(
     cube = cube_smooth_w7_f05_swf,
     multicores = 4,
@@ -2411,7 +2409,7 @@ plot(defor_map_w7_f05_swf)
 
 Comparing the two maps, the narrow water streams inside the forest area have been better preserved. Small corridors between forest areas have also been maintained. A better comparison between the two maps requires importing them into QGIS. Exporting data from `sits` to QGIS is discussed in the chapter "Visualising and Exporting data". 
 
-In conclusion, post-processing is a desirable step in any classification process. Bayesian smoothing improves the borders between the objects created by the classification and remove outliers that result from pixel-based classification. It is a reliable methods that should be used in most situations. 
+In conclusion, post-processing is a desirable step in any classification process. Bayesian smoothing improves the borders between the objects created by the classification and removes outliers that result from pixel-based classification. It is a reliable method that should be used in most situations. 
 
 <!--chapter:end:10-bayesiansmoothing.Rmd-->
 
@@ -2426,29 +2424,29 @@ dir.create("./tempdir/chp11")
 
 ## Case study{-}
 
-To show how to do validation and accuracy assessment in`sits`, we show an example of land classification in the Cerrado biome, the second largest biome in Brazil with 1.9 million km$^2$.  The Brazilian Cerrado is a tropical savanna ecoregion with a rich ecosystem ranging from grasslands to woodlands. It is home to more than 7000 species of plants with high levels of endemism [@Klink2005]. It includes three major types of natural vegetation: Open Cerrado, typically composed of grasses and small shrubs with a sporadic presence of small tree vegetation; Cerrado, a typical savanna formation, with the presence of low, irregularly branched, thin-trunked trees; and Cerradão, areas of medium-sized trees (up to 10--12 m)[@Del-Claro2019]. Its natural areas are being converted to agriculture at a fast pace, as it is one of the world's fast moving agricultural frontiers [@Walter2006]. The main agricultural land uses include cattle ranching, crop farms, and planted forests. The classification follows the work by Simoes et al.[@Simoes2021].
+To show how to do validation and accuracy assessment in`sits`, we show an example of land classification in the Cerrado biome, the second largest biome in Brazil with 1.9 million km$^2$. The Brazilian Cerrado is a tropical savanna ecoregion with a rich ecosystem ranging from grasslands to woodlands. It is home to more than 7000 species of plants with high levels of endemism [@Klink2005]. It includes three major types of natural vegetation: Open Cerrado, typically composed of grasses and small shrubs with a sporadic presence of small tree vegetation; Cerrado, a typical savanna formation with the presence of low, irregularly branched, thin-trunked trees; and Cerradão, areas of medium-sized trees (up to 10--12 m)[@Del-Claro2019]. Its natural areas are being converted to agriculture at a fast pace, as it is one of the world's fast-moving agricultural frontiers [@Walter2006]. The main agricultural land uses include cattle ranching, crop farms, and planted forests. The classification follows the work by Simoes et al.[@Simoes2021].
 
-The data is composed of 67 Landsat-8 tiles from the Brazil Data Cube, with 23 time steps covering the the period 2017-08-29 to 2018-08-29. Since the data is avaliable in the Brazil Data Cube, users should first obtain access to the BDC, by obtaining an access key. After obtaining the access key, they should  to include their credentials using an environment variables, as shown below. Obtaining a BDC access key is free. Users need to register at the [BDC site](https://brazildatacube.dpi.inpe.br/portal/explore) to obtain the key.
+The data comprises 67 Landsat-8 tiles from the Brazil Data Cube, with 23 time steps covering 2017-08-29 to 2018-08-29. Since the data is available in the Brazil Data Cube, users should first obtain access to the BDC by obtaining an access key. After obtaining the access key, they should include their credentials using environment variables, as shown below. Obtaining a BDC access key is free. To obtain the key, users need to register at the [BDC site](https://brazildatacube.dpi.inpe.br/portal/explore).
 ```{r,eval = FALSE}
 Sys.setenv(
     "BDC_ACCESS_KEY" = <your_bdc_access_key>
 )
 ```
 
-After obtaining the BDC access key, we now can create a data cube for the Cerrado biome. 
+After obtaining the BDC access key, we can now create a data cube for the Cerrado biome. 
 
-```{r, tidy = "styler", out.width = "80%", fig.align="center", fig.cap="Color composite image of first date of the cube"}
+```{r, tidy = "styler", out.width = "80%", fig.align="center", fig.cap="Color composite image of the first date of the cube"}
 
-# files are available in the Brazil Data Cube
+# Files are available in the Brazil Data Cube
 # 
-# obtain the region of interest covering the Cerrado biome
+# Obtain the region of interest covering the Cerrado biome
 roi_cerrado_shp <- system.file(
     "extdata/shapefiles/cerrado_border/cerrado_border.shp",
     package = "sitsdata")
-# read the shapefile as an object of the "sf" package
+# Read the shapefile as an object of the "sf" package
 roi_cerrado <- sf::st_read(roi_cerrado_shp, quiet = TRUE)
 
-# create a data cube for the entire cerrado biome
+# Create a data cube for the entire cerrado biome
 cerrado_cube <- sits_cube(
         source = "BDC",
         collection = "LC8_30_16D_STK-1",
@@ -2457,7 +2455,7 @@ cerrado_cube <- sits_cube(
         end_date = "2018-08-29",
         multicores = 3
 )
-# plot the first date with NDVI and EVI bands
+# Plot the first date with NDVI and EVI bands
 plot(cerrado_cube, 
      tile = "044049", 
      red = "B7", 
@@ -2466,21 +2464,21 @@ plot(cerrado_cube,
 )
 ```
 
-To classify the Cerrado, we use a training data set produced by by Simoes et al.[@Simoes2021]. The authors carried out a systematic sampling using a grid of 5 x 5 km throughout the Cerrado biome, collecting 85,026 samples. The training data labels were extracted from three sources: the 2018 pastureland map from Parente et al. [@Parente2019], MapBiomas Collection 5 for 2018 [@Souza2020], and~Brazil's National Mapping Agency IBGE land maps for 2016--2018. Out of the 85,026 samples, the authors selected those where there was no disagreement between the labels assigned by the three sources.  The final training set consists of 48,850 points from which the authors extracted the time series using the Landsat-8 data cube available in the BDC. The classes for this training set are: `Annual Crop`, `Cerradao`, `Cerrado`, `Open Cerrado`, `Nat_NonVeg` (Dunes), `Pasture`, `Perennial_Crop`, `Silviculture` (Planted Forests), `Sugarcane`, and `Water`. This data set is available in the package `sitsdata` as `samples_cerrado_lc8`. 
+To classify the Cerrado, we use a training data set produced by Simoes et al. [@Simoes2021]. The authors carried out a systematic sampling using a 5 x 5 km grid throughout the Cerrado biome, collecting 85,026 samples. The training data labels were extracted from three sources: the 2018 pastureland map from Parente et al. [@Parente2019], MapBiomas Collection 5 for 2018 [@Souza2020], and Brazil's National Mapping Agency IBGE land maps for 2016--2018. Out of the 85,026 samples, the authors selected those without disagreement between the labels assigned by the three sources. The final training set consists of 48,850 points from which the authors extracted the time series using the Landsat-8 data cube available in the BDC. The classes for this training set are: `Annual Crop`, `Cerradao`, `Cerrado`, `Open Cerrado`, `Nat_NonVeg` (Dunes), `Pasture`, `Perennial_Crop`, `Silviculture` (Planted Forests), `Sugarcane`, and `Water`. This data set is available in the package `sitsdata` as `samples_cerrado_lc8`. 
 
 
 ```{r, tidy = "styler", out.width = "70%"}
 library(sitsdata)
 data("samples_cerrado_lc8")
-# show the class distribution in the new training set
+# Show the class distribution in the new training set
 sits_labels_summary(samples_cerrado_lc8)
 ```
 
 ## Cross validation of training set{-}
 
-Cross-validation is a technique to estimate the inherent prediction error of a model [@Hastie2009]. Since cross-validation uses only the training samples, its results are not accuracy measures, unless the samples have been carefully collected to represent the diversity of possible occurrences of classes in the study area [@Wadoux2021]. In practice, when working in large areas, it is hard to obtain random stratified samples which cover the different variations in land cover associated to the ecosystems of the study area. Thus, cross-validation should be taken a as measure of model performance on the training data and not as an estimate of overall map accuracy. 
+Cross-validation is a technique to estimate the inherent prediction error of a model [@Hastie2009]. Since cross-validation uses only the training samples, its results are not accuracy measures unless the samples have been carefully collected to represent the diversity of possible occurrences of classes in the study area [@Wadoux2021]. In practice, when working in large areas, it is hard to obtain random stratified samples which cover the different variations in land cover associated with the ecosystems of the study area. Thus, cross-validation should be taken as a measure of model performance on the training data and not an estimate of overall map accuracy. 
 
-Cross-validation uses part of the available samples to fit the classification model, and a different part to test it. The k-fold validation method splits the data into $k$ partitions with approximately the same size and proceed by fitting the model and testing it $k$ times. At each step, we take one distinct partition for test and the remaining ${k-1}$ for training the model, and calculate its prediction error for classifying the test partition. A simple average gives us an estimation of the expected prediction error. The recommended choices of $k$ are $5$ or $10$ [@Hastie2009].
+Cross-validation uses part of the available samples to fit the classification model and a different part to test it. The k-fold validation method splits the data into $k$ partitions with approximately the same size and proceeds by fitting the model and testing it $k$ times. At each step, we take one distinct partition for the test and the remaining ${k-1}$ for training the model and calculate its prediction error for classifying the test partition. A simple average gives us an estimation of the expected prediction error. The recommended choices of $k$ are $5$ or $10$ [@Hastie2009].
 
 `sits_kfold_validate()` supports k-fold validation in `sits`. The result is the confusion matrix and the accuracy statistics (overall and by class). In the examples below, we use multiprocessing to speed up the results. 
 
@@ -2488,19 +2486,19 @@ Cross-validation uses part of the available samples to fit the classification mo
 set.seed(290356)
 ```
 
-Since the data set is big and highly imbalanced, we use the function `sits_reduce_imbalance()` to reduce the size and produce a smaller and more balanced sample data set for the validation examples.
+Since the data set is big and highly imbalanced, we use the function `sits_reduce_imbalance()` to reduce the size and produce a smaller, more balanced sample data set for the validation examples.
 
 ```{r, tidy = "styler", echo = TRUE, eval=FALSE}
-# reduce imbalance in the data set
-# maximum number of samples per class will be 1000 
-# minimum number of samples per class will be 500
+# Reduce imbalance in the data set
+# Maximum number of samples per class will be 1000 
+# Minimum number of samples per class will be 500
 samples_cerrado_bal <- sits_reduce_imbalance(
     samples = samples_cerrado_lc8,
     n_samples_over = 500,
     n_samples_under = 1000,
     multicores = 4
 )
-# show new sample distribution
+# Show new sample distribution
 sits_labels_summary(samples_cerrado_bal)
 ```
 
@@ -2512,31 +2510,31 @@ sits_labels_summary(samples_cerrado_bal)
 The following code does a five-fold validation using random forests. 
 
 ```{r, tidy = "styler"}
-# perform a five fold validation for the cerrado data set
-# random forests machine learning method using default parameters
+# Perform a five-fold validation for the Cerrado data set
+# Random forests machine learning method using default parameters
 val_rfor <- sits_kfold_validate(
     samples = samples_cerrado_bal, 
     folds = 5, 
     ml_method = sits_rfor(),
     multicores = 5
 )
-# print the validation statistics
+# Print the validation statistics
 sits_accuracy_summary(val_rfor)
 ```
 
-One useful function in SITS is the capacity to compare different validation methods and store them in an XLS file for further analysis. The following example shows how to do this, using the Cerrado data set. We take the models: random forests(`sits_rfor()`), extreme gradient boosting (`sits_xgboost()`), temporal CNN (`sits_tempcnn()`), and lightweight temporal attention encoder (`sits_lighttae())`.  After computing the confusion matrix and the statistics for each model, we also store the result in a list. When the calculation is finished, the function `sits_to_xlsx()` writes all of the results in an Excel-compatible spreadsheet. 
+One useful function of SITS is the capacity to compare different validation methods and store them in an XLS file for further analysis. The following example shows how to do this using the Cerrado data set. We take the models: random forests(`sits_rfor()`), extreme gradient boosting (`sits_xgboost()`), temporal CNN (`sits_tempcnn()`), and lightweight temporal attention encoder (`sits_lighttae())`. After computing the confusion matrix and the statistics for each model, we also store the result in a list. When the calculation is finished, the function `sits_to_xlsx()` writes all the results in an Excel-compatible spreadsheet. 
 
 
 ```{r, tidy = "styler", eval = FALSE}
 # Compare different models for the Cerrado data set
-# create a list to store the results
+# Create a list to store the results
 results <- list()
 # Give a name to the results of the random forest model (see above)
 val_rfor$name <- "rfor"
-# store the rfor results in a list
+# Store the rfor results in a list
 results[[length(results) + 1]] <- val_rfor
 
-## Extreme Gradient Boosting
+# Extreme Gradient Boosting
 val_xgb <- sits_kfold_validate(
     samples = samples_cerrado_bal,
     ml_method = sits_xgboost(),
@@ -2586,15 +2584,14 @@ xlsx_file <- "./model_comparison.xlsx"
 
 sits_to_xlsx(results, file = xlsx_file)
 ```
-The resulting Excel file can be opened with R or using spreadsheet programs. The figure below shows a printout of what is read by Excel. As shown below, each sheet corresponds to the output of one model. For simplicity, we show only the result of TempCNN, that has an overall accuracy of 90%. 
+The resulting Excel file can be opened with R or using spreadsheet programs. The figure below shows a printout of what is read by Excel. As shown below, each sheet corresponds to the output of one model. For simplicity, we show only the result of TempCNN, which has an overall accuracy of 90%. 
 
 ```{r, echo = FALSE, fig.align="center", out.width = "90%", out.height = "90%", fig.cap= "Result of 5-fold cross validation of Mato Grosso data using LightTAE"}
 
 knitr::include_graphics("images/k_fold_validation_xlsx.png")
-
 ```
 
-The scores for overall accuracy are similar between the models. However, there are significant differences between the models, as shown by comparing their F1 scores, as shown below.    
+The scores for overall accuracy are similar between the models. However, the models have significant differences, as shown by comparing their F1 scores below.    
 
 ```{r, eval = FALSE, echo = TRUE}
 model_acc <- tibble::tibble(
@@ -2612,7 +2609,8 @@ model_acc <- readRDS(file = "./etc/model_acc.rds")
 options(digits = 3)
 model_acc
 ```
-The table below shows the F1-scores of all classes for each model, as produced by the k-fold validation. The F1-scores are obtained as the harmonic mean between user's accuracy and precision accuracy for each class. The results show that although deep learning models such TempCNN and LightTAE have similar overall accuracies than Random Forests or XGBoost, their F1-scores per class are in most cases better.  
+
+The table below shows the F1-scores of all classes for each model, as produced by the k-fold validation. The F1-scores are obtained as the harmonic mean between user's accuracy and precision accuracy for each class. The results show that although deep learning models such TempCNN and LightTAE have similar overall accuracies to Random Forests or XGBoost, their F1-scores per class are generally better.  
 
 ```{r, eval=FALSE, echo = TRUE, tidy = "styler"}
 f1_score_rfor <- unname(val_rfor$byClass[,"F1"])
@@ -2635,14 +2633,14 @@ options(digits = 3)
 f1_scores
 ```
 
-The cross validation results have to be interpreted carefully. Cross validation is a measure how well the model fits the training data. Using these results as a measure of classification accuracy is only valid if the training data is a good sample of the entire data set. In practice, training data is subject to various sources of bias. In most cases of land classification, some classes are much more frequent than others and as such the training data set will be imbalanced. For large areas, regional differences in soil and climate condition will lead that the same classes will have different spectral responses. When collecting samples for large areas, field analysts may be restricted to areas where they have access (e.g, along roads). An additional problem is that of mixed pixels. Expert interpreters tend to select samples which standout in field work or reference images. Border pixels are unlikely to be chosen as part of training data. For all these reasons, cross validation results should not be considered as indicative of  accuracy measurement over the entire data set. 
+The cross validation results have to be interpreted carefully. Cross validation measures how well the model fits the training data. Using these results to measure classification accuracy is only valid if the training data is a good sample of the entire data set. In practice, training data is subject to various sources of bias. In most cases of land classification, some classes are much more frequent than others, and as such, the training data set will be imbalanced. For large areas, regional differences in soil and climate condition will lead the same classes to have different spectral responses. When collecting samples for large areas, field analysts may be restricted to areas where they have access (e.g., along roads). An additional problem is that of mixed pixels. Expert interpreters tend to select samples that stand out in fieldwork or reference images. Border pixels are unlikely to be chosen as part of the training data. For all these reasons, cross validation results should not be considered indicative of accuracy measurement over the entire data set. 
 
 
 ## Accuracy assessment of classified images{-}
 
-To measure the accuracy of classified images, the `sits_accuracy()` function uses an area-weighted technique, following the best practices proposed by Olofsson et al. [@Olofsson2013]. The need for area-weighted estimates arises from the fact the land use and land cover classes are not evenly distributed in space. In some applications (e.g., deforestation) where the interest lies in assessing how much of the image has changed, the area mapped as deforested is likely to be a small fraction of the total area. If users disregard the relative importance of small areas where change is taking place, the overall accuracy estimate will be inflated and unrealistic. For this reason, Olofsson et al [@Olofsson2013] argue that "mapped areas should be adjusted to eliminate bias attributable to map classification error and these error-adjusted area estimates should be accompanied by confidence intervals to quantify the sampling variability of the estimated area".
+To measure the accuracy of classified images, the `sits_accuracy()` function uses an area-weighted technique, following the best practices proposed by Olofsson et al. [@Olofsson2013]. The need for area-weighted estimates arises because the land use and land cover classes are not evenly distributed in space. In some applications (e.g., deforestation) where the interest lies in assessing how much of the image has changed, the area mapped as deforested is likely to be a small fraction of the total area. If users disregard the relative importance of small areas where change is taking place, the overall accuracy estimate will be inflated and unrealistic. For this reason, Olofsson et al. [@Olofsson2013] argue that "mapped areas should be adjusted to eliminate bias attributable to map classification error, and these error-adjusted area estimates should be accompanied by confidence intervals to quantify the sampling variability of the estimated area".
 
-With this motivation, when measuring accuracy of classified images, the function `sits_accuracy()` follows the procedure set by Olofsson et al. [@Olofsson2013]. Given a classified image and a validation file, the first step is to calculate the confusion matrix in the traditional way, i.e., by identifying the commission and omission errors. Then we calculate the unbiased estimator of the proportion of area in cell $i,j$ of the error matrix
+With this motivation, when measuring the accuracy of classified images, the function `sits_accuracy()` follows the procedure set by Olofsson et al. [@Olofsson2013]. Given a classified image and a validation file, the first step is to calculate the confusion matrix in the traditional way, i.e., by identifying the commission and omission errors. Then we calculate the unbiased estimator of the proportion of area in cell $i,j$ of the error matrix
 
 $$
 \hat{p_{i,j}} = W_i\frac{n_{i,j}}{n_i}
@@ -2651,24 +2649,24 @@ where the total area of the map is $A_{tot}$, the mapping area of class $i$ is $
 $$
 \hat{A_j} = A_{tot}\sum_{i=1}^KW_i\frac{n_{i,j}}{n_i}
 $$
-This unbiased area estimator includes the effect of false negatives (omission error) while not considering the effect of false positives (commission error). The area estimates also allow producing an unbiased estimate of the user's and producer's accuracy for each class. Following @Olofsson2013, we provide the 95% confidence interval for $\hat{A_j}$. 
+This unbiased area estimator includes the effect of false negatives (omission error) while not considering the effect of false positives (commission error). The area estimates also allow for an unbiased estimate of the user's and producer's accuracy for each class. Following @Olofsson2013, we provide the 95% confidence interval for $\hat{A_j}$. 
 
-To use the `sits_accuracy()` function to produce the adjusted area estimates, users have to provide the classified image together with a csv file containing a set of well selected labeled points.  The csv file should have the same format as the one used to obtain samples, as discussed earlier. The labelled points should be based on a random stratified sample. All areas associated to each class should contribute to the test data used for accuracy assessment. 
+To use the `sits_accuracy()` function to produce the adjusted area estimates, users must provide the classified image together with a csv file containing a set of well-selected labeled points. The CSV file should have the same format as the one used to obtain samples, as discussed earlier. The labeled points should be based on a random stratified sample. All areas associated with each class should contribute to the test data used for accuracy assessment. 
 
-Because of the biases inherent in cross validation of training data, users should provide an independent validation data set to measure classification accuracy. In this case study, Simoes et al.[@Simoes2021] did a systematic sampling of the Cerrado biome using a 20 x 20 km grid with a total of 5402 points. These samples are independent of the training set used in the classification. They were interpreted by five specialists using high resolution images from the same period of the classification. This resulted in 5286 evaluation samples thus distributed: "Annual Crop" (553), "Cerrado" (3155), "Natural Non Vegetated" (44), "Pasture" (1246), "Perennial Crop" (38), "Silviculture" (94), "Sugarcane" (77), and "Water" (79). This data set is available in package `sitsdata`, as described below. In this validation file, all samples belonging to classes "Cerrado", "Open Cerrado" and "Cerradao" (Woody Savanna) have been grouped together in a single class. 
+Because of the biases inherent in cross validation of training data, users should provide an independent validation data set to measure classification accuracy. In this case study, Simoes et al. [@Simoes2021] did a systematic sampling of the Cerrado biome using a 20 x 20 km grid with a total of 5402 points. These samples are independent of the training set used in the classification. They were interpreted by five specialists using high-resolution images from the same period of the classification. This resulted in 5286 evaluation samples thus distributed: "Annual Crop" (553), "Cerrado" (3155), "Natural Non Vegetated" (44), "Pasture" (1246), "Perennial Crop" (38), "Silviculture" (94), "Sugarcane" (77), and "Water" (79). This data set is available in package `sitsdata`, as described below. In this validation file, all samples belonging to classes "Cerrado", "Open Cerrado" and "Cerradao" (Woody Savanna) have been grouped together in a single class. 
 
-The first step is to obtain the classification map. The code for the full classification of the Cerrado biome, using the TempCNN algorithm, is shown below. Because of the large data size, the code will not be executed.  For the accuracy assessment, we will use the labelled classification map available in a Dropbox folder. 
+The first step is to obtain the classification map. The code for the full classification of the Cerrado biome, using the TempCNN algorithm, is shown below. Because of the large data size, the code will not be executed. For the accuracy assessment, we will use the labeled classification map available in a Dropbox folder. 
 
 ```{r, tidy="styler", echo = TRUE, eval = FALSE}
 # This code shows the classification of the Cerrado biome
-# It is include for information purposes
+# It is included for information purposes
 # It takes a long time to run
 tcnn_model <- sits_train(
     samples = samples_cerrado_lc8,
     ml_method = sits_tempcnn()
 )
-# using the tempCNN model to classify the Cerrado
-# this example should be run on a large virtual machine
+# Using the tempCNN model to classify the Cerrado
+# This example should be run on a large virtual machine
 cerrado_probs_cube <- sits_classify(
     cube = cerrado_cube,
     ml_model = tcnn_model,
@@ -2691,39 +2689,39 @@ cerrado_classif <- sits_label_classification(
 )
 ```
 
-Since the above code is included for information only, we use the labelled cube stored in a Dropbox folder to perform the accuracy assessment. First, we retrieve the metadata for the cube.
+Since the above code is included for information only, we use the labeled cube stored in a Dropbox folder to perform the accuracy assessment. First, we retrieve the metadata for the cube.
 
 ```{r, tidy="styler", out.width = "100%", fig.align="center", fig.cap="Classification of tile 044048 from the Landsat data cube for the Brazilian Cerrado in 2017/2018." }
-# retrieve the metadata for the classified cube
-# the files are stored as Dropbox links
+# Retrieve the metadata for the classified cube
+# The files are stored as Dropbox links
 cerrado_classif_rds <- system.file("extdata/Cerrado/cerrado_classif_dropbox.rds",
                                    package = "sitsdata")
-# read the cube metadata
+# Read the cube metadata
 cerrado_classif <- readRDS(cerrado_classif_rds)
-# plot one tile of the classification
+# Plot one tile of the classification
 plot(cerrado_classif, tiles = "044048")
 ```
 The next step is to provide a CSV file with the validation points, as described above.
 
 ```{r, eval = FALSE, echo = TRUE}
-# get ground truth points
+# Get ground truth points
 valid_csv <- system.file("extdata/csv/cerrado_lc8_validation.csv",
                             package = "sitsdata")
-# calculate accuracy according to Olofsson's method
+# Calculate accuracy according to Olofsson's method
 area_acc <- sits_accuracy(cerrado_classif, 
                           validation_csv = valid_csv)
-# print the area estimated accuracy 
+# Print the area estimated accuracy 
 area_acc
 ```
 
 ```{r, eval = TRUE, echo = FALSE}
-# calculate accuracy according to Olofsson's method
+# Calculate accuracy according to Olofsson's method
 area_acc <- readRDS("./etc/area_acc.rds")
-# print the area estimated accuracy 
+# Print the area estimated accuracy 
 options(digits = 3)
 area_acc
 ```
-This example shows that it is important to correct area estimates in land classification, to reduce the bias effect of misclassification and to take into account the different producer's accuracies associated to each class. It also shows that actual overall accuracy is in general lower than the result of cross-validation.  
+This example shows that it is important to correct area estimates in land classification to reduce the bias effect of misclassification and to consider the different producer's accuracies associated with each class. It also shows that actual overall accuracy is generally lower than the result of cross-validation.  
 
 
 
@@ -2738,7 +2736,7 @@ if (!file.exists("./tempdir/chp12"))
     dir.create("./tempdir/chp12")
 ```
 
-Land use and land cover classification tasks have unique characteristics that differ from other machine learning domains such as image recognition and natural language processing. The main challenge for land classification is to be able to describe the diversity of the planet's landscapes in a handful of labels. However, the diversity of the world's ecosystem makes all classification systems to be biased approximations of reality. As stated by Murphy : “The gradation of properties in the world means that our smallish number of categories will never map perfectly onto all objects” [@Murphy2002]. For this reason, `sits` provides tools for users to improve their classifications by iterative means, using a process called "active learning". 
+Land use and land cover classification tasks have unique characteristics that differ from other machine learning domains, such as image recognition and natural language processing. The main challenge for land classification is to describe the diversity of the planet's landscapes in a handful of labels. However, the diversity of the world's ecosystem makes all classification systems to be biased approximations of reality. As stated by Murphy: “The gradation of properties in the world means that our smallish number of categories will never map perfectly onto all objects” [@Murphy2002]. For this reason, `sits` provides tools for users to improve their classifications by iterative means, using a process called "active learning". 
 
 Active learning for remote sensing data classification is an iterative process of sample selection, labeling, and model retraining. The following steps provide a general overview of how to use active learning for remote sensing data classification:
 
@@ -2746,66 +2744,66 @@ Active learning for remote sensing data classification is an iterative process o
 2. Train a machine learning model: Use the initial training samples to train a machine learning model to classify remote sensing data.
 3. Classify the data cube using the model.
 4. Identify areas of uncertainty. 
-5. Select samples for re-labeling: select a set of unlabeled samples that the model is most uncertain about, i.e., those that the model is least confident in classifying.
+5. Select samples for re-labeling: Select a set of unlabeled samples that the model is most uncertain about, i.e., those that the model is least confident in classifying.
 6. Label the selected samples: The user labels the selected samples, adding them to the training set.
 7. Retrain the model: The model is retrained using the newly labeled samples, and the process repeats itself, starting at step 2.
 8. Stop when the classification accuracy is satisfactory: The iterative process continues until the classification accuracy reaches a satisfactory level.
 
-In traditional classification methods, experts provide a set of training samples and use a machine learning algorithm to produce map. By contrast, the active learning approach puts the human in the loop[@Monarch2021]. At each iteration, an unlabeled set of samples is presented to the user, which assigns classes to them and includes them in the training set [@Crawford2013]. The process is repeated until the expert is satisfied with the result, as shown in the Figure below. 
+In traditional classification methods, experts provide a set of training samples and use a machine learning algorithm to produce a map. By contrast, the active learning approach puts the human in the loop[@Monarch2021]. At each iteration, an unlabeled set of samples is presented to the user, which assigns classes to them and includes them in the training set [@Crawford2013]. The process is repeated until the expert is satisfied with the result, as shown in the Figure below. 
 
 ```{r, echo = FALSE, out.width = "100%", fig.align="center", fig.cap="Active learning approach (source: Crawford et al., 2013)"}
 knitr::include_graphics("images/active_learning.png")
 ```
 
-Active learning aims to reduce bias and errors in sample selection and as such improve the accuracy of the result. At each interaction, experts are asked to review  pixels where the ML classifier indicates a high value of uncertainty. Source of classification uncertainty include missing classes and or mislabeled samples. In `sits`, active learning is supported by the combination of three functions: `sits_uncertainty()`, `sits_uncertainty_sampling()` and `sits_confidence_sampling()`. 
+Active learning aims to reduce bias and errors in sample selection and, as such, improve the accuracy of the result. At each interaction, experts are asked to review pixels where the ML classifier indicates a high uncertainty value. Sources of classification uncertainty include missing classes and or mislabeled samples. In `sits`, active learning is supported by the combination of three functions: `sits_uncertainty()`, `sits_uncertainty_sampling()`, and `sits_confidence_sampling()`. 
 
 ## Measuring uncertainty{-} 
 
-Uncertainty in land use and land cover classification refers to the degree of doubt or ambiguity in the accuracy of the classification results. The process of classifying land use and land cover involves interpreting remotely sensed images or other geospatial data to assign specific land use or land cover categories to various regions on the ground. Several sources of uncertainty can arise during this process, including:
+Uncertainty in land use and land cover classification refers to the degree of doubt or ambiguity in the accuracy of the classification results. Classifying land use and land cover involves interpreting remotely sensed images or other geospatial data to assign specific land use or land cover categories to various regions on the ground. Several sources of uncertainty can arise during this process, including:
 
-1.	Classification errors: These can occur when the classification algorithm misinterprets the spectral or spatial characteristics of the input data, leading to misclassification of land use or land cover categories.
+1.	Classification errors: These can occur when the classification algorithm misinterprets the spectral or spatial characteristics of the input data, leading to the misclassification of land use or land cover categories.
 2.	Ambiguity in the definition of land use/land cover categories: The definition of land use or land cover categories can be ambiguous or subjective, leading to inconsistencies in the classification results.
 3.	Variability in the landscape: Natural and human-induced variations in the landscape can make it difficult to accurately classify land use or land cover in some regions.
 4.	Limitations of the data: The quality and quantity of input data can influence the accuracy of the classification results.
 
-Quantifying uncertainty in land use and land cover classification is important for ensuring that the classification results are reliable and useful for decision-making. Various methods, such as confusion matrices and error matrices, can be used to estimate and visualize the level of uncertainty in classification results. Additionally, incorporating uncertainty estimates into decision-making processes can help to identify regions where further investigation or data collection is needed. 
+Quantifying uncertainty in land use and land cover classification is important for ensuring that the results are reliable and valid for decision-making. Various methods, such as confusion matrices and error matrices, can be used to estimate and visualize the level of uncertainty in classification results. Additionally, incorporating uncertainty estimates into decision-making processes can help to identify regions where further investigation or data collection is needed. 
 
-The function `sits_uncertainty()` calculates the uncertainty cube based on the probabilities produced by the classifier. It takes a probability cube as input. The uncertainty measure is relevant in the context of active leaning, and helps to increase the quantity and quality of training samples by providing information about the confidence of the model. The supported types of uncertainty are 'entropy', 'least', 'margin' and 'ratio'. 
+The function `sits_uncertainty()` calculates the uncertainty cube based on the probabilities produced by the classifier. It takes a probability cube as input. The uncertainty measure is relevant in the context of active learning. It helps to increase the quantity and quality of training samples by providing information about the model's confidence. The supported types of uncertainty are 'entropy', 'least', 'margin' and 'ratio'. 
 
-Least confidence sampling is computed as the difference between no uncertainty (100% confidence) and the probability of the most likely class, normalized by the number of classes. Let $P_1(i)$ be the higher class probability for pixel $i$. Then least confidence sampling is expressed as
+Least confidence sampling is the difference between no uncertainty (100% confidence) and the probability of the most likely class, normalized by the number of classes. Let $P_1(i)$ be the higher class probability for pixel $i$. Then least confidence sampling is expressed as
 
 $$
 \theta_{LC} = (1 - P_1(i)) * \frac{n}{n-1}
 $$
 
-Margin of confidence sampling is the difference between the two most confident predictions, expressed in range from 0% (no uncertainty) to 100% (maximum uncertainty). Let $P_1(i)$ and be $P_1(i)$ the two higher class probability for pixel $i$. Then, margin of confidence is expressed as 
+The margin of confidence sampling is the difference between the two most confident predictions, expressed from 0% (no uncertainty) to 100% (maximum uncertainty). Let $P_1(i)$ and be $P_1(i)$ the two higher class probabilities for pixel $i$. Then, the margin of confidence is expressed as 
 
 $$
 \theta_{MC} = (1 - P_1(i) - P_2(i))
 $$
-Ratio of confidence is the measure of the ratio between the two most confident predictions, expressed in range from 0% (no uncertainty) to 100% (maximum uncertainty). Let $P_1(i)$ and be $P_1(i)$ the two higher class probability for pixel $i$. Then, ratio of confidence is expressed as 
+The ratio of confidence is the measure of the ratio between the two most confident predictions, expressed in a range from 0% (no uncertainty) to 100% (maximum uncertainty). Let $P_1(i)$ and be $P_1(i)$ the two higher class probabilities for pixel $i$. Then, the ratio of confidence is expressed as 
 $$
 \theta_{RC} = \frac{P_2(i)}{P_1(i)}
 $$
 
-Entropy is a measure of uncertainty used by Claude Shannon on his classic work "A Mathematical Theory of Communication". It is related to amount of variability in the probabilities associated to a pixel. The lower the variability, the lower the entropy. Let $P_k(i)$ be the probability associated to class $k$ for pixel $i$. The entropy is calculated as 
+Entropy is a measure of uncertainty used by Claude Shannon in his classic work "A Mathematical Theory of Communication". It is related to the amount of variability in the probabilities associated with a pixel. The lower the variability, the lower the entropy. Let $P_k(i)$ be the probability of class $k$ for pixel $i$. The entropy is calculated as 
 $$
 \theta_{E} = \frac{-\sum_{k=1}^K P_k(i) * log_2(P_k(i))}{log_2{n}}
 $$
 
-The parameters for `sits_uncertainty()` are: `cube`, a probability data cube; `type`, the uncertainty measure (default is `least`). In the case of entropy, it also requires the parameters  `window_size`, size of neighborhood to calculate entropy (default is 5) and `window_fn`, function to be applied in entropy calculation (default is `median`). As with other processing functions, users can specify `multicores` as the number of cores to run the function and `memsize`, maximum overall memory (in GB) to run the function. Optional parameters include `output_dir` (output directory for image files) and `version` (version of result).
+The parameters for `sits_uncertainty()` are: `cube`, a probability data cube; `type`, the uncertainty measure (default is `least`). In the case of entropy, it also requires the parameters  `window_size`, size of the neighborhood to calculate entropy (default is 5), and `window_fn`, a function to be applied in entropy calculation (default is `median`). As with other processing functions, users can specify `multicores` as the number of cores to run the function and `memsize`, maximum overall memory (in GB) to run the function. Optional parameters include `output_dir` (output directory for image files) and `version` (version of result).
 
 ## Using uncertainty measures for active learning{-}
 
-The following case study shows how uncertainty measures can be used in the context of active learning. The study area is subset of one Sentinel-2 tile in the state of Rondonia, Brazil. The aim of the work is to detect deforestation in the Brazilian Amazonia. 
+The following case study shows how uncertainty measures can be used in the context of active learning. The study area is a subset of one Sentinel-2 tile in the state of Rondonia, Brazil. The work aims to detect deforestation in Brazilian Amazonia. 
 
-The study area is located close to the Samuel Hydroelectric Dam, located on the Madeira River in the Brazilian state of Rondônia. Building the dam led to a loss of 56,000 hectares of native forest. The construction of the dam caused the displacement of several indigenous communities and traditional populations, leading to social and cultural disruption. Additionally, the flooding of large areas of forest resulted in the loss of habitats and biodiversity, including several endangered species. The dam has altered the natural flow of the Madeira River, leading to changes in water quality and temperature, and affecting the aquatic life that depends on the river. The changes in river flow have also impacted the navigation and transportation activities of the local communities.
+The study area is close to the Samuel Hydroelectric Dam, located on the Madeira River in the Brazilian state of Rondônia. Building the dam led to a loss of 56,000 hectares of native forest. The dam's construction caused the displacement of several indigenous communities and traditional populations, leading to a social and cultural disruption. Additionally, flooding large forest areas resulted in losing habitats and biodiversity, including several endangered species. The dam has altered the natural flow of the Madeira River, leading to changes in water quality and temperature and affecting the aquatic life that depends on the river. The changes in river flow have also impacted the navigation and transportation activities of the local communities.
 
-The first step is to produce a regular data cube for the chosen area rom the period 2020-06-01 to 2021-09-01. To reduce processing time and storage, we use only three bands ("B02", "B8A", "B11") plus the cloud band, and take a small area inside the tile. After obtaining a regular cube, we plot the study area in the dates during the temporal interval of the data cube. The first image is taken at the beginning of the dry season in "2020-07-04", when the inundation area of the dam is covered by shallow water. 
+The first step is to produce a regular data cube for the chosen area from 2020-06-01 to 2021-09-01. To reduce processing time and storage, we use only three bands ("B02", "B8A", "B11") plus the cloud band and take a small area inside the tile. After obtaining a regular cube, we plot the study area in the dates during the temporal interval of the data cube. The first image is taken at the beginning of the dry season in "2020-07-04", when the inundation area of the dam was covered by shallow water. 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Area in Rondonia near Samuel dam (source: authors)"}
 
-# select a S2 tile
+# Select a S2 tile
 s2_cube_ro <- sits_cube(
       source = "AWS",
       collection = "SENTINEL-S2-L2A-COGS",
@@ -2814,11 +2812,11 @@ s2_cube_ro <- sits_cube(
       start_date = as.Date("2020-06-01"),
       end_date = as.Date("2021-09-01")
 )
-# select a small area inside the tile
+# Select a small area inside the tile
 roi = c(lon_max = -63.25790, lon_min = -63.6078, 
         lat_max = -8.72290, lat_min = -8.95630)
 
-# regularize the small area cube
+# Regularize the small area cube
 
 s2_reg_cube_ro <- sits_regularize(
   cube = s2_cube_ro,
@@ -2835,7 +2833,7 @@ plot(s2_reg_cube_ro,
      date = "2020-07-04")
 ```
 
-The second image is from "2020-11-09" and shows that most of the inundation area dries during the dry season. In early November 2020, after the end of the dry season, the inundation area is dry and has a response similar to bare soil and to burned areas. The Madeira river can be seen running through the dried inundation area. 
+The second image is from "2020-11-09" and shows that most of the inundation area dries during the dry season. In early November 2020, after the end of the dry season, the inundation area is dry and has a response similar to bare soil and burned areas. The Madeira River can be seen running through the dried inundation area. 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Area in Rondonia near Samuel dam in November 2021 (source: authors)"}
 plot(s2_reg_cube_ro, 
@@ -2845,19 +2843,19 @@ plot(s2_reg_cube_ro,
      date = "2020-11-09")
 ```
 
-The third image is from "2021-08-08".  In early August 2021, after the wet season, the inundation area is again covered by a shallow water layer. A number of burned and clear cut areas can also be seen in the August 2021 image compared with the July 2020 one. Given the contrast between the wet and dry seasons, correct land cover classification of this area is hard. 
+The third image is from "2021-08-08". In early August 2021, after the wet season, the inundation area is again covered by a shallow water layer. Several burned and clear-cut areas can also be seen in the August 2021 image compared with the July 2020 one. Given the contrast between the wet and dry seasons, correct land cover classification of this area is hard. 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Area in Rondonia near Samuel dam in August 2021 (source: authors)"}
 plot(s2_reg_cube_ro, red = "B11", green = "B8A", blue = "B02", date = "2021-08-08")
 ```
 
-The next step is to classify this study area using a training set with 480 times series collected over the state of Rondonia (Brasil) for detecting deforestation. The training set uses 4 classes ("Burned_Area", "Forest", "Highly_Degraded" and "Cleared_Area"). The cube is classified using a LightTAE model, post-processed by a Bayesian smoothing, and then labelled.
+The next step is to classify this study area using a training set with 480 times series collected over the state of Rondonia (Brazil) for detecting deforestation. The training set uses 4 classes ("Burned_Area", "Forest", "Highly_Degraded" and "Cleared_Area"). The cube is classified using a LightTAE model, post-processed by a Bayesian smoothing, and then labeled.
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Classified map for area in Rondonia near Samuel dam (source: authors)"}
 library(sitsdata)
-# load the training set
+# Load the training set
 data("samples_prodes_4classes")
-# select the same three bands used in the data cube
+# Select the same three bands used in the data cube
 samples_4classes_3bands <- sits_select(
     data = samples_prodes_4classes, 
     bands = c("B02", "B8A", "B11")
@@ -2867,7 +2865,7 @@ ltae_model <- sits_train(
     samples = samples_4classes_3bands, 
     ml_method = sits_lighttae()
 )
-# classify the small area cube
+# Classify the small area cube
 s2_cube_probs <- sits_classify(
     data = s2_reg_cube_ro,
     ml_model = ltae_model,
@@ -2875,14 +2873,14 @@ s2_cube_probs <- sits_classify(
     memsize = 15,
     multicores = 5
 )
-# post-process the probability cube
+# Post-process the probability cube
 s2_cube_bayes <- sits_smooth(
     cube = s2_cube_probs,
     output_dir = "./tempdir/chp12/",
     memsize = 16,
     multicores = 4
 )
-# label the post-processed  probability cube
+# Label the post-processed  probability cube
 s2_cube_label <- sits_label_classification(
     cube = s2_cube_bayes,
     output_dir = "./tempdir/chp12/",
@@ -2891,10 +2889,10 @@ s2_cube_label <- sits_label_classification(
 )
 plot(s2_cube_label)
 ```
-The resulting map correctly identifies the forest area and the deforestation. However, it wrongly classifies the area covered by the Samuel hydroelectric dam. The reason is the lack of samples for classes related to surface water and wetlands. To improve the classification, we need to improve our samples. To do that, the first step is calculate the uncertainty of the classification.
+The resulting map correctly identifies the forest area and the deforestation. However, it wrongly classifies the area covered by the Samuel hydroelectric dam. The reason is the lack of samples for classes related to surface water and wetlands. To improve the classification, we need to improve our samples. To do that, the first step is to calculate the uncertainty of the classification.
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap= "Uncertainty map for classification in Rondonia near Samuel dam (source: authors)"}
-# calculate the uncertainty cube
+# Calculate the uncertainty cube
 s2_cube_uncert <- sits_uncertainty(
     cube = s2_cube_bayes,
     type = "entropy",
@@ -2904,24 +2902,23 @@ s2_cube_uncert <- sits_uncertainty(
 )
 plot(s2_cube_uncert)
 ```
-As expected, the places of highest uncertainty are those covered by surface water or associated to wetlands. These places are likely to be misclassified. For this reason, `sits` provides the function `sits_uncertainty_sampling()` which takes the uncertainty cube as its input and produces a tibble with locations in WGS84 that have high uncertainty. The function has three parameters: `n`, number of uncertain points to be included; `min_uncert`, minimum value of uncertainty for pixels to be included in the list; and `sampling_window`, to improve the spatial distribution of the new samples by avoiding points in the same neighborhood to be included. After running the function, we can use `sits_view()` to visualize the location of the samples.
+As expected, the places of highest uncertainty are those covered by surface water or associated with wetlands. These places are likely to be misclassified. For this reason, `sits` provides the function `sits_uncertainty_sampling()`, which takes the uncertainty cube as its input and produces a tibble with locations in WGS84 with high uncertainty. The function has three parameters: `n`, number of uncertain points to be included; `min_uncert`, minimum value of uncertainty for pixels to be included in the list; and `sampling_window`, to improve the spatial distribution of the new samples by avoiding points in the same neighborhood to be included. After running the function, we can use `sits_view()` to visualize the location of the samples.
 
 ```{r, tidy = "styler", echo = TRUE, eval = FALSE}
-# calculate the uncertainty cube
+# Calculate the uncertainty cube
 new_samples <- sits_uncertainty_sampling(
     uncert_cube = s2_cube_uncert,
     n = 20,
     min_uncert = 0.5,
     sampling_window = 10
 )
-# view the location of the samples
+# View the location of the samples
 sits_view(new_samples)
 ```
 
 
-
 ```{r, tidy = "styler", echo = FALSE, eval = TRUE, out.width = "100%", fig.align="center", fig.cap= "Location of uncertain pixel for classification in Rondonia near Samuel dam (source: authors)"}
-# calculate the uncertainty cube
+# Calculate the uncertainty cube
 new_samples <- sits_uncertainty_sampling(
     uncert_cube = s2_cube_uncert,
     n = 20,
@@ -2931,27 +2928,27 @@ new_samples <- sits_uncertainty_sampling(
 knitr::include_graphics("images/uncertain_pixels.png")
 ```
 
-The visualization shows that the samples are located in the areas covered by the Samuel data. As a first approximation, one can use the label "Wetlands" to designate these samples. A more detailed evaluation, which is recommended in practices, requires analysing these samples with an exploration software such as QGIS and individually labelling each sample. In our case, we will take a direct approach for illustration purposes.
+The visualization shows that the samples are located in the areas covered by the Samuel data. As a first approximation, one can use the label "Wetlands" to designate these samples. A more detailed evaluation, which is recommended in practice, requires analyzing these samples with an exploration software such as QGIS and individually labeling each sample. In our case, we will take a direct approach for illustration purposes.
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap= "New land classification in Rondonia near Samuel dam (source: authors)"}
-# label the new samples
+# Label the new samples
 new_samples$label <- "Wetland"
-# obtain the time series from the regularized cube 
+# Obtain the time series from the regularized cube 
 new_samples_ts <- sits_get_data(
     cube = s2_reg_cube_ro,
     samples = new_samples
 )
-# join the new samples with the original ones with 4 classes
+# Join the new samples with the original ones with 4 classes
 samples_4classes_3bands_round_2 <- dplyr::bind_rows(
     samples_4classes_3bands,
     new_samples_ts
 )
-# train a lightTAE model with the new sample set
+# Train a lightTAE model with the new sample set
 ltae_model_v2 <- sits_train(
     samples = samples_4classes_3bands_round_2, 
     ml_method = sits_lighttae()
 )
-# classify the small area cube
+# Classify the small area cube
 s2_cube_probs_v2 <- sits_classify(
     data = s2_reg_cube_ro,
     ml_model = ltae_model_v2,
@@ -2960,7 +2957,7 @@ s2_cube_probs_v2 <- sits_classify(
     memsize = 16,
     multicores = 4
 )
-# post-process the probability cube
+# Post-process the probability cube
 s2_cube_bayes_v2 <- sits_smooth(
     cube = s2_cube_probs_v2,
     output_dir = "./tempdir/chp12/",
@@ -2968,7 +2965,7 @@ s2_cube_bayes_v2 <- sits_smooth(
     memsize = 16,
     multicores = 4
 )
-# label the post-processed  probability cube
+# Label the post-processed  probability cube
 s2_cube_label_v2 <- sits_label_classification(
     cube = s2_cube_bayes_v2,
     output_dir = "./tempdir/chp12/",
@@ -2976,14 +2973,14 @@ s2_cube_label_v2 <- sits_label_classification(
     memsize = 16,
     multicores = 4  
 )
-# plot the second version of the classified cube
+# Plot the second version of the classified cube
 plot(s2_cube_label_v2)
 ```
 
-The results shows a significant quality gain over the earlier classification. There are still some confusion areas in the exposed soils inside the inundation area, some of which have been classified as burned areas. It is useful also to show the uncertainty map associated with the second model. 
+The results show a significant quality gain over the earlier classification. There are still some confusion areas in the exposed soils inside the inundation area, some of which have been classified as burned areas. It is also useful to show the uncertainty map associated with the second model. 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap= "Uncertainty map for classification in Rondonia near Samuel dam - improved model (source: authors)"}
-# calculate the uncertainty cube
+# Calculate the uncertainty cube
 s2_cube_uncert_v2 <- sits_uncertainty(
     cube = s2_cube_bayes_v2,
     type = "entropy",
@@ -2995,7 +2992,7 @@ s2_cube_uncert_v2 <- sits_uncertainty(
 plot(s2_cube_uncert_v2)
 ```
  
-As the new uncertainty map shows, there is a significant improvement in the quality of the classification. The remaining areas of high uncertainty are those places affected by the contrast between wet and dry season close to the inundation area. These areas are low-laying places that sometimes are covered by water and sometimes are bare soil areas throughout the year, depending on the intensity of the rainy season. To further improve the quality of the classification, we could obtain new samples of those uncertain areas, label them and add them to samples. In general, as this section shows, combining uncertainty measurements with active learning is a recommended practice for improving classification results. 
+As the new uncertainty map shows, there is a significant improvement in the quality of the classification. The remaining areas of high uncertainty are those affected by the contrast between the wet and dry seasons close to the inundation area. These areas are low-laying places that sometimes are covered by water and sometimes are bare soil areas throughout the year, depending on the intensity of the rainy season. To further improve the classification quality, we could obtain new samples of those uncertain areas, label them and add them to samples. In general, as this section shows, combining uncertainty measurements with active learning is a recommended practice for improving classification results. 
 
 <!--chapter:end:12-uncertainty.Rmd-->
 
@@ -3003,29 +3000,29 @@ As the new uncertainty map shows, there is a significant improvement in the qual
 
 ```{r, echo = FALSE}
 source("common.R")
-# create a directory to store files
+# Create a directory to store files
 if (!file.exists("./tempdir/chp13"))
     dir.create("./tempdir/chp13")
 ```
 
 Ensemble prediction is a powerful technique for combining predictions from multiple models to produce more accurate and robust predictions. In general, ensemble predictions produce better predictions than using a single model. This is because the errors of individual models can cancel out or be reduced when combined with the predictions of other models. As a result, ensemble predictions can lead to better overall accuracy and reduce the risk of overfitting. 
 
-Ensemble predictions are  more robust to changes in the data or the model. If a single model is sensitive to certain types of data or errors, ensemble predictions can help reduce the impact of these issues by combining the predictions of multiple models. Ensemble predictions can help you choose the best model or models for a given task. By comparing the predictions of different models, you can identify which models perform best on different types of data or tasks. This can be especially useful when working with complex or uncertain data. By combining the predictions of multiple models, users can identify which features or factors are most important for making accurate predictions. When using ensemble methods, it's important to choose models that are diverse and have different sources of error. This can help ensure that the ensemble predictions are more accurate and robust.
+Ensemble predictions are more robust to changes in the data or the model. If a single model is sensitive to certain types of data or errors, ensemble predictions can help reduce the impact of these issues by combining the predictions of multiple models. Ensemble predictions can help you choose the best model or models for a given task. By comparing the predictions of different models, you can identify which models perform best on different types of data or tasks. This can be especially useful when working with complex or uncertain data. By combining the predictions of multiple models, users can identify which features or factors are most important for making accurate predictions. When using ensemble methods, it is important to choose diverse models with different sources of error. This can help ensure that the ensemble predictions are more accurate and robust.
 
-Overall, ensemble predictions are a powerful tool for improving the accuracy and robustness of machine learning models. By combining the predictions of multiple models, users can reduce errors and uncertainty, and gain new insights into the underlying patterns in the data.
+Overall, ensemble predictions are a powerful tool for improving the accuracy and robustness of machine learning models. By combining the predictions of multiple models, users can reduce errors and uncertainty and gain new insights into the underlying patterns in the data.
 
-The `sits` package provides the function `sits_combine_predictions()` to estimate ensemble predictions using probability cubes produced by `sits_classify()` and optionally post-processed with `sits_smooth()`.  There are two ways to do ensemble predictions from multiple models in `sits`:
+The `sits` package provides the function `sits_combine_predictions()` to estimate ensemble predictions using probability cubes produced by `sits_classify()` and optionally post-processed with `sits_smooth()`. There are two ways to make ensemble predictions from multiple models in `sits`:
 
 * Averaging: In this approach, the predictions of each model are averaged to produce the final prediction. This method works well when the models have similar accuracy and errors. 
 
 * Uncertainty: Predictions from different models are compared in terms of their uncertainties on a pixel-by-pixel basis; predictions with lower uncertainty are chosen as the more likely ones to be valid. 
 
-In what follows, we will use the same data used as in the "Image Classification in Data Cubes" chapter  section to illustrate how to produce an ensemble prediction. For simplicity, we repeat the steps taken for classify an image in that chapter: create a data cube, train a model using the lightweight temporal attention encoder algorithm (`sits_lighttae()`), then classify, post-process and label the data cube. As a starting point, we plot two instances of the data cube, at the start and at the end of the time series. 
+In what follows, we will use the same data used in the "Image Classification in Data Cubes" Chapter to illustrate how to produce an ensemble prediction. For simplicity, we repeat the steps taken to classify an image in that chapter: create a data cube, train a model using the lightweight temporal attention encoder algorithm (`sits_lighttae()`), then classify, post-process and label the data cube. As a starting point, we plot two instances of the data cube at the start and end of the time series. 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap= "Color composite image for date 2020-07-06."}
-# files are available in a local directory 
+# Files are available in a local directory 
 data_dir <- system.file("extdata/Rondonia-20LKP/", package = "sitsdata")
-# read data cube
+# Read data cube
 ro_cube_20LKP <- sits_cube(
     source = "MPC",
     collection = "SENTINEL-2-L2A",
@@ -3039,7 +3036,8 @@ plot(ro_cube_20LKP,
     blue = "B02"
 )
 ```
-The image from 2020-07-06 shows many areas under deforestation, especially a large one located in top center of the image. It is useful to compare to an image one year later, which shows a number of burned areas resulting from forest removal followed by fire. 
+
+The image from 2020-07-06 shows many areas under deforestation, especially a large one located in the top center of the image. It is helpful to compare to an image one year later, which shows several burned areas resulting from forest removal followed by fire. 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap= "Color composite image for date 2021-08-10."}
 plot(ro_cube_20LKP, 
@@ -3049,25 +3047,26 @@ plot(ro_cube_20LKP,
     blue = "B02"
 )
 ```
+
 The samples used in the classification are the same as those used in the "Image Classification in Data Cubes" chapter. Please refer to that chapter for a more detailed description of the temporal response of the samples. We first reproduce the result obtained in that chapter using the `sits_tempcnn()` algorithm. 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap= "Image Classification using TempCNN model."}
-# get the samples from library "sitsdata"
+# Get the samples from library "sitsdata"
 library(sitsdata)
 data(samples_prodes_4classes)
-# use only the bands available in the cube
+# Use only the bands available in the cube
 samples_3bands <- sits_select(
     data = samples_prodes_4classes, 
     bands = sits_bands(ro_cube_20LKP)
 )
-# train model using LightTAE algorithm
+# Train model using LightTAE algorithm
 tcnn_model <- sits_train(
     samples = samples_3bands, 
     ml_method = sits_tempcnn(
         opt_hparams = list(lr = 0.001)
         )
 )
-# classify data cube
+# Classify data cube
 ro_cube_probs_tcnn <- sits_classify(
     data     = ro_cube_20LKP,
     ml_model = tcnn_model,
@@ -3076,7 +3075,7 @@ ro_cube_probs_tcnn <- sits_classify(
     multicores = 4,
     memsize = 12
 )
-# smooth data cube
+# Smooth data cube
 ro_cube_bayes_tcnn <- sits_smooth(
     cube    = ro_cube_probs_tcnn,
     output_dir = "./tempdir/chp13",
@@ -3084,7 +3083,7 @@ ro_cube_bayes_tcnn <- sits_smooth(
     multicores = 4,
     memsize = 12
 )
-# generate thematic map
+# Generate a thematic map
 defor_map_tcnn <- sits_label_classification(
     cube = ro_cube_bayes_tcnn,
     multicores = 4,
@@ -3094,19 +3093,19 @@ defor_map_tcnn <- sits_label_classification(
 )
 plot(defor_map_tcnn)
 ```
-The deforestation map produced by the `sits_tempcnn()` algorithm has spatial consistency; arguably, it underestimates the burned areas in the right-hand corner of the image. The method tries to modelling temporal behavior of the reflectances. For this reason, it sometimes fails to detect changes that occur in the last dates of the time series, as it occurs when areas are burned in August. 
+The deforestation map produced by the `sits_tempcnn()` algorithm has spatial consistency; arguably, it underestimates the burned areas in the right-hand corner of the image. The method tries to model the temporal behavior of the reflectances. For this reason, it sometimes fails to detect changes in the last dates of the time series, as it occurs when areas are burned in August. 
 
-To build a two-member ensemble, we now classify the same image using a random forests algorithm.  
+To build a two-member ensemble, we now classify the same image using a random forest algorithm.  
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap= "Land classification in Rondonia using a random forests algorithm."}
 
-# train model using random forests algorithm
+# Train model using random forests algorithm
 rfor_model <- sits_train(
     samples = samples_3bands, 
     ml_method = sits_rfor()
 )
 
-# classify the data cube using the tempCNN model
+# Classify the data cube using the tempCNN model
 ro_cube_probs_rfor <- sits_classify(
     data = ro_cube_20LKP,
     ml_model = rfor_model,
@@ -3115,7 +3114,7 @@ ro_cube_probs_rfor <- sits_classify(
     memsize = 16,
     multicores = 4
 )
-# post-process the probability cube
+# Post-process the probability cube
 ro_cube_bayes_rfor <- sits_smooth(
     cube = ro_cube_probs_rfor,
     output_dir = "./tempdir/chp13/",
@@ -3123,7 +3122,7 @@ ro_cube_bayes_rfor <- sits_smooth(
     memsize = 16,
     multicores = 4
 )
-# label the post-processed  probability cube
+# Label the post-processed  probability cube
 ro_cube_label_rfor <- sits_label_classification(
     cube = ro_cube_bayes_rfor,
     output_dir = "./tempdir/chp13/",
@@ -3131,16 +3130,16 @@ ro_cube_label_rfor <- sits_label_classification(
     memsize = 16,
     multicores = 4  
 )
-# plot the random forests version of the classified cube
+# Plot the random forests version of the classified cube
 plot(ro_cube_label_rfor)
 ```
 
-Comparing the two results, while most of the land areas have been classified equally, there are places of disagreement concerning the places classified as "Burned_Area" and "Highly Degraded". Since the random forests model is sensitive to the response of images in the end of the period, it tends to be better to distinguish burned areas. However, it tends to reduce the forest areas, classifying some of them as highly degraded. Such misclassification happens because the random forests algorithm disregards the temporal correlation of the input data. Values from a single date are used to distinguish between natural and degraded forest areas. 
+Comparing the two results, while most of the land areas have been classified equally, there are places of disagreement concerning the places classified as "Burned_Area" and "Highly Degraded". Since the random forests model is sensitive to the response of images at the end of the period, it tends to be better to distinguish burned areas. However, it tends to reduce the forest areas, classifying some of them as highly degraded. Such misclassification happens because the random forests algorithm disregards the temporal correlation of the input data. Values from a single date are used to distinguish between natural and degraded forest areas. 
 
-Given the differences and complementarities between the two predicted outcomes, it is useful to combine them using `sits_combine_predictions()`. The first option for ensemble prediction is to take the average of the probability maps to reduce noise.
+Given the differences and complementarities between the two predicted outcomes, combining them using `sits_combine_predictions()` is useful. The first option for ensemble prediction is to take the average of the probability maps to reduce noise.
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap= "Land classification in Rondonia near Samuel dam using the average of the probabilities produced by lightTAE and tempCNN algorithms."}
-# combine the two predictions by taking the average of the probabilities for each class
+# Combine the two predictions by taking the average of the probabilities for each class
 s2_cube_average_probs <- sits_combine_predictions(
   cubes = list(ro_cube_bayes_tcnn, ro_cube_bayes_rfor),
   type = "average",
@@ -3149,7 +3148,7 @@ s2_cube_average_probs <- sits_combine_predictions(
   memsize = 16,
   multicores = 4
 )
-# label the average probability cube
+# Label the average probability cube
 s2_cube_average_class <- sits_label_classification(
     cube = s2_cube_average_probs,
     output_dir = "./tempdir/chp13/",
@@ -3157,10 +3156,10 @@ s2_cube_average_class <- sits_label_classification(
     memsize = 16,
     multicores = 4  
 )
-# plot the second version of the classified cube
+# Plot the second version of the classified cube
 plot(s2_cube_average_class)
 ```
-Compared with the initial map, the result has increased the number of pixels classified as burned areas and highly degraded. Not all areas classified as degraded forest by the random forests method have been included in the final map. Only those places where the random forests algorithm has high confidence have been included. In general, the average map results on a better classification than the individual results.
+Compared with the initial map, the result has increased the number of pixels classified as burned areas and highly degraded. Not all areas classified as degraded forest by the random forests method have been included in the final map. Only those places where the random forests algorithm has high confidence have been included. The average map generally results in a better classification than the individual results.
 
 <!--chapter:end:13-ensembleprediction.Rmd-->
 
@@ -3170,12 +3169,12 @@ Compared with the initial map, the result has increased the number of pixels cla
 source("common.R")
 ```
 
-This section is intended for programmers and experts that would like to extend the capabilities of `sits`, either by including new data sources, ML algorithms, exporting data to be used in Python or QGIS, or including new display colors. 
+This section is intended for programmers and experts who would like to extend the capabilities of `sits` by including new data sources, ML algorithms, exporting data to be used in Python or QGIS, or including new display colors. 
 
 
 ## How colors work in sits{-}
 
-In examples provided in the book, the color legend is taken for the predefined color table provided by `sits`.  This default color table is displayed using the command `sits_colors_show`. This color definition file assigns colors to 99 class names, including the IPCC and IGBP land use classes. 
+In examples provided in the book, the color legend is taken for the predefined color table provided by `sits`. This default color table is displayed using the command `sits_colors_show`. This color definition file assigns colors to 99 class names, including the IPCC and IGBP land use classes. 
 
 ```{r, tidy = "styler", out.width = "100%", out.height = "100%", echo = FALSE, fig.align="center", fig.cap="Default colors used in the sits package"}
 # Display default sits colors
@@ -3184,15 +3183,15 @@ sits_colors_show()
 
 The color table can be extended or adjusted by accessing and modifying the default color table, using the commands `sits_colors()` to retrieve the table and `sits_colors_set()` to update the table according to user choices, as shown in the example below.
 ```{r}
-# retrieve the color table
+# Retrieve the color table
 color_tb <- sits_colors()
-# show the color table
+# Show the color table
 color_tb
 ```
 
 As an example of a user-defined color table, consider a definition that covers level 1 of the Anderson Classification System used in the US National Land Cover Data, obtained by defining a new color table, as shown below. The colors can be defined by HEX values or by names accepted as R color codes.
 ```{r, tidy = "styler", out.width = "80%", out.height = "80%", fig.align="center", fig.cap="Example of Anderson Land Classification Scheme use in sits"}
-# define a color table based on the Anderson Land Classification System
+# Define a color table based on the Anderson Land Classification System
 us_nlcd <- tibble::tibble(name = character(), color = character())
 us_nlcd <- us_nlcd %>% 
   tibble::add_row(name = "Urban Built Up", color =  "#85929E") %>% 
@@ -3204,18 +3203,18 @@ us_nlcd <- us_nlcd %>%
   tibble::add_row(name = "Barren Land", color = "#FDEBD0") %>% 
   tibble::add_row(name = "Tundra", color = "#EBDEF0") %>% 
   tibble::add_row(name = "Snow and Ice", color = "#F7F9F9")
-# load the color table into `sits`
+# Load the color table into `sits`
 sits_colors_set(us_nlcd)
-# show the new color table used by sits
+# Show the new color table used by sits
 sits_colors_show()
 ```
 
 ```{r, eval = TRUE, echo = FALSE, warning = FALSE, message = FALSE} 
-# reset the color table
+# Reset the color table
 sits_colors_reset()
 ```
 
-As an alternative, users may define their own legends and pass them as parameters to to the `plot` function. Please see the example provided in Section "Map Reclassification" on Chapter "Image Classification in Data Cubes". 
+As an alternative, users may define legends and pass them as parameters to the `plot` function. Please see the example provided in Section "Map Reclassification" in the Chapter "Image Classification in Data Cubes". 
 
 ## Exporting data to JSON{-}
 
@@ -3223,13 +3222,13 @@ Both the data cube and the time series tibble can be exported to exchange format
 
 ```{r, tidy = "styler", eval = FALSE}
 library(jsonlite)
-# export the data cube to JSON
+# Export the data cube to JSON
 jsonlite::write_json(
   x = s2_20LKP_cube_MPC,
   path = "./data_cube.json",
   pretty = TRUE
 )
-# export the time series to JSON
+# Export the time series to JSON
 jsonlite::write_json(
   x = samples_prodes_4classes,
   path = "./time_series.json",
