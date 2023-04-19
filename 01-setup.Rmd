@@ -20,9 +20,9 @@ sudo apt-get install gdal-bin
 sudo apt-get install proj-bin
 ```
 
-If you get an error while adding this PPA repository, it could be because you miss the package `software-properties-common`. When GDAL is running in `docker` containers, please add the security flag `--security-opt seccomp=unconfined` on start. 
+Getting an error while adding this PPA repository could be due to the absence of the package `software-properties-common`. When GDAL is running in `docker` containers, please add the security flag `--security-opt seccomp=unconfined` on start. 
 
-After installing GDAL, GEOS, and PROJ4, please install packages "sf" and "terra", in this order.
+After installing GDAL, GEOS, and PROJ4, please install packages `sf` and `terra`, in this order.
 
 ```{r, eval = FALSE}
 install.packages("sf")
@@ -44,7 +44,7 @@ sudo dnf install gdal-devel proj-devel geos-devel sqlite-devel udunits2-devel
 
 ## Support for deep learning with torch {.unnumbered}
 
-The deep learning models of `sits` use the `torch` package, which is an **R** version of `pyTorch`. Before installing "sits", please also install packages "torch" and "luz", and initialize torch. 
+The deep learning models of `sits` use the `torch` package, which is an **R** version of `pyTorch`. Before installing `sits`, please also install packages `torch` and `luz`, and initialize torch. 
 
 ```{r, eval = FALSE}
 install.packages("torch")
@@ -61,14 +61,14 @@ After installing `sf`, `terra`, `torch` and `luz`, please proceed to install `si
 install.packages("sits", dependencies = TRUE)
 ```
 
-The source code repository is on GitHub <https://github.com/e-sensing/sits>. To install the development version of `sits`, which contains the latest updates but might be unstable, users should install `devtools` if not already available, as then install sits as follows:
+The source code repository is on GitHub <https://github.com/e-sensing/sits>. To install the development version of `sits`, which contains the latest updates but might be unstable, users should install `devtools` if not already available, as then install `sits` as follows:
 
 ```{r, eval = FALSE}
 install.packages("devtools")
 devtools::install_github("e-sensing/sits@dev", dependencies = TRUE)
 ```
 
-To run the examples in the book, please also install the "sitsdata" package.
+To run the examples in the book, please also install the `sitsdata` package.
 
 ```{r, eval = FALSE}
 options(download.file.method = "wget")
@@ -76,7 +76,7 @@ devtools::install_github("e-sensing/sitsdata")
 ```
 
 
-## Using GPUs with `sits` 
+## Using GPUs with `sits` {.unnumbered}
 
 The `torch` package automatically recognizes if a GPU is available on the machine and uses the GPU for training and classification. There is a significant performance gain when GPUs are used instead of CPUs for deep learning models. There is no need for specific adjustments to `torch` scripts.  To use GPUs with `torch` requires version 11.6 of the CUDA library, which is available for Ubuntu 20.04 and Ubuntu 18.04. 
  

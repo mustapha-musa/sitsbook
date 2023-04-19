@@ -1,4 +1,4 @@
-# Ensemble Prediction from Multiple Models{-}
+# Ensemble prediction from multiple models{-}
 
 ```{r, echo = FALSE}
 source("common.R")
@@ -9,7 +9,7 @@ if (!file.exists("./tempdir/chp13"))
 
 Ensemble prediction is a powerful technique for combining predictions from multiple models to produce more accurate and robust predictions. In general, ensemble predictions produce better predictions than using a single model. This is because the errors of individual models can cancel out or be reduced when combined with the predictions of other models. As a result, ensemble predictions can lead to better overall accuracy and reduce the risk of overfitting. 
 
-Ensemble predictions are more robust to changes in the data or the model. If a single model is sensitive to certain types of data or errors, ensemble predictions can help reduce the impact of these issues by combining the predictions of multiple models. Ensemble predictions can help you choose the best model or models for a given task. By comparing the predictions of different models, you can identify which models perform best on different types of data or tasks. This can be especially useful when working with complex or uncertain data. By combining the predictions of multiple models, users can identify which features or factors are most important for making accurate predictions. When using ensemble methods, it is important to choose diverse models with different sources of error. This can help ensure that the ensemble predictions are more accurate and robust.
+Ensemble predictions are more robust to changes in the data or the model. If a single model is sensitive to certain types of data or errors, ensemble predictions can help reduce the impact of these issues by combining the predictions of multiple models. Ensemble predictions can help choose the best model or models for a given task. Comparing the predictions of different models helps to identify which models perform best on different types of data or tasks. This can be especially useful when working with complex or uncertain data. By combining the predictions of multiple models, users can identify which features or factors are most important for making accurate predictions. When using ensemble methods, choosing diverse models with different sources of error is important to ensure that the ensemble predictions are more accurate and robust.
 
 Overall, ensemble predictions are a powerful tool for improving the accuracy and robustness of machine learning models. By combining the predictions of multiple models, users can reduce errors and uncertainty and gain new insights into the underlying patterns in the data.
 

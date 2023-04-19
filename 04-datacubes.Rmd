@@ -203,7 +203,8 @@ ARD images downloaded from cloud collections to a local computer are not associa
 5. `parse_info`: information to parse the file names. File names need to contain information on tile, date, and band, separated by a delimiter (usually "_").
 6. `delim`: separator character between descriptors in the file name (default is "_").
 
-The example shows how to define a data cube using files from the `sitsdata` package.  The data set contains part of tile "20LKP" of Sentinel-2 images for the period 2020-06-04 to 2021-08-26, with bands "B02", "B8A" and "B11". Data is extracted from collection "SENTINEL-2-L2A" on Microsoft Planetary Computer ("MPC").  Given the file name `cube_20LKP_B02_2020-06-04.tif`, to retrieve information about the images, one needs to set the `parse_info` parameter to `c("X1", "tile", "band", "date")`. 
+The example shows how to define a data cube using files from the `sitsdata` package.  The data set contains part of tile "20LKP" of Sentinel-2 images for the period 2020-06-04 to 2021-08-26, with bands "B02", "B8A" and "B11". Data is extracted from collection "SENTINEL-2-L2A" on Microsoft Planetary Computer ("MPC"). Given the file name `cube_20LKP_B02_2020-06-04.tif`, the parameter `parse_info` needs to be set to `c("X1", "tile", "band", "date")` for retrieving information about the images.
+
 
 ```{r}
 library(sits)

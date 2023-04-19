@@ -199,7 +199,7 @@ new_samples <- sits_uncertainty_sampling(
 knitr::include_graphics("images/uncertain_pixels.png")
 ```
 
-The visualization shows that the samples are located in the areas covered by the Samuel data. As a first approximation, one can use the label "Wetlands" to designate these samples. A more detailed evaluation, which is recommended in practice, requires analyzing these samples with an exploration software such as QGIS and individually labeling each sample. In our case, we will take a direct approach for illustration purposes.
+The visualization shows that the samples are located in the areas covered by the Samuel data. To designate these samples, "Wetlands" can be used as a first approximation for labeling. A more detailed evaluation, which is recommended in practice, requires analyzing these samples with an exploration software such as QGIS and individually labeling each sample. In our case, we will take a direct approach for illustration purposes.
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap= "New land classification in Rondonia near Samuel dam (source: authors)"}
 # Label the new samples
