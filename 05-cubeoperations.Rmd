@@ -82,7 +82,7 @@ reg_cube <- sits_apply(reg_cube,
 # Plot NDRE1 index
 plot(reg_cube, band = "NDRE1",  palette = "RdYlGn")
 ```
-You can notice that the contrast between forests and deforested areas is more robust in the NDRE1 index than with NDVI. We can also compare this index with other red-edge based indexes, as shown below. We first calculate NDRE2 using bands "B07" and "B05". 
+Notice that the contrast between forests and deforested areas is more robust in the NDRE1 index than with NDVI. To compare this index with other red-edge based indexes, one option is to compute NDRE2 using bands "B07" and "B05", as shown below.
 
 ```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NDRE2 using bands B07 and B05 of Sentinel-2"}
 

@@ -220,7 +220,7 @@ plot(sinop_bayes, labels = c("Forest"), palette = "BuGn")
 
 ## Labelling a probability data cube {.unnumbered}
 
-After removing outliers using local smoothing, one can obtain the labeled classification map using the function `sits_label_classification()`. This function assigns each pixel to the class with the highest probability.
+After removing outliers using local smoothing, the labeled classification map can be obtained using the function `sits_label_classification()`. This function assigns each pixel to the class with the highest probability.
 \newpage
 
 ```{r, out.width = "100%", out.height = "75%", tidy="styler", fig.cap = "Classification map for Sinop", fig.align="center"}

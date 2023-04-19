@@ -20,7 +20,7 @@ sudo apt-get install gdal-bin
 sudo apt-get install proj-bin
 ```
 
-If you get an error while adding this PPA repository, it could be because you miss the package `software-properties-common`. When GDAL is running in `docker` containers, please add the security flag `--security-opt seccomp=unconfined` on start. 
+Getting an error while adding this PPA repository could be due to the absence of the package `software-properties-common`. When GDAL is running in `docker` containers, please add the security flag `--security-opt seccomp=unconfined` on start. 
 
 After installing GDAL, GEOS, and PROJ4, please install packages `sf` and `terra`, in this order.
 

@@ -100,7 +100,7 @@ We make the following recommendations for setting the $\sigma^2_{k}$ parameter:
 
 2. Set the $\sigma^2_{k}$ parameter with low values (5 or below) to reduce the neighborhood influence compared with the probabilities for each pixel of class $k$. In this way, classes with low spatial autocorrelation are more likely not to be relabeled.
 
-Consider the case of forest areas and watersheds. If an expert wishes to have compact areas classified as forests without many outliers inside them, she will set the $\sigma^2$ parameter for the class "Forest" to be high. For comparison, one usually wants to avoid that small watersheds with few similar neighbors being relabeled. In this case, it is advisable to avoid a strong influence of the neighbors, and $\sigma^2$ should be set as low as possible. 
+Consider the case of forest areas and watersheds. If an expert wishes to have compact areas classified as forests without many outliers inside them, she will set the $\sigma^2$ parameter for the class "Forest" to be high. For comparison, to avoid that small watersheds with few similar neighbors being relabeled, it is advisable to avoid a strong influence of the neighbors, setting $\sigma^2$ to be as low as possible. 
 
 ## Defining the neighborhood{-}
 

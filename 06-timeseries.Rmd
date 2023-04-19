@@ -28,7 +28,7 @@ The package provides functions for data manipulation and displaying information 
 sits_labels_summary(samples_matogrosso_mod13q1)
 ```
 
-In many cases, it is helpful to relabel the data set. For example, there may be situations when one wants to use a smaller set of labels since samples in one label on the original set may not be distinguishable from samples with other labels. We then could use `sits_labels()<-` to assign new labels). The example below shows how to do relabelling on a time series set shown above; all samples associated with crops are grouped in a single "Croplands" label.
+In many cases, it is helpful to relabel the data set. For example, there may be situations where using a smaller set of labels is desirable because samples in one label on the original set may not be distinguishable from samples with other labels. We then could use `sits_labels()<-` to assign new labels). The example below shows how to do relabelling on a time series set shown above; all samples associated with crops are grouped in a single "Croplands" label.
 ```{r, tidy = "styler"}
 # Copy the sample set for Mato Grosso 
 samples_new_labels <- samples_matogrosso_mod13q1
@@ -41,7 +41,7 @@ sits_labels(samples_new_labels) <- c("Cerrado",   "Croplands",
 sits_labels_summary(samples_new_labels)
 ```
 
-Given that we have used the tibble data format for the metadata and the embedded time series, one can use the functions from `dplyr`, `tidyr`, and `purrr` packages of the `tidyverse` [@Wickham2017] to process the data. For example, the following code uses `sits_select()` to get a subset of the sample data set with two bands (NDVI and EVI) and then uses the `dplyr::filter()` to select the samples labeled as "Cerrado". 
+Since metadata and the embedded time series use the tibble data format, the functions from `dplyr`, `tidyr`, and `purrr` packages of the `tidyverse` [@Wickham2017] can be used to process the data. For example, the following code uses `sits_select()` to get a subset of the sample data set with two bands (NDVI and EVI) and then uses the `dplyr::filter()` to select the samples labeled as "Cerrado". 
 
 ```{r, tidy="styler", message = FALSE}
 # Select NDVI band
@@ -71,7 +71,7 @@ plot(samples_cerrado)
 
 ## Obtaining time series data from data cubes{-}
 
-To get a set of time series in sits, one must first create a regular data cube and then request one or more time series from the cube using `sits_get_data()`.  This function uses two mandatory parameters: `cube` and `samples`. The `cube` parameter indicates the data cube from which the time series will be extracted.  The `samples` parameter accepts the following data types: 
+To get a set of time series in sits, first create a regular data cube and then request one or more time series from the cube using `sits_get_data()`.  This function uses two mandatory parameters: `cube` and `samples`. The `cube` parameter indicates the data cube from which the time series will be extracted.  The `samples` parameter accepts the following data types: 
 
 1. A data.frame with information on latitude and longitude (mandatory), start_date, end_date, and label for each sample point.
 2. A csv file with columns latitude and longitude, start_date, end_date, and label.
@@ -99,7 +99,7 @@ series <- sits_get_data(cube    = raster_cube,
 plot(series)
 ```
 
-A useful case is when a set of labeled samples can be used as a training data set. In this case, one usually has trusted observations labeled and commonly stored in plain text files in comma-separated values (CSV) or using shapefiles (SHP). 
+A useful case is when a set of labeled samples can be used as a training data set. In this case, trusted observations are usually labeled and commonly stored in plain text files in comma-separated values (CSV) or using shapefiles (SHP). 
 
 ```{r, tidy="styler", message=FALSE}
 # Retrieve a list of samples described by a CSV file
