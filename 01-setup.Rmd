@@ -55,13 +55,13 @@ torch::install_torch()
 
 ## Installing the `sits` package {.unnumbered}
 
-After installing `sf`, `terra`, `torch` and `luz`, please proceed to install `sits`,  which is available on CRAN and should be installed as a regular **R** package.
+After installing `sf`, `terra`, `torch`, and `luz`, please proceed to install `sits`,  which is available on CRAN and should be installed as a regular **R** package.
 
 ```{r, eval = FALSE}
 install.packages("sits", dependencies = TRUE)
 ```
 
-The source code repository is on GitHub <https://github.com/e-sensing/sits>. To install the development version of `sits`, which contains the latest updates but might be unstable, users should install `devtools` if not already available, as then install `sits` as follows:
+The source code repository is on GitHub <https://github.com/e-sensing/sits>. To install the development version of `sits`, which contains the latest updates but might be unstable, users should install `devtools`, if not already available, and then install `sits` as follows:
 
 ```{r, eval = FALSE}
 install.packages("devtools")
@@ -78,5 +78,5 @@ devtools::install_github("e-sensing/sitsdata")
 
 ## Using GPUs with `sits` {.unnumbered}
 
-The `torch` package automatically recognizes if a GPU is available on the machine and uses the GPU for training and classification. There is a significant performance gain when GPUs are used instead of CPUs for deep learning models. There is no need for specific adjustments to `torch` scripts.  To use GPUs with `torch` requires version 11.6 of the CUDA library, which is available for Ubuntu 20.04 and Ubuntu 18.04. 
+The `torch` package automatically recognizes if a GPU is available on the machine and uses it for training and classification. There is a significant performance gain when GPUs are used instead of CPUs for deep learning models. There is no need for specific adjustments to `torch` scripts.  To use GPUs, `torch` requires version 11.6 of the CUDA library, which is available for Ubuntu 18.04 and 20.04. 
  

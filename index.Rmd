@@ -7,7 +7,7 @@ author:
 - Felipe Souza
 - Charlotte Pelletier
 - Alber Sanchez
-- Pedro Ribeiro Andrade
+- Pedro R. Andrade
 - Karine Ferreira
 - Gilberto Queiroz
 date: "`r Sys.Date()`"
@@ -68,7 +68,7 @@ If you are not an **R** user and would like to quickly master what is needed to 
 
 ## Software version described in this book{-}
 
-The version of the `sits` package described in this book is version 1.3.0.
+The version of the `sits` package described in this book is 1.3.0.
 
 ## Main reference for `sits` {-}
 
