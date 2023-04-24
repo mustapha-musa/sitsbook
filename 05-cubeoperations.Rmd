@@ -56,7 +56,7 @@ There are many options for calculating NDVI-related indexes for Sentinel-2 bands
 
 We first calculate the NDVI in the usual way, using bands "B08" and "B04".
 <!---
-PEDRO: 11) Aqui tem uma questao. Todas as bandas ate entao eram descritas entre aspas. Agora nao esta entre aspas porque o usuario faz a formulacao usando as bandas como se fossem variaveis. E' importante deixar isto claro, mas estou mantendo entre aspas no texto porque na maioria dos lugares esta assim.
+PEDRO: 10) Aqui tem uma questao. Todas as bandas ate entao eram descritas entre aspas. Agora nao esta entre aspas porque o usuario faz a formulacao usando as bandas como se fossem variaveis. E' importante deixar isto claro, mas estou mantendo entre aspas no texto porque na maioria dos lugares esta assim.
 -->
 
 
@@ -134,7 +134,7 @@ plot(reg_cube, band = "NBR", palette = "Reds")
 
 One of the most valuable tools for analyzing land remote sensing images is spectral mixture models [@Roberts1993, @Shimabukuro1991, @Souza2005]. The rationale for mixture models arises due to the spatial resolution associated with pixels of medium-resolution images. 
 <!---
-PEDRO: 12) Achei confuso acima.
+PEDRO: 11) Achei confuso acima.
 -->
 In general, the values for these pixels contain a mixture of spectral responses of different land cover types inside a resolution element [@Shimabukuro2019]. Assuming that the set of land cover classes (called endmembers) is known, spectral mixture analysis derives a set of new bands containing each endmember proportion. The most used method for spectral mixture analysis is the linear model [@Shimabukuro2019], expressed as
 
