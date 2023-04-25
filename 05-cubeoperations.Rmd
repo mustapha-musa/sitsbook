@@ -52,11 +52,12 @@ reg_cube <- sits_regularize(
 )
 ```
 
-There are many options for calculating NDVI-related indexes for Sentinel-2 bands. The most widely used method combines band "B08" (785-899 nm) and band "B04" (650-680 nm). Recent works in the literature propose using the red-edge bands "B05" (698-713 nm), "B06" (733-748 nm), and "B07" (773-793 nm) for capturing subtle variations in chlorophyll absorption producing indexes, which are called Normalized Difference Vegetation Red-edge indexes (NDRE) [@Xie2019]. In a recent paper, Sun et al. [@Sun2020a] argue that a vegetation index built using bands "B06" and "B07" provide a better approximation to leaf area index estimates. In a recent review, Chaves et al. [@Chaves2020] argue that red-edge bands are important for distinguishing leaf structure and chlorophyll content of different vegetation species. In the example below, we show how to include additional indexes in the regular data cube with the Sentinel-2 spectral bands. 
+There are many options for calculating NDVI-related indexes for Sentinel-2 bands. The most widely used method combines band B08 (785-899 nm) and band B04 (650-680 nm). Recent works in the literature propose using the red-edge bands B05 (698-713 nm), B06 (733-748 nm), and B07 (773-793 nm) for capturing subtle variations in chlorophyll absorption producing indexes, which are called Normalized Difference Vegetation Red-edge indexes (NDRE) [@Xie2019]. In a recent paper, Sun et al. [@Sun2020a] argue that a vegetation index built using bands B06 and B07 provide a better approximation to leaf area index estimates. In a recent review, Chaves et al. [@Chaves2020] argue that red-edge bands are important for distinguishing leaf structure and chlorophyll content of different vegetation species. In the example below, we show how to include additional indexes in the regular data cube with the Sentinel-2 spectral bands. 
 
-We first calculate the NDVI in the usual way, using bands "B08" and "B04".
+We first calculate the NDVI in the usual way, using bands B08 and B04.
 <!---
 PEDRO: 10) Aqui tem uma questao. Todas as bandas ate entao eram descritas entre aspas. Agora nao esta entre aspas porque o usuario faz a formulacao usando as bandas como se fossem variaveis. E' importante deixar isto claro, mas estou mantendo entre aspas no texto porque na maioria dos lugares esta assim.
+GILBERTO: Vamos tirar as aspas to texto.
 -->
 
 
@@ -71,7 +72,7 @@ reg_cube <- sits_apply(reg_cube,
 )
 plot(reg_cube, band = "NDVI", palette = "RdYlGn")
 ```
-We now compare the traditional NDVI with other vegetation indexes computed using red-edge bands. We first compute the NDRE1 using bands "B06" and "B05". 
+We now compare the traditional NDVI with other vegetation indexes computed using red-edge bands. We first compute the NDRE1 using bands B06 and B05. 
 
 ```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NDRE1 using bands B06 and B05 of Sentinel-2."}
 
@@ -85,7 +86,7 @@ reg_cube <- sits_apply(reg_cube,
 # Plot NDRE1 index
 plot(reg_cube, band = "NDRE1",  palette = "RdYlGn")
 ```
-Notice that the contrast between forests and deforested areas is more robust in the NDRE1 index than with NDVI. To compare this index with other red-edge based indexes, one option is to compute NDRE2 using bands "B07" and "B05", as shown below.
+Notice that the contrast between forests and deforested areas is more robust in the NDRE1 index than with NDVI. To compare this index with other red-edge based indexes, one option is to compute NDRE2 using bands B07 and B05, as shown below.
 
 ```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NDRE2 using bands B07 and B05 of Sentinel-2."}
 
@@ -99,7 +100,7 @@ reg_cube <- sits_apply(reg_cube,
 # Plot NDRE2 index
 plot(reg_cube, band = "NDRE2", palette = "RdYlGn")
 ```
-Finally, we can calculate the third red-edge based vegetation index using bands "B07" and "B06". 
+Finally, we can calculate the third red-edge based vegetation index using bands B07 and B06. 
 
 ```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="NDVI using bands B07 and B06 of Sentinel-2."}
 
@@ -116,7 +117,7 @@ plot(reg_cube, band = "NDRE3", palette = "RdYlGn")
 
 ## Spectral indexes for identifying burned areas{-}
 
-Band combination can also generate spectral indices for detecting degradation by fires, which are an important element in environmental degradation. Forest fires significantly impact emissions and impoverish natural ecosystems [@Nepstad1999]. Fires open the canopy, making the microclimate drier and increasing the amount of dry fuel [@Gao2020]. One well-established technique for detecting burned areas with remote sensing images is the normalized burn ratio (NBR), the difference between the near-infrared and the short wave infrared band,  calculated using bands "B8A" and "B12".
+Band combination can also generate spectral indices for detecting degradation by fires, which are an important element in environmental degradation. Forest fires significantly impact emissions and impoverish natural ecosystems [@Nepstad1999]. Fires open the canopy, making the microclimate drier and increasing the amount of dry fuel [@Gao2020]. One well-established technique for detecting burned areas with remote sensing images is the normalized burn ratio (NBR), the difference between the near-infrared and the short wave infrared band,  calculated using bands B8A and B12.
 
 ```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP."}
 # Calculate the NBR index
@@ -132,11 +133,15 @@ plot(reg_cube, band = "NBR", palette = "Reds")
 
 ## Spectral mixture analysis{-}
 
-One of the most valuable tools for analyzing land remote sensing images is spectral mixture models [@Roberts1993, @Shimabukuro1991, @Souza2005]. The rationale for mixture models arises due to the spatial resolution associated with pixels of medium-resolution images. 
 <!---
-PEDRO: 11) Achei confuso acima.
+PEDRO: 11) Achei confuso.
+GILBERTO: Veja se melhorou.
 -->
-In general, the values for these pixels contain a mixture of spectral responses of different land cover types inside a resolution element [@Shimabukuro2019]. Assuming that the set of land cover classes (called endmembers) is known, spectral mixture analysis derives a set of new bands containing each endmember proportion. The most used method for spectral mixture analysis is the linear model [@Shimabukuro2019], expressed as
+
+Mixture models are statistical models that represent the pixel values in a remote sensing image as a combination of multiple pure land cover types, called endmembers. This is due to the presence of different land cover types, atmospheric conditions, and sensor characteristics, which can cause the pixel values to mix different spectral responses. Many pixels in images of medium-resolution satellites such as Landsat or Sentinel-2 contain a mixture of spectral responses of different land cover types inside a resolution element [@Shimabukuro2019]. Assuming that the set of land cover classes (called endmembers) is known, spectral mixture analysis derives a set of new bands containing each endmember proportion. The most used method for spectral mixture analysis is the linear model [@Shimabukuro2019].
+
+The main idea behind the linear mixture model is that the observed pixel spectrum can be expressed as a linear combination of the spectra of the pure endmembers, weighted by their respective proportions (or abundances) within the pixel. Mathematically, the model can be represented as:
+
 
 $$
 R_i = \sum_{j=1}^N a_{i,j}*x_j + \epsilon_i, i \in {1,...M}, M > N
@@ -178,4 +183,15 @@ plot(reg_cube, band = "WATER", palette = "Blues")
 plot(reg_cube, band = "SOIL", palette = "OrRd")
 ```
 
-Spectral mixture analysis methods have many applications in remote sensing, including forest degradation [@Cochrane1998, @Shimabukuro2019, @Bullock2020, @Chen2021], wetland surface dynamics [@Halabisky2016], and urban area characterization [@Wu2003]. Their use in `sits` allows a unique combination of mixture models and time series analysis.
+Linear mixture models (LMM) improve the interpretation of remote sensing images by accounting for mixed pixels and providing a more accurate representation of the Earth's surface. Some of their key benefits include:
+
+1. Improved classification accuracy: LMMs provide a more accurate representation of mixed pixels by considering the contributions of multiple land cover types within a single pixel. This can lead to improved land cover classification accuracy compared to conventional per-pixel classification methods, which may struggle to accurately classify mixed pixels.
+
+2. Sub-pixel information: LMMs allow for the estimation of the abundances of each land cover type within a pixel, providing valuable sub-pixel information. This can be especially useful in applications where the spatial resolution of the sensor is not fine enough to resolve individual land cover types, such as monitoring urban growth or studying vegetation dynamics.
+
+3. Enhanced change detection: By considering the sub-pixel composition of land cover types, LMMs can provide a more sensitive measure of changes in land cover over time. This can lead to more accurate and precise change detection, particularly in areas with complex land cover patterns or where subtle changes in land cover may occur.
+
+4. Biophysical parameter estimation: LMMs can be used to estimate biophysical parameters, such as vegetation fraction, leaf area index (LAI), or soil moisture content, by relating the endmember abundances to these parameters. This can provide valuable information for monitoring and managing natural resources, agriculture, and ecosystems.
+
+Applications of spectral mixture analysis in remote sensing include forest degradation [@Cochrane1998, @Souza2005, @Shimabukuro2019, @Bullock2020, @Chen2021], wetland surface dynamics [@Halabisky2016], and urban area characterization [@Wu2003]. These models providing valuable information for a wide range of applications, from land cover mapping and change detection to resource management and environmental monitoring.
+
