@@ -17,7 +17,7 @@ The `sits_apply()` function computes new indices from a desired mathematical ope
 
 2. Neighborhood-based operations that produce a derived value based on a window centered around each individual pixel. The available functions  are `w_median()`, `w_sum()`, `w_mean()`, `w_min()`, `w_max()`, `w_sd()` (standard deviation), and `w_var()` (variance). Users set the window size (only odd values are allowed).
 
-The following examples show how to use the `sits_apply()` function.
+The following examples show how to use `sits_apply()`.
 
 ## Computing NDVI and its variations{-}
 
@@ -40,26 +40,20 @@ s2_cube <- sits_cube(
               "B08", "B8A", "B11", 
               "B12","CLOUD"),
     start_date = as.Date("2018-07-01"),
-    end_date = as.Date("2018-08-31")
-)
+    end_date = as.Date("2018-08-31"))
+
 # Regularize the cube to 15 day intervals
 reg_cube <- sits_regularize(
           cube       = s2_cube,
           output_dir = "./tempdir/chp5",
           res        = 60,
           period     = "P15D",
-          multicores = 4
-)
+          multicores = 4)
 ```
 
 There are many options for calculating NDVI-related indexes for Sentinel-2 bands. The most widely used method combines band B08 (785-899 nm) and band B04 (650-680 nm). Recent works in the literature propose using the red-edge bands B05 (698-713 nm), B06 (733-748 nm), and B07 (773-793 nm) for capturing subtle variations in chlorophyll absorption producing indexes, which are called Normalized Difference Vegetation Red-edge indexes (NDRE) [@Xie2019]. In a recent paper, Sun et al. [@Sun2020a] argue that a vegetation index built using bands B06 and B07 provide a better approximation to leaf area index estimates. In a recent review, Chaves et al. [@Chaves2020] argue that red-edge bands are important for distinguishing leaf structure and chlorophyll content of different vegetation species. In the example below, we show how to include additional indexes in the regular data cube with the Sentinel-2 spectral bands. 
 
 We first calculate the NDVI in the usual way, using bands B08 and B04.
-<!---
-PEDRO: 10) Aqui tem uma questao. Todas as bandas ate entao eram descritas entre aspas. Agora nao esta entre aspas porque o usuario faz a formulacao usando as bandas como se fossem variaveis. E' importante deixar isto claro, mas estou mantendo entre aspas no texto porque na maioria dos lugares esta assim.
-GILBERTO: Vamos tirar as aspas to texto.
--->
-
 
 ```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NDVI using bands B08 and B04 of Sentinel-2."}
 
@@ -68,8 +62,8 @@ reg_cube <- sits_apply(reg_cube,
     NDVI = (B08 - B04)/(B08 + B04),
     output_dir = "./tempdir/chp5",
     multicores = 4,
-    memsize = 12
-)
+    memsize = 12)
+
 plot(reg_cube, band = "NDVI", palette = "RdYlGn")
 ```
 We now compare the traditional NDVI with other vegetation indexes computed using red-edge bands. We first compute the NDRE1 using bands B06 and B05. 
@@ -81,8 +75,8 @@ reg_cube <- sits_apply(reg_cube,
     NDRE1 = (B06 - B05)/(B06 + B05),
     output_dir = "./tempdir/chp5",
     multicores = 4,
-    memsize = 12
-)
+    memsize = 12)
+
 # Plot NDRE1 index
 plot(reg_cube, band = "NDRE1",  palette = "RdYlGn")
 ```
@@ -95,8 +89,8 @@ reg_cube <- sits_apply(reg_cube,
     NDRE2 = (B07 - B05)/(B07 + B05),
     output_dir = "./tempdir/chp5",
     multicores = 4,
-    memsize = 12
-)
+    memsize = 12)
+
 # Plot NDRE2 index
 plot(reg_cube, band = "NDRE2", palette = "RdYlGn")
 ```
@@ -109,8 +103,8 @@ reg_cube <- sits_apply(reg_cube,
     NDRE3 = (B07 - B06)/(B07 + B06),
     output_dir = "./tempdir/chp5",
     multicores = 4,
-    memsize = 12
-)
+    memsize = 12)
+
 # plot NDRE3 index
 plot(reg_cube, band = "NDRE3", palette = "RdYlGn")
 ```
@@ -125,20 +119,15 @@ reg_cube <- sits_apply(reg_cube,
     NBR = (B12 - B8A)/(B12 + B8A),
     output_dir = "./tempdir/chp5",
     multicores = 4,
-    memsize = 12
-)
+    memsize = 12)
+
 # Plot the NBR for the first date"
 plot(reg_cube, band = "NBR", palette = "Reds")
 ```
 
 ## Spectral mixture analysis{-}
 
-<!---
-PEDRO: 11) Achei confuso.
-GILBERTO: Veja se melhorou.
--->
-
-Mixture models are statistical models that represent the pixel values in a remote sensing image as a combination of multiple pure land cover types, called endmembers. This is due to the presence of different land cover types, atmospheric conditions, and sensor characteristics, which can cause the pixel values to mix different spectral responses. Many pixels in images of medium-resolution satellites such as Landsat or Sentinel-2 contain a mixture of spectral responses of different land cover types inside a resolution element [@Shimabukuro2019]. Assuming that the set of land cover classes (called endmembers) is known, spectral mixture analysis derives a set of new bands containing each endmember proportion. The most used method for spectral mixture analysis is the linear model [@Shimabukuro2019].
+Mixture models are statistical models that represent the pixel values in a remote sensing image as a combination of multiple pure land cover types. This is due to the presence of different land cover types, atmospheric conditions, and sensor characteristics, which can cause the pixel values to mix different spectral responses. Many pixels in images of medium-resolution satellites such as Landsat or Sentinel-2 contain a mixture of spectral responses of different land cover types inside a resolution element [@Shimabukuro2019]. Assuming that the set of land cover classes (called endmembers) is known, spectral mixture analysis derives a set of new bands containing each endmember proportion. The most used method for spectral mixture analysis is the linear model [@Shimabukuro2019].
 
 The main idea behind the linear mixture model is that the observed pixel spectrum can be expressed as a linear combination of the spectra of the pure endmembers, weighted by their respective proportions (or abundances) within the pixel. Mathematically, the model can be represented as:
 
@@ -150,7 +139,7 @@ where $i=1,..M$ is the set of spectral bands and $j=1,..N$ is the set of land co
 
 To run the mixture model in `sits`, it is necessary to inform the values of pixels covered entirely by a single class. These are the so-called "pure" pixels. These pixels should be chosen carefully and based on expert knowledge of the area. The quality of the resulting endmember images depends on the quality of the pure pixels. Since `sits` supports multiple endmember spectral mixture analysis [@Roberts1998], users can specify more than one pure pixel per endmember to account for natural variability. 
 
-In `sits`, spectral mixture analysis is done by the `sits_mixture_model()` function, which has two mandatory parameters: `cube` (a data cube) and `endmembers`, a named table (or equivalent) that defines the pure pixels. The `endmembers` table must have the following named columns: (a) `type`, which defines the class associated with an endmember; (b) names, the names of the bands. Each line of the table must contain the value of each endmember for all bands (see example). To improve readability, we suggest that the `endmembers` parameters be defined as a `tribble`. A `tribble` is a `tibble` with an easier to read row-by-row layout. In the example below, we define three endmembers for classes "forest", "soil", and "water".  Note that the values for each band are expressed as integers ranging from 0 to 10,000. 
+In `sits`, spectral mixture analysis is done by `sits_mixture_model()`, which has two mandatory parameters: `cube` (a data cube) and `endmembers`, a named table (or equivalent) that defines the pure pixels. The `endmembers` table must have the following named columns: (a) `type`, which defines the class associated with an endmember; (b) names, the names of the bands. Each line of the table must contain the value of each endmember for all bands (see example). To improve readability, we suggest that the `endmembers` parameters be defined as a `tribble`. A `tribble` is a `tibble` with an easier to read row-by-row layout. In the example below, we define three endmembers for classes "forest", "soil", and "water".  Note that the values for each band are expressed as integers ranging from 0 to 10,000. 
 
 ```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Percentage of forest per pixel estimated by mixture model."}
 # Define the endmembers for three classes and six bands
@@ -158,16 +147,16 @@ em <- tibble::tribble(
     ~type,    ~B02, ~B03, ~B04, ~B8A, ~B11, ~B12,
     "forest",  200,  352,  189, 2800, 1340,  546,
     "soil",    400,  650,  700, 3600, 3500, 1800,
-    "water",   700, 1100, 1400,  850,   40,   26,
-)
+    "water",   700, 1100, 1400,  850,   40,   26)
+
 # Generate the mixture model
 reg_cube <- sits_mixture_model(
     data = reg_cube,
     endmembers = em,
     multicores = 4,
     memsize = 12,
-    output_dir = "./tempdir/chp5"
-)
+    output_dir = "./tempdir/chp5")
+
 # Plot the FOREST for the first date using the Greens palette
 plot(reg_cube, band = "FOREST", palette = "Greens")
 ```

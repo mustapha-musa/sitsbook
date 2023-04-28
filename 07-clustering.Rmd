@@ -6,17 +6,17 @@ source("common.R")
 
 Selecting good training samples for machine learning classification of satellite images is critical to achieving accurate results. Experience with machine learning methods has demonstrated that the number and quality of training samples are crucial factors in obtaining accurate results [@Maxwell2018]. Large and accurate datasets are preferable, regardless of the algorithm used, while noisy training samples can negatively impact classification performance [@Frenay2014]. Thus, it is beneficial to use pre-processing methods to improve the quality of samples and eliminate those that may have been incorrectly labeled or possess low discriminatory power.
 
-Distinguishing between wrongly labeled samples and differences resulting from the natural variability of class signatures is necessary. When training data belongs to a large geographic region, the natural variability of vegetation phenology leads to different patterns being assigned to the same label. A related issue is the limitation of crisp boundaries to describe the natural world. Class definitions use idealized descriptions (e.g., "a savanna woodland has tree cover of 50% to 90% ranging from 8 to 15 meters in height"). In practice, the boundaries between classes are fuzzy and sometimes overlap, making it hard to distinguish between them. To help users improve sample quality, `sits` provides methods for evaluating the training data.
+It is necessary to distinguish between wrongly labeled samples and differences resulting from the natural variability of class signatures. When training data belongs to a large geographic region, the variability of vegetation phenology leads to different patterns being assigned to the same label. A related issue is the limitation of crisp boundaries to describe the natural world. Class definitions use idealized descriptions (e.g., "a savanna woodland has tree cover of 50% to 90% ranging from 8 to 15 meters in height"). In practice, the boundaries between classes are fuzzy and sometimes overlap, making it hard to distinguish between them. To improve sample quality, `sits` provides methods for evaluating the training data.
 
 ## Geographical variability of training samples{-}
 
-When working with machine learning classification of Earth observation data, it is important to evaluate if the training samples are well distributed in the study area. Training data often comes from ground surveys made at chosen locations. When working in large areas, ideally representative sample needs to capture spatial variability. In practice, however, ground surveys or other means of data collection are limited to selected areas. In many cases, the geographical distribution of the training data does not cover the study area equally. Such mismatch can be a problem for achieving a good quality classification. As stated by Meyer and Pebesma[@Meyer2022]: "large gaps in geographic space do not always imply large gaps in feature space". 
+When working with machine learning classification of Earth observation data, it is important to evaluate if the training samples are well distributed in the study area. Training data often comes from ground surveys made at chosen locations. In large areas, ideally representative samples need to capture spatial variability. In practice, however, ground surveys or other means of data collection are limited to selected areas. In many cases, the geographical distribution of the training data does not cover the study area equally. Such mismatch can be a problem for achieving a good quality classification. As stated by Meyer and Pebesma [@Meyer2022]: "large gaps in geographic space do not always imply large gaps in feature space". 
 
-Meyer and Pebesma[@Meyer2022] propose using a spatial distance distribution plot, which displays two distributions of nearest-neighbor distances: sample-to-sample and prediction-location-to-sample. The difference between the two distributions reflects the degree of spatial clustering in the reference data. Ideally, the two distributions should be similar. Cases where the sample-to-sample distance distribution does not match prediction-location-to-sample distribution indicate possible problems in training data collection. 
+Meyer and Pebesma [@Meyer2022] propose using a spatial distance distribution plot, which displays two distributions of nearest-neighbor distances: sample-to-sample and prediction-location-to-sample. The difference between the two distributions reflects the degree of spatial clustering in the reference data. Ideally, the two distributions should be similar. Cases where the sample-to-sample distance distribution does not match prediction-location-to-sample distribution indicate possible problems in training data collection. 
 
-`sits` implements spatial distance distribution plots with the `sits_geo_dist()` function. This function asks users to provide their training data in the `samples` parameter, and the study area in the `roi` parameter expressed as an `sf` object. Additional parameters are `n` (maximum number of samples for each distribution) and `crs` (coordinate reference system for the samples). By default, `n` is 1000, and `crs` is "EPSG:4326". The example below shows how to use `sits_geo_dist()`. 
+`sits` implements spatial distance distribution plots with the `sits_geo_dist()` function. This function get a training data in the `samples` parameter, and the study area in the `roi` parameter expressed as an `sf` object. Additional parameters are `n` (maximum number of samples for each distribution) and `crs` (coordinate reference system for the samples). By default, `n` is 1000, and `crs` is "EPSG:4326". The example below shows how to use `sits_geo_dist()`. 
 
-```{r, tidy = "styler", out.width = "100%", message = FALSE, warning = FALSE, fig.cap = "SOM map for the Cerrado samples"}
+```{r, tidy = "styler", out.width = "100%", message = FALSE, warning = FALSE, fig.cap = "Distribution of sample-to-sample and sample-to-prediction distances."}
 # Read a shapefile for the state of Mato Grosso, Brazil
 mt_shp <- system.file("extdata/shapefiles/mato_grosso/mt.shp",
                       package = "sits")
@@ -30,36 +30,35 @@ distances <- sits_geo_dist(
 # Plot sample-to-sample and sample-to-prediction distances
 plot(distances)
 ```
-The plot shows a mismatch between the sample-to-sample and the sample-to-prediction distribution. Most samples are closer to each other than they are close to the location where values need to be predicted. In this case, there are many areas where few or no samples have been collected and where the prediction uncertainty will be higher. In this and similar cases, users should invest in improving the distribution of training samples. If that is not possible, they should be aware that areas with insufficient samples could have lower accuracy. This information must be reported to potential users of their results. 
+The plot shows a mismatch between the sample-to-sample and the sample-to-prediction distributions. Most samples are closer to each other than they are close to the location where values need to be predicted. In this case, there are many areas where few or no samples have been collected and where the prediction uncertainty will be higher. In this and similar cases, improving the distribution of training samples is always welcome. If that is not possible, areas with insufficient samples could have lower accuracy. This information must be reported to potential users of classification results. 
 
 
 ## Hierarchical clustering for sample quality control{-}
 
-The package provides two clustering methods to assess sample quality: (a) Agglomerative Hierarchical Clustering (AHC); (b) Self-organizing Maps (SOM). These methods have different computational complexities. AHC has a computational complexity of $\mathcal{O}(n^2)$, given the number of time series $n$, whereas SOM complexity is linear. For large data, AHC requires substantial memory and running time; in these cases, SOM is recommended. This section describes how to run AHC in `sits`. The SOM-based technique is presented in the following section.
+The package provides two clustering methods to assess sample quality: Agglomerative Hierarchical Clustering (AHC) and Self-organizing Maps (SOM). These methods have different computational complexities. AHC has a computational complexity of $\mathcal{O}(n^2)$, given the number of time series $n$, whereas SOM complexity is linear. For large data, AHC requires substantial memory and running time; in these cases, SOM is recommended. This section describes how to run AHC in `sits`. The SOM-based technique is presented in the next section.
 
-Agglomerative hierarchical clustering (AHC) computes the dissimilarity between any two elements from a data set. Depending on the distance functions and linkage criteria, the algorithm decides which two clusters are merged at each iteration. This approach is helpful for exploring samples due to its visualization power and ease of use [@Keogh2003]. In `sits`, AHC is implemented using `sits_cluster_dendro()`.
+AHC computes the dissimilarity between any two elements from a data set. Depending on the distance functions and linkage criteria, the algorithm decides which two clusters are merged at each iteration. This approach is helpful for exploring samples due to its visualization power and ease of use [@Keogh2003]. In `sits`, AHC is implemented using `sits_cluster_dendro()`.
 
-```{r, tidy = "styler", cache=TRUE, fig.align="center", out.width="90%", fig.cap="Example of hierarchical clustering for a two class set of time series", message=FALSE}
+```{r, tidy = "styler", cache=TRUE, fig.align="center", out.width="90%", fig.cap="Example of hierarchical clustering for a two class set of time series.", message=FALSE}
 # Take a set of patterns for 2 classes
 # Create a dendrogram, plot, and get the optimal cluster based on ARI index
 clusters <- sits_cluster_dendro(
     samples = cerrado_2classes, 
     bands = c("NDVI", "EVI"),
     dist_method = "dtw_basic",
-    linkage =  "ward.D2"
-)
+    linkage =  "ward.D2")
 ```
 
-The `sits_cluster_dendro()` function has one mandatory parameter (`samples`), where users should provide the samples to be evaluated. Optional parameters include `bands`, `dist_method`, and `linkage`. The `dist_method` parameter specifies how to calculate the distance between two time series. We recommend a metric that uses dynamic time warping (DTW)[@Petitjean2012], as DTW is a reliable method for measuring differences between satellite image time series [@Maus2016]. The options available in `sits` are based on those provided by package `dtwclust`, which include `dtw_basic`, `dtw_lb`, and `dtw2`. Please check `?dtwclust::tsclust` for more information on DTW distances.
+The `sits_cluster_dendro()` function has one mandatory parameter (`samples`), with the samples to be evaluated. Optional parameters include `bands`, `dist_method`, and `linkage`. The `dist_method` parameter specifies how to calculate the distance between two time series. We recommend a metric that uses dynamic time warping (DTW) [@Petitjean2012], as DTW is a reliable method for measuring differences between satellite image time series [@Maus2016]. The options available in `sits` are based on those provided by package `dtwclust`, which include `dtw_basic`, `dtw_lb`, and `dtw2`. Please check `?dtwclust::tsclust` for more information on DTW distances.
 
-The `linkage` parameter defines the distance metric between clusters. The recommended linkage criteria are: `complete` or `ward.D2`. Complete linkage prioritizes the within-cluster dissimilarities, producing clusters with shorter distance samples, but results are sensitive to outliers. As an alternative, Ward proposes to use the sum-of-squares error to minimize data variance [@Ward1963]; his method is available as `ward.D2` option to the `linkage` parameter.  To cut the dendrogram, the `sits_cluster_dendro()` function computes the adjusted rand index (ARI) [@Rand1971] and returns the height where the cut of the dendrogram maximizes the index. In the example, the ARI index indicates that six (6) clusters are present. The result of `sits_cluster_dendro()` is a time series tibble with one additional column called "cluster". The function `sits_cluster_frequency()` provides information on the composition of each cluster.
+The `linkage` parameter defines the distance metric between clusters. The recommended linkage criteria are: `complete` or `ward.D2`. Complete linkage prioritizes the within-cluster dissimilarities, producing clusters with shorter distance samples, but results are sensitive to outliers. As an alternative, Ward proposes to use the sum-of-squares error to minimize data variance [@Ward1963]; his method is available as `ward.D2` option to the `linkage` parameter.  To cut the dendrogram, the `sits_cluster_dendro()` function computes the adjusted rand index (ARI) [@Rand1971] and returns the height where the cut of the dendrogram maximizes the index. In the example, the ARI index indicates that there are six clusters. The result of `sits_cluster_dendro()` is a time series tibble with one additional column called "cluster". The function `sits_cluster_frequency()` provides information on the composition of each cluster.
 
 ```{r}
 # Show clusters samples frequency
 sits_cluster_frequency(clusters)
 ```
 
-The cluster frequency table shows that each cluster has a predominance of either "Cerrado" or "Pasture" class, except for cluster 3, which has a mix of samples from both classes. Such confusion may have resulted from incorrect labeling, inadequacy of selected bands and spatial resolution, or even a natural confusion due to the variability of the land classes. To remove cluster 3, use `dplyr::filter()`. The resulting clusters still contained mixed labels, possibly resulting from outliers. In this case, users may want to remove the outliers and leave only the most frequent class using `sits_cluster_clean()`. After cleaning the samples, the result set of samples is likely to improve the classification results.
+The cluster frequency table shows that each cluster has a predominance of either "Cerrado" or "Pasture" class, except for cluster 3, which has a mix of samples from both classes. Such confusion may have resulted from incorrect labeling, inadequacy of selected bands and spatial resolution, or even a natural confusion due to the variability of the land classes. To remove cluster 3, use `dplyr::filter()`. The resulting clusters still contain mixed labels, possibly resulting from outliers. In this case, `sits_cluster_clean()` removes the outliers, leaving only the most frequent class. After cleaning the samples, the resulting set of samples is likely to improve the classification results.
 
 ```{r}
 # Remove cluster 3 from the samples
@@ -95,12 +94,11 @@ As an example, we take a set of time series from the Cerrado region of Brazil, t
 # Take only the NDVI and EVI bands
 samples_cerrado_mod13q1_2bands <- sits_select(
     data = samples_cerrado_mod13q1, 
-    bands = c("NDVI", "EVI")
-)
+    bands = c("NDVI", "EVI"))
+
 # Show the summary of the samples
 sits_labels_summary(
-  data = samples_cerrado_mod13q1_2bands
-)
+  data = samples_cerrado_mod13q1_2bands)
 ```
 
 ## Creating the SOM map{-}
@@ -115,8 +113,8 @@ som_cluster <- sits_som_map(samples_cerrado_mod13q1_2bands,
     grid_ydim = 15,
     alpha = 1.0,
     distance = "euclidean",
-    rlen = 20
-)
+    rlen = 20)
+
 # Plot the SOM map
 plot(som_cluster)
 ```
@@ -164,8 +162,8 @@ new_samples <- sits_som_clean_samples(
     som_map = som_cluster, 
     prior_threshold = 0.6,
     posterior_threshold = 0.6,
-    keep = c("clean", "analyze")
-)
+    keep = c("clean", "analyze"))
+
 # Print the new sample distribution
 sits_labels_summary(new_samples)
 ```
@@ -179,8 +177,7 @@ new_cluster <- sits_som_map(
    grid_xdim = 15,
    grid_ydim = 15,
    alpha = 1.0,
-   distance = "euclidean",
-)
+   distance = "euclidean")
 ```
 
 ```{r, out.width="90%", fig.align="center", fig.cap="Cluster confusion plot for samples cleaned by SOM"}
@@ -191,15 +188,15 @@ plot(new_cluster_mixture)
 
 As expected, the new confusion map shows a significant improvement over the previous one. This result should be interpreted carefully since it may be due to different effects. The most direct interpretation is that "Millet_Cotton" and "Silviculture" cannot be easily separated from the other classes, given the current attributes (a time series of "NDVI" and "EVI" indices from MODIS images). In such situations, users should consider improving the number of samples from the less represented classes, including more MODIS bands, or working with higher resolution satellites. The results of the SOM method should be interpreted based on the users' understanding of the ecosystems and agricultural practices of the study region. 
 
-A further comparison between the original and clean samples is to run a 5-fold validation on the original and the cleaned sample sets using `sits_kfold_validate()` and a random forests model. The SOM procedure improves the validation results from 95% on the original data set to 99% in the cleaned one. This improvement should not be interpreted as providing a better fit for the final map accuracy. A 5-fold validation procedure only measures how well the machine learning model fits the samples; it is not an accuracy assessment of classification results. The result only indicates that the training set after the SOM sample removal procedure is more internally consistent than the original one. For more details on accuracy measures, please see chapter on "Validation and Accuracy Measures".
+A further comparison between the original and clean samples is to run a 5-fold validation on the original and the cleaned sample sets using `sits_kfold_validate()` and a random forests model. The SOM procedure improves the validation results from 95% on the original data set to 99% in the cleaned one. This improvement should not be interpreted as providing a better fit for the final map accuracy. A 5-fold validation procedure only measures how well the machine learning model fits the samples; it is not an accuracy assessment of classification results. The result only indicates that the training set after the SOM sample removal procedure is more internally consistent than the original one. For more details on accuracy measures, please see Chapter [Validation and accuracy measures](https://e-sensing.github.io/sitsbook/validation-and-accuracy-measurements.html).
 
 ```{r, tidy = "styler", message = FALSE, warning = FALSE}
 # Run a k-fold validation
 assess_orig <- sits_kfold_validate(
     samples = samples_cerrado_mod13q1_2bands, 
     folds = 5,
-    ml_method = sits_rfor()
-)
+    ml_method = sits_rfor())
+
 # Print summary 
 sits_accuracy_summary(assess_orig)
 ```
@@ -208,8 +205,8 @@ sits_accuracy_summary(assess_orig)
 assess_new <- sits_kfold_validate(
     samples = new_samples,
     folds = 5,
-    ml_method = sits_rfor()
-)
+    ml_method = sits_rfor())
+
 # Print summary 
 sits_accuracy_summary(assess_new)
 ```
@@ -218,13 +215,13 @@ The SOM-based analysis discards samples that can be confused with samples of oth
 
 ## Reducing sample imbalance{-} 
 
-Many training samples for Earth observation data analysis are imbalanced. This situation arises when the distribution of samples associated with each class is uneven. One example is the Cerrado data set used in this chapter. The three most frequent classes ("Dense Woodland", "Savanna" and "Pasture") include 53% of all samples, while the three least frequent classes ("Millet-Cotton", "Silviculture", and "Dunes") comprise only 2.5% of the data set. Sample imbalance is an undesirable property of a training set since machine learning algorithms tend to be more accurate for classes with many samples. The instances belonging to the minority group are misclassified more often than those belonging to the majority group. Thus, reducing sample imbalance can positively affect classification accuracy[@Johnson2019]. 
+Many training samples for Earth observation data analysis are imbalanced. This situation arises when the distribution of samples associated with each class is uneven. One example is the Cerrado data set used in this Chapter. The three most frequent classes ("Dense Woodland", "Savanna" and "Pasture") include 53% of all samples, while the three least frequent classes ("Millet-Cotton", "Silviculture", and "Dunes") comprise only 2.5% of the data set. Sample imbalance is an undesirable property of a training set since machine learning algorithms tend to be more accurate for classes with many samples. The instances belonging to the minority group are misclassified more often than those belonging to the majority group. Thus, reducing sample imbalance can positively affect classification accuracy [@Johnson2019]. 
 
 The function `sits_reduce_imbalance()` deals with class imbalance; it oversamples minority classes and undersamples majority ones. Oversampling requires generating synthetic samples. The package uses the SMOTE method that estimates new samples by considering the cluster formed by the nearest neighbors of each minority class. SMOTE takes two samples from this cluster and produces a new one by randomly interpolating them [@Chawla2002].
 
 To perform undersampling, `sits_reduce_imbalance()` builds a SOM map for each majority class based on the required number of samples to be selected. Each dimension of the SOM is set to `ceiling(sqrt(new_number_samples/4))` to allow a reasonable number of neurons to group similar samples. After calculating the SOM map, the algorithm extracts four samples per neuron to generate a reduced set of samples that approximates the variation of the original one. 
 
-The `sits_reduce_imbalance()` algorithm has two parameters: `n_samples_over` and `n_samples_under`. The first parameter ensures that all classes with samples less than its value are oversampled. The second parameter controls undersampling; all classes with more samples than its value are undersampled. The following example shows the use of `sits_reduce_imbalance()` in the Cerrado data set used in this chapter. We generate a balanced data set where all classes have between 1000 and 1500 samples. We use `sits_som_evaluate_cluster()` to estimate the confusion between classes of the balanced data set.
+The `sits_reduce_imbalance()` algorithm has two parameters: `n_samples_over` and `n_samples_under`. The first parameter ensures that all classes with samples less than its value are oversampled. The second parameter controls undersampling; all classes with more samples than its value are undersampled. The following example uses `sits_reduce_imbalance()` with the Cerrado samples. We generate a balanced data set where all classes have between 1000 and 1500 samples. We use `sits_som_evaluate_cluster()` to estimate the confusion between classes of the balanced data set.
 
 ```{r, tidy = "styler"}
 # Reducing imbalances in the Cerrado data set
@@ -232,8 +229,7 @@ balanced_samples <- sits_reduce_imbalance(
     samples = samples_cerrado_mod13q1_2bands,
     n_samples_over = 1000,
     n_samples_under = 1500,
-    multicores = 4
-)
+    multicores = 4)
 ```
 
 ```{r, tidy = "styler"}
@@ -251,8 +247,7 @@ som_cluster_bal <- sits_som_map(
     grid_ydim = 10,
     alpha = 1.0,
     distance = "euclidean",
-    rlen = 20
-)
+    rlen = 20)
 ```
 
 
@@ -272,7 +267,11 @@ As shown in the Figure, the balanced data set shows less confusion per class tha
 
 The quality of training data is critical to improving the accuracy of maps resulting from machine learning classification methods. To address this challenge, the `sits` package provides three methods for improving training samples. For large datasets, we recommend using both imbalance-reducing and SOM-based algorithms. The SOM-based method identifies potential mislabeled samples and outliers that require further investigation. The results demonstrate a positive impact on the overall classification accuracy.
 
-Users need to take care when defining their classification schema. The complexity and diversity of our planet defies simple class names with hard boundaries. Due to representational and data handling issues, all classification systems have a limited number of categories, which inevitably fail to adequately describe the nuances of the planet's landscapes. All representation systems are thus limited and application-dependent. As stated by Janowicz [@Janowicz2012]: "geographical concepts are situated and context-dependent and can be described from different, equally valid, points of view; thus, ontological commitments are arbitrary to a large extent". 
+Users need to take care when defining their classification schema. 
+<!---
+PEDRO: 19) A frase acima usa o termo 'users' e e' vaga. Remover?
+-->
+The complexity and diversity of our planet defy simple class names with hard boundaries. Due to representational and data handling issues, all classification systems have a limited number of categories, which inevitably fail to adequately describe the nuances of the planet's landscapes. All representation systems are thus limited and application-dependent. As stated by Janowicz [@Janowicz2012]: "geographical concepts are situated and context-dependent and can be described from different, equally valid, points of view; thus, ontological commitments are arbitrary to a large extent". 
 
-The availability of big data and satellite image time series is a further challenge. In principle, image time series can capture more subtle changes for land classification. Experts must conceive classification systems and training data collection by understanding how time series information relates to actual land change. Methods for quality analysis, such as those presented in this chapter, cannot replace user understanding and informed choices. 
+The availability of big data and satellite image time series is a further challenge. In principle, image time series can capture more subtle changes for land classification. Experts must conceive classification systems and training data collections by understanding how time series information relates to actual land change. Methods for quality analysis, such as those presented in this Chapter, cannot replace user understanding and informed choices. 
 

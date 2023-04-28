@@ -61,7 +61,7 @@ After installing `sf`, `terra`, `torch`, and `luz`, please proceed to install `s
 install.packages("sits", dependencies = TRUE)
 ```
 
-The source code repository is on GitHub <https://github.com/e-sensing/sits>. To install the development version of `sits`, which contains the latest updates but might be unstable, users should install `devtools`, if not already available, and then install `sits` as follows:
+The source code repository is on [GitHub](https://github.com/e-sensing/sits). To install the development version of `sits`, which contains the latest updates but might be unstable, users should install `devtools`, if not already available, and then install `sits` as follows:
 
 ```{r, eval = FALSE}
 install.packages("devtools")
