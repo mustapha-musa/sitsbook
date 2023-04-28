@@ -14,6 +14,11 @@ The `sits` package uses sets of time series data describing properties in spatio
 PEDRO: 12) O trecho abaixo apresenta tibble, termo que ja foi usado em varios outros capitulos. acho que poderia mover parte deste paragrafo mais para o comeco do livro. O restante deste capitulo fala bastante de "sits tibble", nao sei se e' a melhor estrategia uma vez que varios outros objetos no
 pacote tambem sao "sits tibbles".
 GILBERTO: Vamos falar então de "time series tibble". Que tal?
+P: De acordo com usar "time series tibble", mas tem a questao tambem de que os capitulos
+anteriores ja usavam tibble, mas a definicao do que e' uma tibble aparece no capitulo 3
+e neste. como o capitulo 3 e' introdutorio acho que pode ficar em dois lugares, mas a
+definicao que esta aqui poderia vir antes.
+Exemplo: "04-datacubes.Rmd:The result of `sits_cube()` is a tibble"
 -->
 The package uses a `tibble` data structure to organize time series data. A `tibble` is a generalization of a `data.frame`, the usual way in R to organize data in tables. Tibbles are part of the `tidyverse`, a collection of R packages designed to work together in data manipulation [@Wickham2017].  The following code shows the first three lines of a tibble containing 1,882 labeled samples of land cover in Mato Grosso state of Brazil. The samples have time series extracted from the MODIS MOD13Q1 product from 2000 to 2016, provided every 16 days at 250-meter resolution in the Sinusoidal projection. Based on ground surveys and high-resolution imagery, it includes samples of nine classes: "Forest", "Cerrado", "Pasture", "Soy_Fallow", "Fallow_Cotton", "Soy_Cotton", "Soy_Corn", "Soy_Millet", and "Soy_Sunflower". 
 
@@ -44,8 +49,8 @@ sits_labels(samples_new_labels) <- c("Cerrado",   "Croplands",
                                      "Forest",    "Pasture",
                                      "Croplands", "Croplands",
                                      "Croplands", "Croplands",
-                                     "Croplands"
-)
+                                     "Croplands")
+
 sits_labels_summary(samples_new_labels)
 ```
 
@@ -95,13 +100,13 @@ raster_cube <- sits_cube(
     source     = "BDC",
     collection = "MOD13Q1-6",
     data_dir   = data_dir,
-    parse_info = c("X1", "X2", "tile", "band", "date")
-)
+    parse_info = c("X1", "X2", "tile", "band", "date"))
+
 # Obtain a time series from the raster cube from a point
 sample_latlong <- tibble::tibble(
     longitude = -55.57320, 
-    latitude  = -11.50566 
-)
+    latitude  = -11.50566)
+
 series <- sits_get_data(cube    = raster_cube,
                         samples = sample_latlong)
 plot(series)
@@ -123,23 +128,17 @@ To retrieve training samples for time series analysis, users must provide the te
 <!---
 PEDRO: 13) Nao esta claro o termo instance acima. Seria "time instances"?
 GILBERTO: "instances" -> "entries".
+P: entries e' uma palavra que nao foi usada em mais nenhum lugar no livro. manter?
 -->
-
 
 Given a suitably built CSV sample file, `sits_get_data()` requires two parameters: (a) `cube`, the name of the R object that describes the data cube; (b) `samples`, the name of the CSV file. 
 ```{r, tidy="styler"}
 # Get the points from a data cube in raster brick format
-points <- sits_get_data(
-    cube = raster_cube, 
-    samples = samples_csv_file)
+points <- sits_get_data(cube = raster_cube, 
+                        samples = samples_csv_file)
 # Show the tibble with the first three points
 points[1:3,]
 ```
-<!---
-PEDRO: 14) No exemplo acima, o ultimo argumento sits_get_data e' seguido de fecha parenteses. tem outros exemplos que o fecha parenteses fica sozinho na linha seguints. seria bom manter consistencia. prefiro deste jeito, pois economiza espaco.
-GILBERTO: OK, vamos fazer assim.
--->
-
 
 Users can also specify samples by providing shapefiles or `sf` objects containing `POINT` or `POLYGON` geometries. The geographical location is inferred from the geometries associated with the shapefile or `sf` object. For files containing points, the geographical location is obtained directly. For polygon geometries, the parameter `n_sam_pol` (defaults to 20) determines the number of samples to be extracted from each polygon. The temporal information can be provided explicitly by the user; if absent, it is inferred from the data cube. If label information is available in the shapefile or `sf` object, the parameter `label_attr` is compulsory to indicate which column contains the label associated with each time series.
 
@@ -159,28 +158,23 @@ modis_cube <- sits_cube(
     bands       = c("NDVI", "EVI"),
     roi         = sf_shape,
     start_date  = "2020-06-01", 
-    end_date    = "2021-08-29"
-)
+    end_date    = "2021-08-29")
+
 # Read the points from the cube and produce a tibble with time series
 samples_mt <- sits_get_data(
     cube         = modis_cube, 
     samples      = shp_file, 
     start_date   = "2020-06-01",
     end_date     = "2021-08-29", 
-    n_sam_pol    = 20, multicores   = 4
-)
+    n_sam_pol    = 20,
+    multicores   = 4)
 ```
 
 ## Filtering time series{-}
 
 Satellite image time series is generally contaminated by atmospheric influence, geolocation error, and directional effects [@Lambin2006]. Atmospheric noise, sun angle, interferences on observations or different equipment specifications, and the nature of the climate-land dynamics can be sources of variability [@Atkinson2012]. Inter-annual climate variability also changes the phenological cycles of the vegetation, resulting in time series whose periods and intensities do not match on a year-to-year basis. To make the best use of available satellite data archives, methods for satellite image time series analysis need to deal with  *noisy* and *non-homogeneous* data sets.
 
-The literature on satellite image time series has several applications of filtering to correct or smooth vegetation index data. The package supports the well-known Savitzky–Golay (`sits_sgolay()`) and Whittaker (`sits_whittaker()`) filters. In an evaluation of NDVI time series filtering for estimating phenological parameters in India, @Atkinson2012 found that the Whittaker filter provides good results. 
-<!---
-PEDRO: 15) gostaria de confirmar se MERIS NDVI poderia ser apenas NDVI. O termo MERIS so' aparece uma vez em todo o livro.
-GILBERTO: De acordo.
--->
-@Zhou2016 found that the Savitzky-Golay filter is suitable for reconstructing tropical evergreen broadleaf forests.
+The literature on satellite image time series has several applications of filtering to correct or smooth vegetation index data. The package supports the well-known Savitzky–Golay (`sits_sgolay()`) and Whittaker (`sits_whittaker()`) filters. In an evaluation of NDVI time series filtering for estimating phenological parameters in India, @Atkinson2012 found that the Whittaker filter provides good results. @Zhou2016 found that the Savitzky-Golay filter is suitable for reconstructing tropical evergreen broadleaf forests.
 
 ### Savitzky–Golay filter{-}
 
@@ -198,24 +192,10 @@ sits_merge(point_sg, point_ndvi) %>% plot()
 ```
 
 The resulting smoothed curve has both desirable and unwanted properties. From 2000 to 2008, the Savitsky-Golay filter removes noise from clouds. However, after 2010, when the region was converted to agriculture, the filter removes an important part of the natural variability from the crop cycle. Therefore, the `length` parameter is arguably too big, resulting in oversmoothing. 
-<!---
-PEDRO: 16) esta ultima frase nao ficou boa, a ainda usa o termo "users". remover?
-GILBERTO: De acordo.
--->
-
 
 ### Whittaker filter{-}
 
 The Whittaker smoother attempts to fit a curve representing the raw data, but is penalized if subsequent points vary too much [@Atzberger2011]. The Whittaker filter balances the residual to the original data and the smoothness of the fitted curve. The filter has one parameter: $\lambda{}$ that works as a smoothing weight parameter. The following example shows the effect of the Whittaker filter on a point extracted from the MOD13Q1 product, ranging from 2000-02-18 to 2018-01-01. The `lambda` parameter controls the smoothing of the filter. By default, it is set to 0.5, a small value. The example shows the effect of a larger smoothing parameter.
-<!---
-PEDRO: 17) pessoalmente nao gosto de aspas nestas situacoes. poderia substituir por italico? tem outras situacoes assim no texto
-GILBERTO: Tirei as aspas.
--->
-<!---
-PEDRO: 18) as duas frases acima poderiam estar no paragrafo anterior
-GILBERTO: De acordo.
--->
-
 
 ```{r, fig.align="center", out.width="90%", fig.cap="Whittaker filter applied on a one-year NDVI time series."}
 

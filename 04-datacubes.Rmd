@@ -8,7 +8,7 @@ library(sits)
 
 ## Analysis-ready data image collections{-}
 
-Analysis-ready data (ARD) are images that are ready for analysis without the need for further preprocessing or transformation. They simplify and accelerate the analysis of Earth observation (EO) data by providing consistent and high-quality data that are standardized across different sensors and platforms. ARD data is typically provided as a collection of  files, where each pixel contains a single value for each spectral band for a given date.
+Analysis-ready data (ARD) are images that are ready for analysis without the need for further preprocessing or transformation. They simplify and accelerate the analysis of Earth observation data by providing consistent and high-quality data that are standardized across different sensors and platforms. ARD data is typically provided as a collection of  files, where each pixel contains a single value for each spectral band for a given date.
 
 ARD collections are available in cloud services such as Amazon Web Service, Brazil Data Cube, Digital Earth Africa, Swiss Data Cube, and Microsoft's Planetary Computer. These collections have been processed to improve multidate comparability.  Radiance measures at the top of the atmosphere were converted to ground reflectance measures.  In general, the timelines of the images of an ARD collection are different. Images still contain cloudy or missing pixels; bands for the images in the collection may have different resolutions. Figure 9 shows an example of the Landsat ARD image collection. 
 
@@ -88,8 +88,8 @@ s2_23MMU_cube <- sits_cube(
     tiles = "23MMU",
     bands = c("B02", "B8A", "B11", "CLOUD"),
     start_date = "2018-07-12",
-    end_date = "2019-07-28"
-)
+    end_date = "2019-07-28")
+
 plot(s2_23MMU_cube, red = "B11", blue = "B02", green = "B8A", date = "2018-10-05")
 ```
 
@@ -106,8 +106,8 @@ s2_20LKP_cube_MPC <- sits_cube(
       tiles = "20LKP",
       bands = c("B02", "B8A", "B11", "CLOUD"),
       start_date = "2019-07-01",
-      end_date = "2019-07-28"
-)
+      end_date = "2019-07-28")
+
 # Plot a color composite of one date of the cube
 plot(s2_20LKP_cube_MPC, red = "B11", blue = "B02", green = "B8A", 
      date = "2019-07-18")
@@ -128,8 +128,8 @@ s2_L8_cube_MPC <- sits_cube(
         bands = c("BLUE", "NIR08", "SWIR16", "CLOUD"),
         roi = sf_bsb,
         start_date = "2019-06-01",
-        end_date = "2019-10-01"
-)
+        end_date = "2019-10-01")
+
 # Plot the second tile that covers Brasilia
 plot(s2_L8_cube_MPC[2,], red = "SWIR16", green = "NIR08", blue = "BLUE", 
      date = "2019-07-30")
@@ -138,7 +138,7 @@ plot(s2_L8_cube_MPC[2,], red = "SWIR16", green = "NIR08", blue = "BLUE",
 
 ## Assessing Digital Earth Africa{-}
 
-Digital Earth Africa (DEAFRICA) is a cloud service that provides open-access EO data for the African continent. The ARD image collections in `sits` are `S2_L2A` (Sentinel-2 level 2A) and `LS8_SR` (Landsat-8). Since the STAC interface for DEAFRICA does not implement the concept of tiles, users need to specify their area of interest using the `roi` parameter. The requested `roi` produces a cube that contains three MGRS tiles ("35HLD", "35HKD", and "35HLC") covering part of South Africa. 
+Digital Earth Africa (DEAFRICA) is a cloud service that provides open-access Earth observation data for the African continent. The ARD image collections in `sits` are `S2_L2A` (Sentinel-2 level 2A) and `LS8_SR` (Landsat-8). Since the STAC interface for DEAFRICA does not implement the concept of tiles, users need to specify their area of interest using the `roi` parameter. The requested `roi` produces a cube that contains three MGRS tiles ("35HLD", "35HKD", and "35HLC") covering part of South Africa. 
 ```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Sentinel-2 image in an area over South Africa."}
 dea_cube <- sits_cube(
     source = "DEAFRICA",
@@ -147,9 +147,9 @@ dea_cube <- sits_cube(
             lon_max = 25.87, lat_max = -32.63),
     bands = c("B05", "B8A", "B11"),
     start_date = "2019-09-01",
-    end_date = "2019-10-01"
-)
-plot(dea_cube, red = "B11", blue = "B05", green = "B8A",)
+    end_date = "2019-10-01")
+
+plot(dea_cube, red = "B11", blue = "B05", green = "B8A")
 ```
 
 ## Assessing the Brazil Data Cube{-}
@@ -165,9 +165,7 @@ The collections available in the BDC are: `LC8_30_16D_STK-1` (Landsat-8 OLI, 30m
 
 To access the BDC, users must provide their credentials using environment variables, as shown below. Obtaining a BDC access key is free. Users must register at the [BDC site](https://brazildatacube.dpi.inpe.br/portal/explore) to obtain the key.
 ```{r,eval = FALSE}
-Sys.setenv(
-    "BDC_ACCESS_KEY" = <your_bdc_access_key>
-)
+Sys.setenv("BDC_ACCESS_KEY" = <your_bdc_access_key>)
 ```
 
 In the example below, the data cube is defined as one tile ("022024") of `CB4_64_16D_STK-1` collection, which holds CBERS AWFI images at 16 days resolution.
@@ -180,8 +178,8 @@ cbers_tile <- sits_cube(
     tiles = "022024",
     bands = c("B13", "B14", "B15", "B16", "CLOUD"),
     start_date = "2018-09-01",
-    end_date = "2019-08-28"
-)
+    end_date = "2019-08-28")
+
 # Plot one time instance
 plot(cbers_tile, red = "B15", green = "B16", blue = "B13", date = "2018-09-30")
 ```
@@ -219,8 +217,8 @@ s2_cube_20LKP <- sits_cube(
     source = "MPC",
     collection = "SENTINEL-2-L2A",
     data_dir = data_dir,
-    parse_info = c("X1", "tile", "band", "date")
-)
+    parse_info = c("X1", "tile", "band", "date"))
+
 # Plot the band B8A in the first time instance
 plot(s2_cube_20LKP, red = "B11", green = "B8A", blue = "B02", dates = "2021-07-25")
 ```
@@ -251,15 +249,15 @@ Rondonia_class_cube <- sits_cube(
                "Highly_Degraded", "Forest"),
     data_dir = data_dir,
     parse_info = c("X1", "X2", "tile", "start_date", "end_date", 
-                   "band", "version")
-)
+                   "band", "version"))
+
 # Plot the classified cube
 plot(Rondonia_class_cube)
 ```
 
 ## Regularizing data cubes{-}
 
-ARD collections available in AWS, MSPC, USGS, and DEAFRICA are not regular in space and time. Bands may have different resolutions, images may not cover the entire tile, and time intervals are irregular. For this reason, data from these collections need to be converted to regular data cubes by calling function `sits_regularize()`, which uses the  *gdalcubes* package [@Appel2019]. 
+ARD collections available in AWS, MSPC, USGS, and DEAFRICA are not regular in space and time. Bands may have different resolutions, images may not cover the entire tile, and time intervals are irregular. For this reason, data from these collections need to be converted to regular data cubes by calling `sits_regularize()`, which uses the  *gdalcubes* package [@Appel2019]. 
 
 In the following example, the user has created an irregular data cube from the Sentinel-2 collection available in Microsoft's Planetary Computer (MSPC) for tiles `20LKP` and `20LLP` in the state of Rondonia, Brazil. We first build an irregular data cube using `sits_cube()`.
 
@@ -271,8 +269,8 @@ s2_cube <- sits_cube(
     tiles = c("20LKP", "20LLP"),
     bands = c("B05", "B8A", "B12", "CLOUD"),
     start_date = as.Date("2018-07-01"),
-    end_date = as.Date("2018-08-31")
-)
+    end_date = as.Date("2018-08-31"))
+
 # Show the different timelines of the cube tiles
 sits_timeline(s2_cube)
 ```
@@ -294,8 +292,8 @@ reg_cube <- sits_regularize(
           output_dir = "./tempdir/chp4",
           res        = 120,
           period     = "P15D",
-          multicores = 4
-)
+          multicores = 4)
+
 # Plot the first image of the tile 20LLP of the regularized cube
 # The pixels of the regular data cube cover the full MGRS tile
 reg_cube %>% 
