@@ -32,8 +32,8 @@ if (!file.exists("./tempdir/chp5"))
 
 # Create an irregular data cube from MSPC
 s2_cube <- sits_cube(
-    source = "MPC",
-    collection = "SENTINEL-2-L2A",
+    source = "AWS",
+    collection = "SENTINEL-S2-L2A-COGS",
     tiles = "20LKP",
     bands = c("B02", "B03", "B04", 
               "B05", "B06", "B07", 
@@ -137,14 +137,14 @@ R_i = \sum_{j=1}^N a_{i,j}*x_j + \epsilon_i, i \in {1,...M}, M > N
 $$
 where $i=1,..M$ is the set of spectral bands and $j=1,..N$ is the set of land cover types. For each pixel, $R_i$ is the reflectance in the i-th spectral band, $x_j$ is the reflectance value due to the j-th endmember, and $a_{i,j}$ is the proportion between the j-th endmember and the i-th spectral band. The model includes an error term $e_i$. The linear model can be interpreted as a system of equations where the spectral response of the pixel is a linear combination of the spectral response of the endmembers [@Shimabukuro2019]. To solve this system of equations and obtain the proportion of each endmember, `sits` uses a non-negative least squares (NNLS) regression algorithm, which is available in the R package `RStoolbox` and was developed by Jakob Schwalb-Willmann, based on the sequential coordinate-wise algorithm (SCA) proposed on Franc et al. [@Franc2005]. 
 
-To run the mixture model in `sits`, it is necessary to inform the values of pixels covered entirely by a single class. These are the so-called "pure" pixels. These pixels should be chosen carefully and based on expert knowledge of the area. The quality of the resulting endmember images depends on the quality of the pure pixels. Since `sits` supports multiple endmember spectral mixture analysis [@Roberts1998], users can specify more than one pure pixel per endmember to account for natural variability. 
+To run the mixture model in `sits`, it is necessary to inform the values of pixels which represent spectral responses of a unique class. These are the so-called "pure" pixels. These pixels should be chosen carefully and based on expert knowledge of the area. The quality of the resulting endmember images depends on the quality of the pure pixels. Since `sits` supports multiple endmember spectral mixture analysis [@Roberts1998], users can specify more than one pure pixel per endmember to account for natural variability. 
 
 In `sits`, spectral mixture analysis is done by `sits_mixture_model()`, which has two mandatory parameters: `cube` (a data cube) and `endmembers`, a named table (or equivalent) that defines the pure pixels. The `endmembers` table must have the following named columns: (a) `type`, which defines the class associated with an endmember; (b) names, the names of the bands. Each line of the table must contain the value of each endmember for all bands (see example). To improve readability, we suggest that the `endmembers` parameters be defined as a `tribble`. A `tribble` is a `tibble` with an easier to read row-by-row layout. In the example below, we define three endmembers for classes "forest", "soil", and "water".  Note that the values for each band are expressed as integers ranging from 0 to 10,000. 
 
 ```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Percentage of forest per pixel estimated by mixture model."}
 # Define the endmembers for three classes and six bands
 em <- tibble::tribble(
-    ~type,    ~B02, ~B03, ~B04, ~B8A, ~B11, ~B12,
+    ~class,   ~B02, ~B03, ~B04, ~B8A, ~B11, ~B12,
     "forest",  200,  352,  189, 2800, 1340,  546,
     "soil",    400,  650,  700, 3600, 3500, 1800,
     "water",   700, 1100, 1400,  850,   40,   26)

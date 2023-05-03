@@ -19,10 +19,10 @@ library(sitsdata)
 # Obtain the samples 
 data("samples_prodes_4classes")
 # Show the contents of the samples
-sits_labels_summary(samples_prodes_4classes)
+summary(samples_prodes_4classes)
 ```
 
-It is helpful to plot the basic patterns associated with the samples to understand the training set better. The function `sits_patterns()` uses a generalized additive model (GAM) to predict a smooth, idealized approximation to the time series associated with each label for all bands. Since the data cube used in the classification has only three bands ("B02", "B8A", and "B11"), we filter the samples for these bands before showing the patterns. 
+It is helpful to plot the basic patterns associated with the samples to understand the training set better. The function `sits_patterns()` uses a generalized additive model (GAM) to predict a smooth, idealized approximation to the time series associated with each class for all bands. Since the data cube used in the classification has only three bands ("B02", "B8A", and "B11"), we filter the samples for these bands before showing the patterns. 
 
 ```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Patterns associated to the training samples"}
 samples_3bands <- sits_select(
@@ -113,9 +113,9 @@ The labeled map generated from the pixel-based time series classification method
 
 ## Map reclassification{-}
 
-Reclassification of a remote sensing map refers to changing the classes assigned to different pixels in the image. The purpose of reclassification is to modify the information contained in the image to better suit a specific use case. In `sits`, reclassification involves assigning new class labels to pixels based on additional information from a reference map. Based on the classification labels and the reference map, the users define rules according to the desired outcome. These rules are then applied to the classified map. The result is a new map with updated labels.
+Reclassification of a remote sensing map refers to changing the classes assigned to different pixels in the image. The purpose of reclassification is to modify the information contained in the image to better suit a specific use case. In `sits`, reclassification involves assigning new classes to pixels based on additional information from a reference map. Users define rules according to the desired outcome. These rules are then applied to the classified map. The result is a new map with updated classes.
 
-To illustrate the reclassification operation in `sits`, we take a classified data cube stored in the `sitsdata` package. As discussed in the "Earth observation data cubes" Chapter, `sits` can create a data cube from a classified image file. Users need to provide the original data source and collection, the directory where data is stored (`data_dir`), the information on how to retrieve data cube parameters from file names (`parse_info`), and the labels associated with the classified image. 
+To illustrate the reclassification operation in `sits`, we take a classified data cube stored in the `sitsdata` package. As discussed in the "Earth observation data cubes" Chapter, `sits` can create a data cube from a classified image file. Users need to provide the original data source and collection, the directory where data is stored (`data_dir`), the information on how to retrieve data cube parameters from file names (`parse_info`), and the labels used in the classification. 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="original classification map."}
 # Open classification map
@@ -135,7 +135,7 @@ plot(ro_class)
 
 The above map shows the total extent of deforestation by clear cuts estimated by the `sits` random forest algorithm in an area in Rondonia, Brazil, based on a time series of Sentinel-2 images for the period `2020-06-04` to `2021-08-26`. Suppose we want to estimate the deforestation that occurred period from June 2020 to August 2021. We need a reference map containing information on forest cuts before 2020. 
 
-In this example, we use as a reference the PRODES deforestation map of Amazonia created by Brazil's National Institute for Space Research (INPE). This map is produced by visual interpretation. PRODES measures deforestation every year, starting from August of one year to July of the following year. The contains classes that represent the natural world ("Forest", "Water", "NonForest", and  "NonForest2") and classes that capture the yearly deforestation increments. These classes are labeled "dYYYY" and "rYYYY"; the first label refers to deforestation in a given year (e.g., "d2008" for deforestation for August 2007 to July 2008); the second to places where the satellite data is not sufficient to determine the land cover (e.g, "r2010" for 2010). This map is available on package "sitsdata", as shown below.
+In this example, we use as a reference the PRODES deforestation map of Amazonia created by Brazil's National Institute for Space Research (INPE). This map is produced by visual interpretation. PRODES measures deforestation every year, starting from August of one year to July of the following year. The contains classes that represent the natural world ("Forest", "Water", "NonForest", and  "NonForest2") and classes that capture the yearly deforestation increments. These classes are named "dYYYY" and "rYYYY"; the first refers to deforestation in a given year (e.g., "d2008" for deforestation for August 2007 to July 2008); the second to places where the satellite data is not sufficient to determine the land cover (e.g, "r2010" for 2010). This map is available on package "sitsdata", as shown below.
 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Deforestation map produced by sits."}
@@ -189,9 +189,9 @@ def_legend <- c(
 plot(prodes2021, legend = def_legend)
 ```
 
-Taking the PRODES map as our reference, we can include new labels in the classified map produced by `sits` using `sits_reclassify()`. The new label "Defor_2020" will be applied to all pixels that PRODES considers that have been deforested before July 2020. We also include a new label, "Non_Forest" to include all pixels that PRODES takes as not covered by native vegetation, such as wetlands and rocky areas. The PRODES classes will be used as a mask over the `sits` deforestation map.
+Taking the PRODES map as our reference, we can include new labels in the classified map produced by `sits` using `sits_reclassify()`. The new name "Defor_2020" will be applied to all pixels that PRODES considers that have been deforested before July 2020. We also include a "Non_Forest" class to include all pixels that PRODES takes as not covered by native vegetation, such as wetlands and rocky areas. The PRODES classes will be used as a mask over the `sits` deforestation map.
 
-The `sits_reclassify()` operation requires the parameters: (a) `cube`, the classified data cube whose pixels will be reclassified; (b) `mask`, the reference data cube used as a mask; (c) `rules`, a named list. The names of the `rules` list will be the new labels of the classified cube. Each new label is associated with a `mask` vector that includes the labels of the reference map that will be joined. `sits_reclassify()` then compares the original and reference map pixel by pixel. For each pixel of the reference map whose labels are in one of the `rules`, the algorithm relabels the original map. The result will be a reclassified map with the original labels plus the new labels that have been masked using the reference map.
+The `sits_reclassify()` operation requires the parameters: (a) `cube`, the classified data cube whose pixels will be reclassified; (b) `mask`, the reference data cube used as a mask; (c) `rules`, a named list. The names of the `rules` list will be the new label. Each new label is associated with a `mask` vector that includes the labels of the reference map that will be joined. `sits_reclassify()` then compares the original and reference map pixel by pixel. For each pixel of the reference map whose labels are in one of the `rules`, the algorithm relabels the original map. The result will be a reclassified map with the original labels plus the new labels that have been masked using the reference map.
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Deforestation map by sits masked by PRODES map."}
 # Reclassify cube

@@ -10,18 +10,18 @@
 <meta name="author" content="Felipe Souza">
 <meta name="author" content="Charlotte Pelletier">
 <meta name="author" content="Alber Sanchez">
-<meta name="author" content="Pedro Ribeiro Andrade">
+<meta name="author" content="Pedro R. Andrade">
 <meta name="author" content="Karine Ferreira">
 <meta name="author" content="Gilberto Queiroz">
-<meta name="description" content="Introduction Image classification post-processing has been defined as “a refinement of the labeling in a classified image to enhance its classification accuracy” [79]. In remote sensing image...">
+<meta name="description" content="Introduction Image classification post-processing has been defined as “a refinement of the labeling in a classified image to enhance its classification accuracy” [76]. In remote sensing image...">
 <meta name="generator" content="bookdown 0.33 with bs4_book()">
 <meta property="og:title" content="Bayesian smoothing for post-processing | sits: Satellite Image Time Series Analysis on Earth Observation Data Cubes">
 <meta property="og:type" content="book">
 <meta property="og:image" content="/images/cover_sits_book.png">
-<meta property="og:description" content="Introduction Image classification post-processing has been defined as “a refinement of the labeling in a classified image to enhance its classification accuracy” [79]. In remote sensing image...">
+<meta property="og:description" content="Introduction Image classification post-processing has been defined as “a refinement of the labeling in a classified image to enhance its classification accuracy” [76]. In remote sensing image...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Bayesian smoothing for post-processing | sits: Satellite Image Time Series Analysis on Earth Observation Data Cubes">
-<meta name="twitter:description" content="Introduction Image classification post-processing has been defined as “a refinement of the labeling in a classified image to enhance its classification accuracy” [79]. In remote sensing image...">
+<meta name="twitter:description" content="Introduction Image classification post-processing has been defined as “a refinement of the labeling in a classified image to enhance its classification accuracy” [76]. In remote sensing image...">
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -79,18 +79,18 @@
 <li><a class="" href="index.html">Preface</a></li>
 <li><a class="" href="setup.html">Setup</a></li>
 <li><a class="" href="acknowledgements.html">Acknowledgements</a></li>
-<li><a class="" href="introduction-to-sits.html">Introduction to SITS</a></li>
+<li><a class="" href="introduction.html">Introduction</a></li>
 <li><a class="" href="earth-observation-data-cubes.html">Earth observation data cubes</a></li>
-<li><a class="" href="operations-on-data-cubes.html">Operations on Data Cubes</a></li>
+<li><a class="" href="operations-on-data-cubes.html">Operations on data cubes</a></li>
 <li><a class="" href="working-with-time-series.html">Working with time series</a></li>
-<li><a class="" href="improving-the-quality-of-training-samples.html">Improving the Quality of Training Samples</a></li>
-<li><a class="" href="machine-learning-for-data-cubes.html">Machine Learning for Data Cubes</a></li>
-<li><a class="" href="image-classification-in-data-cubes.html">Image Classification in Data Cubes</a></li>
+<li><a class="" href="improving-the-quality-of-training-samples.html">Improving the quality of training samples</a></li>
+<li><a class="" href="machine-learning-for-data-cubes.html">Machine learning for data cubes</a></li>
+<li><a class="" href="image-classification-in-data-cubes.html">Image classification in data cubes</a></li>
 <li><a class="active" href="bayesian-smoothing-for-post-processing.html">Bayesian smoothing for post-processing</a></li>
 <li><a class="" href="validation-and-accuracy-measurements.html">Validation and accuracy measurements</a></li>
 <li><a class="" href="uncertainty-and-active-learning.html">Uncertainty and active learning</a></li>
-<li><a class="" href="ensemble-prediction-from-multiple-models.html">Ensemble Prediction from Multiple Models</a></li>
-<li><a class="" href="visualising-and-exporting-data.html">Visualising and Exporting data</a></li>
+<li><a class="" href="ensemble-prediction-from-multiple-models.html">Ensemble prediction from multiple models</a></li>
+<li><a class="" href="visualising-and-exporting-data.html">Visualising and exporting data</a></li>
 <li><a class="" href="technical-annex.html">Technical Annex</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
@@ -103,17 +103,17 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="bayesian-smoothing-for-post-processing" class="section level1 unnumbered">
 <h1>Bayesian smoothing for post-processing<a class="anchor" aria-label="anchor" href="#bayesian-smoothing-for-post-processing"><i class="fas fa-link"></i></a>
 </h1>
-<div id="introduction" class="section level2 unnumbered">
-<h2>Introduction<a class="anchor" aria-label="anchor" href="#introduction"><i class="fas fa-link"></i></a>
+<div id="introduction-1" class="section level2 unnumbered">
+<h2>Introduction<a class="anchor" aria-label="anchor" href="#introduction-1"><i class="fas fa-link"></i></a>
 </h2>
-<p>Image classification post-processing has been defined as “a refinement of the labeling in a classified image to enhance its classification accuracy” <span class="citation"><a href="references.html#ref-Huang2014" role="doc-biblioref">[79]</a></span>. In remote sensing image analysis, these procedures combine pixel-based classification methods with a spatial post-processing method to remove outliers and misclassified pixels. For pixel-based classifiers, post-processing methods enable the inclusion of spatial information in the final results.</p>
+<p>Image classification post-processing has been defined as “a refinement of the labeling in a classified image to enhance its classification accuracy” <span class="citation"><a href="references.html#ref-Huang2014" role="doc-biblioref">[76]</a></span>. In remote sensing image analysis, these procedures combine pixel-based classification methods with a spatial post-processing method to remove outliers and misclassified pixels. For pixel-based classifiers, post-processing methods enable the inclusion of spatial information in the final results.</p>
 <p>The <code>sits</code> package uses a <em>time-first, space-later</em> approach. Since machine learning classifiers in <code>sits</code> are mostly pixel-based, it is necessary to complement them with spatial smoothing methods. These methods improve the accuracy of land-cover classification by incorporating spatial and contextual information into the classification process. Smoothing methods use neighborhood data to remove outliers and enhance consistency in the resulting product.</p>
-<p>Most statistical classifiers use training samples derived from “pure” pixels that users have selected to represent the desired output classes. However, images contain many mixed pixels irrespective of the resolution. Also, there is a considerable degree of data variability in each class. These effects lead to outliers whose chance of misclassification is significant. To offset these problems, most post-processing methods use the “smoothness assumption” <span class="citation"><a href="references.html#ref-Schindler2012" role="doc-biblioref">[80]</a></span>: nearby pixels tend to have the same label. To put this assumption in practice, smoothing methods in <code>sits</code> use the neighborhood information to remove outliers and enhance consistency in the resulting product.</p>
+<p>Most statistical classifiers use training samples derived from “pure” pixels that users have selected to represent the desired output classes. However, images contain many mixed pixels irrespective of the resolution. Also, there is a considerable degree of data variability in each class. These effects lead to outliers whose chance of misclassification is significant. To offset these problems, most post-processing methods use the “smoothness assumption” <span class="citation"><a href="references.html#ref-Schindler2012" role="doc-biblioref">[77]</a></span>: nearby pixels tend to have the same label. To put this assumption in practice, smoothing methods in <code>sits</code> use the neighborhood information to remove outliers and enhance consistency in the resulting product.</p>
 </div>
 <div id="motivation" class="section level2 unnumbered">
 <h2>Motivation<a class="anchor" aria-label="anchor" href="#motivation"><i class="fas fa-link"></i></a>
 </h2>
-<p>The smoothing method available in <code>sits</code> uses Bayesian inference. Bayesian inference is a way of allowing the inclusion of expert knowledge on the derivation of probabilities. As stated by <span class="citation"><a href="references.html#ref-Spiegelhalter2009" role="doc-biblioref">[81]</a></span>: “In the Bayesian paradigm, degrees of belief in states of nature are specified. Bayesian statistical methods start with existing ‘prior’ beliefs and update these using data to give ‘posterior’ beliefs, which may be used as the basis for inferential decisions”. Bayesian inference has now been established as a major method for assessing probability.</p>
+<p>The smoothing method available in <code>sits</code> uses Bayesian inference. Bayesian inference is a way of allowing the inclusion of expert knowledge on the derivation of probabilities. As stated by <span class="citation"><a href="references.html#ref-Spiegelhalter2009" role="doc-biblioref">[78]</a></span>: “In the Bayesian paradigm, degrees of belief in states of nature are specified. Bayesian statistical methods start with existing ‘prior’ beliefs and update these using data to give ‘posterior’ beliefs, which may be used as the basis for inferential decisions”. Bayesian inference has now been established as a major method for assessing probability.</p>
 <p>Bayesian inference allows the inclusion of expert knowledge. The assumption is that class probabilities at the local level should be similar and provide the baseline for comparison with the pixel values produced by the classifier. Based on these two elements, Bayesian smoothing adjusts the probabilities for the pixels, including spatial dependence.</p>
 </div>
 <div id="bayesian-estimation" class="section level2 unnumbered">
@@ -181,19 +181,19 @@ x_{i,k} +
 <li><p>Set the <span class="math inline">\(\sigma^2_{k}\)</span> parameter with high values (20 or above) to increase the neighborhood influence compared with the probability values for each pixel. Classes whose probabilities have strong spatial autocorrelation will tend to replace outliers of different classes.</p></li>
 <li><p>Set the <span class="math inline">\(\sigma^2_{k}\)</span> parameter with low values (5 or below) to reduce the neighborhood influence compared with the probabilities for each pixel of class <span class="math inline">\(k\)</span>. In this way, classes with low spatial autocorrelation are more likely not to be relabeled.</p></li>
 </ol>
-<p>Consider the case of forest areas and watersheds. If an expert wishes to have compact areas classified as forests without many outliers inside them, she will set the <span class="math inline">\(\sigma^2\)</span> parameter for the class “Forest” to be high. For comparison, one usually wants to avoid that small watersheds with few similar neighbors being relabeled. In this case, it is advisable to avoid a strong influence of the neighbors, and <span class="math inline">\(\sigma^2\)</span> should be set as low as possible.</p>
+<p>Consider the case of forest areas and watersheds. If an expert wishes to have compact areas classified as forests without many outliers inside them, she will set the <span class="math inline">\(\sigma^2\)</span> parameter for the class “Forest” to be high. For comparison, to avoid that small watersheds with few similar neighbors being relabeled, it is advisable to avoid a strong influence of the neighbors, setting <span class="math inline">\(\sigma^2\)</span> to be as low as possible.</p>
 </div>
 <div id="defining-the-neighborhood" class="section level2 unnumbered">
 <h2>Defining the neighborhood<a class="anchor" aria-label="anchor" href="#defining-the-neighborhood"><i class="fas fa-link"></i></a>
 </h2>
-<p>The intuition for Bayesian smoothing is that homogeneous neighborhoods should have the same class. In homogeneous neighborhoods, the dominant class has both higher average probabilities and lower variance than the other classes. In these neighborhoods, a pixel of a different class is likely to be associated to lower average probabilities and higher local variance. Mixed pixels at the limits between areas with different classes pose a problem for classification. These pixels contain signatures of two classes. To account for these cases, Bayesian smoothing in <code>sits</code> uses a special definition of a neighborhood.</p>
-<p>To be reliable, local class statistics should only include pixels likely to belong to such class. Windows centered on border pixels contain only some pixels belonging to the same class as the central pixel; the others belong to a different class. Consider a window of size 7 x 7 around a pixel in the probability map of class “Forest”. It will contain the central pixel and 80 neighbors. Instead of using all those neighbors to compute the local statistics, <code>sits</code> uses only some. The neighbors used to calculate the local statistics is set by taking only those with the highest probability of belonging to the class “Forest”. Such a percentage of pixels per window to calculate the local statistics is user-controllable.</p>
+<p>The intuition for Bayesian smoothing is that homogeneous neighborhoods should have the same class. In homogeneous neighborhoods, the dominant class has both higher average probabilities and lower variance than the other classes. In these neighborhoods, a pixel of a different class is likely to be associated to lower average probabilities and higher local variance. Mixed pixels at the limits between areas with different classes pose a problem. These pixels contain signatures of two classes. To account for these cases, Bayesian smoothing in <code>sits</code> uses a special definition of a neighborhood.</p>
+<p>To be reliable, local statistics should only include pixels likely to belong to a single class. Windows centred on border pixels contain only some pixels belonging to the same class as the central pixel; the others belong to a different class. Consider a window of size 7 x 7 around a pixel in the probability map of class “Forest”. It will contain the central pixel and 80 neighbours. Not all surrounding pixels are used to compute the local statistics. Local statistics estimates use only pixels with high probability of belonging to the class “Forest”. The window is then defined by taking the percentage of surrounding pixels with the highest probabilities to calculate the local statistics. By default, this percentage is set to 50%. The intuition is that border pixels will have about half of their neighbours from one class and half of them from another.</p>
 </div>
 <div id="measuring-the-local-variance" class="section level2 unnumbered">
 <h2>Measuring the local variance<a class="anchor" aria-label="anchor" href="#measuring-the-local-variance"><i class="fas fa-link"></i></a>
 </h2>
 <p>As discussed above, the effect of the Bayesian estimator depends on the values of the a priori variance <span class="math inline">\(sigma^2_{k}\)</span> set by the user and of the local variance <span class="math inline">\(s^2_{i,1}\)</span> measured for each pixel. To illustrate the impact of the choices of the <span class="math inline">\(sigma^2_{k}\)</span> parameter, we present a detailed example. The first step is to take a probability cube for a deforestation detection application in an area of the Brazilian Amazon. This cube has been produced by a random forest model with six classes. We first build the data cube and then plot the probabilities for classes “Water” and “Forest”.</p>
-<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define the classes of the probability cube</span></span>
 <span><span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"Water"</span>, <span class="st">"ClearCut_Burn"</span>, <span class="st">"ClearCut_Soil"</span>,</span>
@@ -213,14 +213,14 @@ x_{i,k} +
 <span><span class="co"># plot the probabilities for water and forest</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">probs_cube</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Water"</span>, <span class="st">"Forest"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-121"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-121-1.png" alt="Probability map produced for classes Forest and Water." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-139"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-139-1.png" alt="Probability map produced for classes Forest and Water." width="100%"><p class="caption">
 Figure 72: Probability map produced for classes Forest and Water.
 </p>
 </div>
 <p>The probability map for class “Forest” shows high values associated with compact patches and linear stretches in riparian areas. By contrast, the probability map for class “Water” has mostly low values, except in a few places with a high chance of occurrence of this class. To further understand the behavior of the Bayesian estimator, it is helpful to examine the local variance associated with the logits of the probabilities.</p>
 <p>The <code>sits_variance</code> function estimates the local variances for the logits, which correspond to the <span class="math inline">\(s^2_{i,k}\)</span> parameter in the Bayesian estimator. It has the following parameters: (a) <code>cube</code>, a probability cube; (b) <code>window_size</code>, the dimension of the local neighborhood; (c) <code>neigh_fraction</code>, the percentage of pixels in the neighborhood which will be used to calculate the variance; (d) <code>multicores</code>, number of CPU cores that will be used for processing; (e) <code>memsize</code>, memory available; (f) <code>output_dir</code>, directory where results will be stored; (g) <code>version</code>, for version control. In the example below, we will use half of the pixels of a 7x7 window to estimate the variance. The chosen pixels will be those with the highest probability pixels to be more representative of the actual class distribution. The output values are the variances of the logits.</p>
-<div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">var_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_variance.html">sits_variance</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">probs_cube</span>,</span>
 <span>  window_size <span class="op">=</span> <span class="fl">7</span>,</span>
@@ -232,8 +232,8 @@ Figure 72: Probability map produced for classes Forest and Water.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">var_cube</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Water"</span>, <span class="st">"Forest"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-122"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-122-1.png" alt="Variance map for class Forest." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-140"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-140-1.png" alt="Variance map for class Forest." width="100%"><p class="caption">
 Figure 73: Variance map for class Forest.
 </p>
 </div>
@@ -245,7 +245,7 @@ Figure 73: Variance map for class Forest.
 <p>To run Bayesian smoothing we use the function <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code> with parameters: (a) <code>cube</code>, a probability cube produced by <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>; (b) <code>window_size</code>, the local window to compute the neighborhood probabilities; (d) <code>neigh_fraction</code>, fraction of local neighbors used to calculate local statistics; (e) <code>smoothness</code>, a vector with estimates of the prior variance of each class; (f) <code>multicores</code>, number of CPU cores that will be used for processing; (g) <code>memsize</code>, memory available for classification; (h) <code>output_dir</code>, a directory where results will be stored; (i) <code>version</code>, for version control. The resulting cube can be visualized with <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code>. In what follows, we compare the smoothing effect by varying the <code>window_size</code> and <code>smoothness</code> parameters.</p>
 <p>Together, the parameters <code>window_size</code> and <code>neigh_fraction</code> control how many pixels in a neighborhood are used to calculate the local statistics used by the Bayesian estimator. For example, setting <code>window size</code> to 7 and <code>neigh_fraction</code> to 0.5 (the defaults) ensures that 25 samples are used to estimate the local statistics.</p>
 <p>Our first reference is the classified map without smoothing which shows the presence of outliers and classification errors. To obtain it, we use the function <code>sits_label_classification</code>, taking the probability map as an input, as follows.</p>
-<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate the thematic map</span></span>
 <span><span class="va">class_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">probs_cube</span>,</span>
@@ -257,13 +257,13 @@ Figure 73: Variance map for class Forest.
 <span><span class="co"># Plot the result</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">class_map</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-123"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-123-1.png" alt="Classified map without smoothing." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-141"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-141-1.png" alt="Classified map without smoothing." width="100%"><p class="caption">
 Figure 74: Classified map without smoothing.
 </p>
 </div>
 <p>To remove the outliers and classification errors, we will run a smoothing procedure where all prior variances are set to the same value of 20, which is relatively high compared with the maximum local class variance shown above. In this case, for most situations, the new value of the</p>
-<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute Bayesian smoothing</span></span>
 <span><span class="va">cube_smooth_w7_f05_s20</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">probs_cube</span>,</span>
@@ -278,13 +278,13 @@ Figure 74: Classified map without smoothing.
 <span><span class="co"># Plot the result</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">cube_smooth_w7_f05_s20</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Water"</span>, <span class="st">"Forest"</span><span class="op">)</span>, palette <span class="op">=</span> <span class="st">"YlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-124"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-124-1.png" alt="Probability maps after bayesian smoothing." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-142"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-142-1.png" alt="Probability maps after bayesian smoothing." width="100%"><p class="caption">
 Figure 75: Probability maps after bayesian smoothing.
 </p>
 </div>
 <p>Bayesian smoothing has removed some of the local variability associated with misclassified pixels that differ from their neighbors. There is a side effect: the water areas surrounded by forests have not been preserved in the forest probability map. The smoothing impact is best appreciated by comparing the labeled map produced without smoothing to the one that follows the procedure, as shown below.</p>
-<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate the thematic map</span></span>
 <span><span class="va">defor_map_w7_f05_20</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">cube_smooth_w7_f05_s20</span>,</span>
@@ -295,13 +295,13 @@ Figure 75: Probability maps after bayesian smoothing.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">defor_map_w7_f05_20</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-125"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-125-1.png" alt="Final classification map after Bayesian smoothing with 7 x 7 window, neigh_fraction = 0.5 and smoothness = 20." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-143"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-143-1.png" alt="Final classification map after Bayesian smoothing with 7 x 7 window, neigh_fraction = 0.5 and smoothness = 20." width="100%"><p class="caption">
 Figure 76: Final classification map after Bayesian smoothing with 7 x 7 window, neigh_fraction = 0.5 and smoothness = 20.
 </p>
 </div>
 <p>In the smoothed map, the outliers have been removed by expanding forest areas. Forests have replaced small corridors of water and soil encircled by trees. This effect is due to the high probability of forest detection in the training data. To keep the water areas and reduce the expansion of the forest area, a viable alternative is to reduce the smoothness (<span class="math inline">\(\sigma^2\)</span>) for the “Forest” and “Water” classes. In this way, the local influence of the forest in the other classes is reduced. As for the water areas, since they are narrow, their neighborhoods will have many low probability values, which would reduce the expected value of the Bayesian estimator.</p>
-<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Reduce smoothing for classes Water and Forest</span></span>
 <span><span class="co"># Labels:  "Water", "ClearCut_Burn", "ClearCut_Soil",</span></span>
 <span><span class="co">#          "ClearCut_Veg", "Forest", "Wetland"</span></span>
@@ -327,8 +327,8 @@ Figure 76: Final classification map after Bayesian smoothing with 7 x 7 window, 
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">defor_map_w7_f05_swf</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-126"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-126-1.png" alt="Probability maps after Bayesian smoothing with 7 x 7 window with low smoothness for classes Water and Forest" width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-144"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-144-1.png" alt="Probability maps after Bayesian smoothing with 7 x 7 window with low smoothness for classes Water and Forest" width="100%"><p class="caption">
 Figure 77: Probability maps after Bayesian smoothing with 7 x 7 window with low smoothness for classes Water and Forest
 </p>
 </div>
@@ -338,13 +338,13 @@ Figure 77: Probability maps after Bayesian smoothing with 7 x 7 window with low 
 </div>
 </div>
   <div class="chapter-nav">
-<div class="prev"><a href="image-classification-in-data-cubes.html">Image Classification in Data Cubes</a></div>
+<div class="prev"><a href="image-classification-in-data-cubes.html">Image classification in data cubes</a></div>
 <div class="next"><a href="validation-and-accuracy-measurements.html">Validation and accuracy measurements</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#bayesian-smoothing-for-post-processing">Bayesian smoothing for post-processing</a></li>
-<li><a class="nav-link" href="#introduction">Introduction</a></li>
+<li><a class="nav-link" href="#introduction-1">Introduction</a></li>
 <li><a class="nav-link" href="#motivation">Motivation</a></li>
 <li><a class="nav-link" href="#bayesian-estimation">Bayesian estimation</a></li>
 <li><a class="nav-link" href="#defining-the-neighborhood">Defining the neighborhood</a></li>
@@ -366,7 +366,7 @@ Figure 77: Probability maps after Bayesian smoothing with 7 x 7 window with low 
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro Ribeiro Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-04-15.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-03.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
