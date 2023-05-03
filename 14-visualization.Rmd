@@ -4,19 +4,23 @@
 source("common.R")
 ```
 
-This section is intended for programmers and experts who would like to extend the capabilities of `sits` by including new data sources, ML algorithms, exporting data to be used in Python or QGIS, or including new display colors. 
+This Chapter is intended for programmers and experts who would like to extend the capabilities of `sits` by including new data sources, machine learning algorithms, exporting data to be used in Python or QGIS, or including new display colors. 
 
 
 ## How colors work in sits{-}
 
-In examples provided in the book, the color legend is taken for the predefined color table provided by `sits`. This default color table is displayed using the command `sits_colors_show`. This color definition file assigns colors to 99 class names, including the IPCC and IGBP land use classes. 
+In examples provided in the book, the color legend is taken from a predefined color table provided by `sits`. This default color table is displayed using `sits_colors_show()`. This color definition file assigns colors to 99 class names, including the IPCC and IGBP land use classes. 
 
 ```{r, tidy = "styler", out.width = "100%", out.height = "100%", echo = FALSE, fig.align="center", fig.cap="Default colors used in the sits package"}
 # Display default `sits` colors
 sits_colors_show()
 ```
 
-The color table can be extended or adjusted by accessing and modifying the default color table, using the commands `sits_colors()` to retrieve the table and `sits_colors_set()` to update the table according to user choices, as shown in the example below.
+The color table can be extended or adjusted by accessing and modifying the default color table, using `sits_colors()` to retrieve the table and `sits_colors_set()` to update the table, as shown in the example below.
+<!---
+PEDRO: 46) sits_colors_set() nao e' mostrado no exemplo a seguir, somente depois do proximo paragrafo
+-->
+
 ```{r}
 # Retrieve the color table
 color_tb <- sits_colors()
@@ -49,7 +53,7 @@ sits_colors_show()
 sits_colors_reset()
 ```
 
-As an alternative, users may define legends and pass them as parameters to the `plot` function. Please see the example provided in Section "Map Reclassification" in the Chapter "Image Classification in Data Cubes". 
+As an alternative, a legend can be used directly as a parameter to `plot()`. Please see the example provided in Section "Map Reclassification" in Chapter [Image classification in data cubes](https://e-sensing.github.io/sitsbook/image-classification-in-data-cubes.html). 
 
 ## Exporting data to JSON{-}
 
@@ -61,13 +65,12 @@ library(jsonlite)
 jsonlite::write_json(
   x = s2_20LKP_cube_MPC,
   path = "./data_cube.json",
-  pretty = TRUE
-)
+  pretty = TRUE)
+
 # Export the time series to JSON
 jsonlite::write_json(
   x = samples_prodes_4classes,
   path = "./time_series.json",
-  pretty = TRUE
-)
+  pretty = TRUE)
 ```
 

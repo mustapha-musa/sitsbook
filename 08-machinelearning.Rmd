@@ -487,6 +487,6 @@ PEDRO: 29) No paragrafo acima RF e' definido e usado novamente, enquanto que a l
 
 3.  TempCNN is a reliable model with reasonable training time, which is close to the state-of-the-art in deep learning classifiers for image time series.
 
-4.  Attention-based models (TAE and LightTAE) can achieve the best overall performance in the case of well-designed and balanced training sets and with hyperparameter tuning. 
+4.  Attention-based models (TAE and LightTAE) can achieve the best overall performance with  well-designed and balanced training sets and hyperparameter tuning. 
 
 5. The best means of improving classification performance is to provide an accurate and reliable training data set. Each class should have enough samples to account for spatial and temporal variability. 
