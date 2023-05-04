@@ -98,7 +98,7 @@ The following code does a five-fold validation using the random forest algorithm
 
 ```{r, tidy = "styler"}
 # Perform a five-fold validation for the Cerrado data set
-# Random forests machine learning method using default parameters
+# Random forest machine learning method using default parameters
 val_rfor <- sits_kfold_validate(
     samples = samples_cerrado_bal, 
     folds = 5, 
@@ -197,7 +197,7 @@ options(digits = 3)
 model_acc
 ```
 
-The table below shows the F1-scores of all classes for each model, as produced by the k-fold validation. The F1-scores are the harmonic mean between user's accuracy and precision accuracy for each class. The results show that, although deep learning models such TempCNN and LightTAE have similar overall accuracies to Random Forests or XGBoost, their F1-scores per class are generally better.  
+The table below shows the F1-scores of all classes for each model, as produced by the k-fold validation. The F1-scores are the harmonic mean between user's accuracy and precision accuracy for each class. The results show that, although deep learning models such TempCNN and LightTAE have similar overall accuracies to random forest or XGBoost, their F1-scores per class are generally better.  
 
 ```{r, eval=FALSE, echo = TRUE, tidy = "styler"}
 f1_score_rfor <- unname(val_rfor$byClass[,"F1"])
@@ -240,7 +240,7 @@ $$
 PEDRO: 41) A frase anterior termina sem um ponto. Pode colocar no final da formula?
 Tem outros lugares do texto que frases terminam assim tambem.
 -->
-This unbiased area estimator includes the effect of false negatives (omission error) while not considering the effect of false positives (commission error). The area estimates also allow for an unbiased estimate of the user's and producer's accuracy for each class. Following @Olofsson2013, we provide the 95% confidence interval for $\hat{A_j}$. 
+This unbiased area estimator includes the effect of false negatives (omission error) while not considering the effect of false positives (commission error). The area estimates also allow for an unbiased estimate of the user's and producer's accuracy for each class. Following Olofsson et al. @Olofsson2013, we provide the 95% confidence interval for $\hat{A_j}$. 
 
 To produce the adjusted area estimates, `sits_accuracy()` must get the classified image together with a csv file containing a set of well-selected labeled points. The CSV file should have the same format as the one used to obtain samples, as discussed earlier.
 <!---

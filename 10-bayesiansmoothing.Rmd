@@ -20,12 +20,12 @@ Smoothing methods use neighborhood data to remove outliers and enhance consisten
 
 Most statistical classifiers use training samples derived from "pure" pixels that users have selected to represent the desired output classes. However, images contain many mixed pixels irrespective of the resolution. Also, there is a considerable degree of data variability in each class. These effects lead to outliers whose chance of misclassification is significant. To offset these problems, most post-processing methods use the "smoothness assumption" [@Schindler2012]: nearby pixels tend to have the same label. To put this assumption in practice, smoothing methods in `sits` use the neighborhood information to remove outliers and enhance consistency in the resulting product.
 <!---
-PEDRO: 31) Existem duas ocorrencias de "product" neste capitulo, que so tem 
+PEDRO: 31) Existem duas ocorrencias de "product" neste capitulo. Usar classification?
 -->
 
 ## Motivation{-}
 
-The smoothing method available in `sits` uses Bayesian inference for including expert knowledge on the derivation of probabilities. As stated by [@Spiegelhalter2009]: "In the Bayesian paradigm, degrees of belief in states of nature are specified. Bayesian statistical methods start with existing 'prior' beliefs and update these using data to give 'posterior' beliefs, which may be used as the basis for inferential decisions". Bayesian inference has been established as a major method for assessing probability. 
+The smoothing method available in `sits` uses Bayesian inference for including expert knowledge on the derivation of probabilities. As stated by Spiegelhalter and Rice [@Spiegelhalter2009]: "In the Bayesian paradigm, degrees of belief in states of nature are specified. Bayesian statistical methods start with existing 'prior' beliefs and update these using data to give 'posterior' beliefs, which may be used as the basis for inferential decisions". Bayesian inference has been established as a major method for assessing probability. 
 
 Bayesian inference allows the inclusion of expert knowledge.
 <!---
@@ -131,7 +131,7 @@ Consider the case of forest areas and watersheds. If an expert wishes to have co
 
 The intuition for Bayesian smoothing is that homogeneous neighborhoods should have the same class. In homogeneous neighborhoods, the dominant class has both higher average probabilities and lower variance than the other classes. In these neighborhoods, a pixel of a different class is likely to be associated to lower average probabilities and higher local variance. Mixed pixels at the limits between areas with different classes pose a problem. These pixels contain signatures of two classes. To account for these cases, Bayesian smoothing in `sits` uses a special definition of a neighborhood.
 
-To be reliable, local statistics should only include pixels likely to belong to a single class. Windows centred on border pixels contain only some pixels belonging to the same class as the central pixel; the others belong to a different class. Consider a window of size 7 x 7 around a pixel in the probability map of class "Forest". It will contain the central pixel and 80 neighbours.
+To be reliable, local statistics should only include pixels likely to belong to a single class. Windows centred on border pixels contain only some pixels belonging to the same class as the central pixel; the others belong to a different class. Consider a window of size $7 \times 7$ around a pixel in the probability map of class "Forest". It will contain the central pixel and 80 neighbours.
 <!---
 PEDRO: 37) Nao seria 48 vizinhos? 7*7-1? Ou seria uma vizinhanca 9x9?
 -->
