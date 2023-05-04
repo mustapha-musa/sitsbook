@@ -306,7 +306,7 @@ Attention-based models have become one of the most used deep learning architectu
 
 The basic structure of transformers is the same as other neural network algorithms. They have an encoder that transforms textual input values into numerical vectors and a decoder that processes these vectors to provide suitable answers. The difference is how the values are handled internally. In multilayer perceptron (MLP), all inputs are treated equally at first; based on iterative matching of training and test data, the backpropagation technique feeds information back to the initial layers to identify the most suitable combination of inputs that produces the best output. 
 <!---
-PEDRO: 44) O acronimo MLP e' definido duas vezes neste Capitulo, no paragrafo acima e na linha 179
+PEDRO: 47) O acronimo MLP e' definido duas vezes neste Capitulo, no paragrafo acima e na linha 179
 -->
 Convolutional nets (CNN) combine input values that are close in time (1D) or space (2D) to produce higher-level information that helps to distinguish the different components of the input data. For text recognition, the initial choice of deep learning studies was to use recurrent neural networks (RNN) that handle input sequences. 
 
