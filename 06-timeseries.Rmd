@@ -8,9 +8,9 @@ source("common.R")
 
 <a href="https://www.kaggle.com/esensing/working-with-time-series-in-sits" target="_blank"><img src="https://kaggle.com/static/images/open-in-kaggle.svg"/></a>
 
-The `sits` package uses sets of time series data describing properties in spatiotemporal locations of interest. For land use classification, these sets consist of samples labeled by experts. The package can also be used for any type of classification, provided that the timeline and bands of the time series used for training match that of the data cubes. 
+The `sits` package uses sets of time series data describing properties in spatiotemporal locations of interest. For land classification, these sets consist of samples labeled by experts. The package can also be used for any type of classification, provided that the timeline and bands of the time series used for training match that of the data cubes. 
 
-The following code shows the first three lines of a time series tibble containing 1,882 labeled samples of land cover in Mato Grosso state of Brazil. The samples have time series extracted from the MODIS MOD13Q1 product from 2000 to 2016, provided every 16 days at 250-meter resolution in the Sinusoidal projection. Based on ground surveys and high-resolution imagery, it includes samples of nine classes: "Forest", "Cerrado", "Pasture", "Soy_Fallow", "Fallow_Cotton", "Soy_Cotton", "Soy_Corn", "Soy_Millet", and "Soy_Sunflower". 
+The following code shows the first three lines of a time series tibble containing 1,882 labeled samples of land classes in Mato Grosso state of Brazil. The samples have time series extracted from the MODIS MOD13Q1 product from 2000 to 2016, provided every 16 days at 250-meter resolution in the Sinusoidal projection. Based on ground surveys and high-resolution imagery, it includes samples of nine classes: "Forest", "Cerrado", "Pasture", "Soy_Fallow", "Fallow_Cotton", "Soy_Cotton", "Soy_Corn", "Soy_Millet", and "Soy_Sunflower". 
 
 ```{r}
 # Samples
@@ -18,7 +18,7 @@ data("samples_matogrosso_mod13q1")
 samples_matogrosso_mod13q1[1:4,]
 ```
 
-The time series tibble contains data and metadata. The first six columns contain spatial and temporal information, the label assigned to the sample, and the data cube from where the data has been extracted. The first sample has been labeled "Pasture" at location (-58.5631, -13.8844), being valid for the period (2006-09-14, 2007-08-29). Informing the dates where the label is valid is crucial for correct classification. In this case, the researchers labeling the samples used the agricultural calendar in Brazil. The relevant dates for other applications and other countries will likely differ from those used in the example. The `time_series` column contains the time series data for each spatiotemporal location. This data is also organized as a tibble, with a column with the dates and the other columns with the values for each spectral band. 
+The time series tibble contains data and metadata. The first six columns contain spatial and temporal information, the label assigned to the sample, and the data cube from where the data has been extracted. The first sample has been labeled "Pasture" at location ($-58.5631$, $-13.8844$), being valid for the period (2006-09-14, 2007-08-29). Informing the dates where the label is valid is crucial for correct classification. In this case, the researchers labeling the samples used the agricultural calendar in Brazil. The relevant dates for other applications and other countries will likely differ from those used in the example. The `time_series` column contains the time series data for each spatiotemporal location. This data is also organized as a tibble, with a column with the dates and the other columns with the values for each spectral band. 
 
 ## Utilities for handling time series{-}
 
@@ -111,12 +111,7 @@ samples_csv[1:3,]
 ```
 
 To retrieve training samples for time series analysis, users must provide the temporal information (`start_date` and `end_date`). In the simplest case, all samples share the same dates. That is not a strict requirement. It is possible to specify different dates as long as they have a compatible duration. For example, the data set `samples_matogrosso_mod13q1` provided with the `sitsdata` package contains samples from different years covering the same duration. These samples are from the MOD13Q1 product, which contains the same number of images per year. Thus, all time series in the data set `samples_matogrosso_mod13q1` have the same number of dates. 
-<!---
-PEDRO: 13) Nao esta claro o termo instance acima. Seria "time instances"?
-GILBERTO: "instances" -> "entries".
-P: entries e' uma palavra que nao foi usada em mais nenhum lugar no livro. manter?
-GILBERTO: dates.
--->
+
 
 Given a suitably built CSV sample file, `sits_get_data()` requires two parameters: (a) `cube`, the name of the R object that describes the data cube; (b) `samples`, the name of the CSV file. 
 ```{r, tidy="styler"}
@@ -161,7 +156,7 @@ samples_mt <- sits_get_data(
 
 Satellite image time series is generally contaminated by atmospheric influence, geolocation error, and directional effects [@Lambin2006]. Atmospheric noise, sun angle, interferences on observations or different equipment specifications, and the nature of the climate-land dynamics can be sources of variability [@Atkinson2012]. Inter-annual climate variability also changes the phenological cycles of the vegetation, resulting in time series whose periods and intensities do not match on a year-to-year basis. To make the best use of available satellite data archives, methods for satellite image time series analysis need to deal with  *noisy* and *non-homogeneous* data sets.
 
-The literature on satellite image time series has several applications of filtering to correct or smooth vegetation index data. The package supports the well-known Savitzky–Golay (`sits_sgolay()`) and Whittaker (`sits_whittaker()`) filters. In an evaluation of NDVI time series filtering for estimating phenological parameters in India, @Atkinson2012 found that the Whittaker filter provides good results. @Zhou2016 found that the Savitzky-Golay filter is suitable for reconstructing tropical evergreen broadleaf forests.
+The literature on satellite image time series has several applications of filtering to correct or smooth vegetation index data. The package supports the well-known Savitzky–Golay (`sits_sgolay()`) and Whittaker (`sits_whittaker()`) filters. In an evaluation of NDVI time series filtering for estimating phenological parameters in India, Atkinson et al.  found that the Whittaker filter provides good results [@Atkinson2012]. Zhou et al. found that the Savitzky-Golay filter is suitable for reconstructing tropical evergreen broadleaf forests [@Zhou2016].
 
 ### Savitzky–Golay filter{-}
 

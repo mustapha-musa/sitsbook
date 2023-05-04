@@ -4,19 +4,24 @@
 source("common.R")
 ```
 
-This section is intended for programmers and experts who would like to extend the capabilities of `sits` by including new data sources, ML algorithms, exporting data to be used in Python or QGIS, or including new display colors. 
+This Chapter is intended for programmers and experts who would like to extend the capabilities of `sits` by including new data sources, machine learning algorithms, exporting data to be used in Python or QGIS, or including new display colors. 
 
 
 ## How colors work in sits{-}
 
-In examples provided in the book, the color legend is taken for the predefined color table provided by `sits`. This default color table is displayed using the command `sits_colors_show`. This color definition file assigns colors to 99 class names, including the IPCC and IGBP land use classes. 
+In examples provided in the book, the color legend is taken from a predefined color table provided by `sits`. This default color table is displayed using `sits_colors_show()`. This color definition file assigns colors to 99 class names, including the IPCC and IGBP land classes. 
 
 ```{r, tidy = "styler", out.width = "100%", out.height = "100%", echo = FALSE, fig.align="center", fig.cap="Default colors used in the sits package"}
 # Display default `sits` colors
 sits_colors_show()
 ```
 
-The color table can be extended or adjusted by accessing and modifying the default color table, using the commands `sits_colors()` to retrieve the table and `sits_colors_set()` to update the table according to user choices, as shown in the example below.
+The color table can be extended or adjusted by accessing and modifying the default color table, using `sits_colors()` to retrieve the table.
+<!---
+PEDRO: 46) sits_colors_set() nao e' mostrado no exemplo a seguir, somente depois do proximo paragrafo
+GILBERTO: Texto modificado (rever)
+-->
+
 ```{r}
 # Retrieve the color table
 color_tb <- sits_colors()
@@ -24,7 +29,7 @@ color_tb <- sits_colors()
 color_tb
 ```
 
-As an example of a user-defined color table, consider a definition that covers level 1 of the Anderson Classification System used in the US National Land Cover Data, obtained by defining a new color table, as shown below. The colors can be defined by HEX values or by names accepted as R color codes.
+The default color table can be redefined using `sits_colors_set()`. As an example of a user-defined color table, consider a definition that covers level 1 of the Anderson Classification System used in the US National Land Cover Data, obtained by defining a new colour table, as shown below. The colours can be defined by HEX values or by names accepted as R color codes.
 ```{r, tidy = "styler", out.width = "80%", out.height = "80%", fig.align="center", fig.cap="Example of Anderson Land Classification Scheme use in sits"}
 # Define a color table based on the Anderson Land Classification System
 us_nlcd <- tibble::tibble(name = character(), color = character())
@@ -44,12 +49,14 @@ sits_colors_set(us_nlcd)
 sits_colors_show()
 ```
 
+The original default `sits` colour table can be restored using `sits_colors_reset()`. 
+
 ```{r, eval = TRUE, echo = FALSE, warning = FALSE, message = FALSE} 
 # Reset the color table
 sits_colors_reset()
 ```
 
-As an alternative, users may define legends and pass them as parameters to the `plot` function. Please see the example provided in Section "Map Reclassification" in the Chapter "Image Classification in Data Cubes". 
+As an alternative, a legend can be used directly as a parameter to `plot()`. Please see the example provided in Section "Map Reclassification" in Chapter [Image classification in data cubes](https://e-sensing.github.io/sitsbook/image-classification-in-data-cubes.html). 
 
 ## Exporting data to JSON{-}
 
@@ -61,13 +68,12 @@ library(jsonlite)
 jsonlite::write_json(
   x = s2_20LKP_cube_MPC,
   path = "./data_cube.json",
-  pretty = TRUE
-)
+  pretty = TRUE)
+
 # Export the time series to JSON
 jsonlite::write_json(
   x = samples_prodes_4classes,
   path = "./time_series.json",
-  pretty = TRUE
-)
+  pretty = TRUE)
 ```
 

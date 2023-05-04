@@ -107,23 +107,23 @@
 <h2>Analysis-ready data image collections<a class="anchor" aria-label="anchor" href="#analysis-ready-data-image-collections"><i class="fas fa-link"></i></a>
 </h2>
 <p>Analysis-ready data (ARD) are images that are ready for analysis without the need for further preprocessing or transformation. They simplify and accelerate the analysis of Earth observation data by providing consistent and high-quality data that are standardized across different sensors and platforms. ARD data is typically provided as a collection of files, where each pixel contains a single value for each spectral band for a given date.</p>
-<p>ARD collections are available in cloud services such as Amazon Web Service, Brazil Data Cube, Digital Earth Africa, Swiss Data Cube, and Microsoft’s Planetary Computer. These collections have been processed to improve multidate comparability. Radiance measures at the top of the atmosphere were converted to ground reflectance measures. In general, the timelines of the images of an ARD collection are different. Images still contain cloudy or missing pixels; bands for the images in the collection may have different resolutions. Figure 9 shows an example of the Landsat ARD image collection.</p>
+<p>ARD collections are available in cloud services such as Amazon Web Service, Brazil Data Cube, Digital Earth Africa, Swiss Data Cube, and Microsoft’s Planetary Computer. These collections have been processed to improve multidate comparability. Radiance measures at the top of the atmosphere were converted to ground reflectance measures. In general, the timelines of the images of an ARD collection are different. Images still contain cloudy or missing pixels; bands for the images in the collection may have different resolutions. Figure <a href="earth-observation-data-cubes.html#fig:ardt">9</a> shows an example of the Landsat ARD image collection.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:ardtile"></span>
+<span style="display:block;" id="fig:ardt"></span>
 <img src="images/usgs_ard_tile.png" alt="ARD image collection (source: USGS). Reproduction based on fair use doctrine." width="80%"><p class="caption">
 Figure 9: ARD image collection (source: USGS). Reproduction based on fair use doctrine.
 </p>
 </div>
-<p>ARD image collections are organized in spatial partitions. Sentinel-2/2A images follow the Military Grid Reference System (MGRS) tiling system, which divides the world into 60 UTM zones of 8 degrees of longitude. Each zone has blocks of 6 degrees of latitude. Blocks are split into tiles of 110 x 110 km2 with a 10 km overlap. Figure 10 shows the MGRS tiling system for a part of the Northeastern coast of Brazil, contained in UTM zone 24, block M.</p>
+<p>ARD image collections are organized in spatial partitions. Sentinel-2/2A images follow the Military Grid Reference System (MGRS) tiling system, which divides the world into 60 UTM zones of 8 degrees of longitude. Each zone has blocks of 6 degrees of latitude. Blocks are split into tiles of <span class="math inline">\(110 \times 110\)</span> km<span class="math inline">\(^2\)</span> with a 10 km overlap. Figure <a href="earth-observation-data-cubes.html#fig:mgrs">10</a> shows the MGRS tiling system for a part of the Northeastern coast of Brazil, contained in UTM zone 24, block M.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:wrs"></span>
+<span style="display:block;" id="fig:mgrs"></span>
 <img src="images/s2_mgrs_grid.png" alt="MGRS tiling system used by Sentinel-2 images (source: GISSurfer 2.0). Reproduction based on fair use doctrine." width="80%"><p class="caption">
 Figure 10: MGRS tiling system used by Sentinel-2 images (source: GISSurfer 2.0). Reproduction based on fair use doctrine.
 </p>
 </div>
-<p>The Landsat-4/5/7/8/9 satellites use the Worldwide Reference System (WRS-2), which breaks the coverage of Landsat satellites into images identified by path and row. The path is the descending orbit of the satellite; the WRS-2 system has 233 paths per orbit, and each path has 119 rows, where each row refers to a latitudinal center line of a frame of imagery. Images in WRS-2 are geometrically corrected to the UTM projection.</p>
+<p>The Landsat-4/5/7/8/9 satellites use the Worldwide Reference System (WRS-2), which breaks the coverage of Landsat satellites into images identified by path and row (see Figure <a href="earth-observation-data-cubes.html#fig:wrs">11</a>). The path is the descending orbit of the satellite; the WRS-2 system has 233 paths per orbit, and each path has 119 rows, where each row refers to a latitudinal center line of a frame of imagery. Images in WRS-2 are geometrically corrected to the UTM projection.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:mgrs"></span>
+<span style="display:block;" id="fig:wrs"></span>
 <img src="images/landsat_wrs_grid.png" alt="WRS-2 tiling system used by Landsat-5/7/8/9 images (source: INPE and ESRI). Reproduction based on fair use doctrine." width="80%"><p class="caption">
 Figure 11: WRS-2 tiling system used by Landsat-5/7/8/9 images (source: INPE and ESRI). Reproduction based on fair use doctrine.
 </p>
@@ -145,16 +145,16 @@ Figure 11: WRS-2 tiling system used by Landsat-5/7/8/9 images (source: INPE and 
 <div id="regular-image-data-cubes" class="section level2 unnumbered">
 <h2>Regular image data cubes<a class="anchor" aria-label="anchor" href="#regular-image-data-cubes"><i class="fas fa-link"></i></a>
 </h2>
-<p>Machine learning and deep learning (ML/DL) classification algorithms require the input data to be consistent. The dimensionality of the data used for training the model has to be the same as that of the data to be classified. There should be no gaps and no missing values. Thus, to use ML/DL algorithms for remote sensing data, ARD image collections should be converted to regular data cubes. Following Appel and Pebesma <span class="citation"><a href="references.html#ref-Appel2019" role="doc-biblioref">[2]</a></span>, a <em>regular data cube</em> has the following definition and properties:</p>
+<p>Machine learning and deep learning (ML/DL) classification algorithms require the input data to be consistent. The dimensionality of the data used for training the model has to be the same as that of the data to be classified. There should be no gaps and no missing values. Thus, to use ML/DL algorithms for remote sensing data, ARD image collections should be converted to regular data cubes. Following Appel and Pebesma <span class="citation"><a href="references.html#ref-Appel2019" role="doc-biblioref">[3]</a></span>, a <em>regular data cube</em> has the following definition and properties:</p>
 <ol style="list-style-type: decimal">
 <li>A regular data cube is a four-dimensional structure with dimensions x (longitude or easting), y (latitude or northing), time, and bands.</li>
 <li>Its spatial dimensions refer to a single spatial reference system (SRS). Cells of a data cube have a constant spatial size with respect to the cube’s SRS.</li>
 <li>The temporal dimension is a set of continuous and equally-spaced intervals.</li>
 <li>For every combination of dimensions, a cell has a single value.</li>
 </ol>
-<p>All cells of a data cube have the same spatiotemporal extent. The spatial resolution of each cell is the same in X and Y dimensions. All temporal intervals are the same. Each cell contains a valid set of measures. For each position in space, the data cube should provide a set of valid time series. For each time interval, the regular data cube should provide a valid 2D image (see Figure 11).</p>
+<p>All cells of a data cube have the same spatiotemporal extent. The spatial resolution of each cell is the same in X and Y dimensions. All temporal intervals are the same. Each cell contains a valid set of measures. For each position in space, the data cube should provide a set of valid time series. For each time interval, the regular data cube should provide a valid 2D image (see Figure <a href="earth-observation-data-cubes.html#fig:dc">12</a>.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:dcconcept"></span>
+<span style="display:block;" id="fig:dc"></span>
 <img src="images/datacube_conception.png" alt="Conceptual view of data cubes (source: authors)." width="100%"><p class="caption">
 Figure 12: Conceptual view of data cubes (source: authors).
 </p>
@@ -165,7 +165,7 @@ Figure 12: Conceptual view of data cubes (source: authors).
 <h2>Creating data cubes<a class="anchor" aria-label="anchor" href="#creating-data-cubes"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="https://www.kaggle.com/esensing/creating-data-cubes-in-sits" target="_blank"><img src="https://kaggle.com/static/images/open-in-kaggle.svg"></a></p>
-<p>To obtain information on ARD image collection from cloud providers, <code>sits</code> uses the <a href="https://stacspec.org/en">STAC (SpatioTemporal Asset Catalogue) protocol</a>, a specification of geospatial information which many large image collection providers have adopted. A ‘spatiotemporal asset’ is any file that represents information about the Earth captured in a specific space and time. To access STAC endpoints, <code>sits</code> uses the <a href="http://github.com/brazil-data-cube/rstac">rstac</a> R package.</p>
+<p>To obtain information on ARD image collection from cloud providers, <code>sits</code> uses the <a href="https://stacspec.org/en">SpatioTemporal Asset Catalogue</a> (STAC) protocol, a specification of geospatial information which many large image collection providers have adopted. A ‘spatiotemporal asset’ is any file that represents information about the Earth captured in a specific space and time. To access STAC endpoints, <code>sits</code> uses the <a href="http://github.com/brazil-data-cube/rstac">rstac</a> R package.</p>
 <p>The function <code><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube()</a></code> supports access to image collections in cloud services; it has the following parameters:</p>
 <ol style="list-style-type: decimal">
 <li>
@@ -292,7 +292,7 @@ Figure 16: Sentinel-2 image in an area over South Africa.
 <div id="assessing-the-brazil-data-cube" class="section level2 unnumbered">
 <h2>Assessing the Brazil Data Cube<a class="anchor" aria-label="anchor" href="#assessing-the-brazil-data-cube"><i class="fas fa-link"></i></a>
 </h2>
-<p>The <a href="http://brazildatacube.org/">Brazil Data Cube</a> (BDC) is built by Brazil’s National Institute for Space Research (INPE). The BDC uses three hierarchical grids based on the Albers Equal Area projection and SIRGAS 2000 datum. The three grids are generated taking -54<span class="math inline">\(^\circ\)</span> longitude as the central reference and defining tiles of <span class="math inline">\(6\times4\)</span>, <span class="math inline">\(3\times2\)</span>, and <span class="math inline">\(1.5\times1\)</span> degrees. The large grid has tiles of <span class="math inline">\(672\times440\)</span> km<sup>2</sup> and is used for CBERS-4 AWFI collections at 64 meter resolution; each CBERS-4 AWFI tile contains images of <span class="math inline">\(10,504\times6,865\)</span> pixels. The medium grid is used for Landsat-8 OLI collections at 30 meter resolution; tiles have an extension of <span class="math inline">\(336\times220\)</span> km<sup>2</sup>, and each image has <span class="math inline">\(11,204\times7,324\)</span> pixels. The small grid covers <span class="math inline">\(168\times110\)</span> km<sup>2</sup> and is used for Sentinel-2 MSI collections at 10m resolutions; each image has <span class="math inline">\(16,806\times10,986\)</span> pixels. The data cubes in the BDC are regularly spaced in time and cloud-corrected <span class="citation"><a href="references.html#ref-Ferreira2020a" role="doc-biblioref">[3]</a></span>.</p>
+<p>The <a href="http://brazildatacube.org/en">Brazil Data Cube</a> (BDC) is built by Brazil’s National Institute for Space Research (INPE). The BDC uses three hierarchical grids based on the Albers Equal Area projection and SIRGAS 2000 datum. The three grids are generated taking -54<span class="math inline">\(^\circ\)</span> longitude as the central reference and defining tiles of <span class="math inline">\(6\times4\)</span>, <span class="math inline">\(3\times2\)</span>, and <span class="math inline">\(1.5\times1\)</span> degrees. The large grid has tiles of <span class="math inline">\(672\times440\)</span> km<sup>2</sup> and is used for CBERS-4 AWFI collections at 64 meter resolution; each CBERS-4 AWFI tile contains images of <span class="math inline">\(10,504\times6,865\)</span> pixels. The medium grid is used for Landsat-8 OLI collections at 30 meter resolution; tiles have an extension of <span class="math inline">\(336\times220\)</span> km<sup>2</sup>, and each image has <span class="math inline">\(11,204\times7,324\)</span> pixels. The small grid covers <span class="math inline">\(168\times110\)</span> km<sup>2</sup> and is used for Sentinel-2 MSI collections at 10m resolutions; each image has <span class="math inline">\(16,806\times10,986\)</span> pixels. The data cubes in the BDC are regularly spaced in time and cloud-corrected <span class="citation"><a href="references.html#ref-Ferreira2020a" role="doc-biblioref">[4]</a></span>.</p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:unnamed-chunk-26"></span>
 <img src="images/bdc_grid.png" alt="Hierarchical BDC tiling system showing overlayed on Brazilian Biomes (a), illustrating one large tile (b), four medium tiles (c), and sixteen small tiles (d). Source: Ferreira et al.(2020)." width="80%"><p class="caption">
@@ -422,7 +422,7 @@ Figure 20: Classified data cube for the year 2020/2021 in Rondonia, Brazil.
 <div id="regularizing-data-cubes" class="section level2 unnumbered">
 <h2>Regularizing data cubes<a class="anchor" aria-label="anchor" href="#regularizing-data-cubes"><i class="fas fa-link"></i></a>
 </h2>
-<p>ARD collections available in AWS, MSPC, USGS, and DEAFRICA are not regular in space and time. Bands may have different resolutions, images may not cover the entire tile, and time intervals are irregular. For this reason, data from these collections need to be converted to regular data cubes by calling <code><a href="https://rdrr.io/pkg/sits/man/sits_regularize.html">sits_regularize()</a></code>, which uses the <em>gdalcubes</em> package <span class="citation"><a href="references.html#ref-Appel2019" role="doc-biblioref">[2]</a></span>.</p>
+<p>ARD collections available in AWS, MSPC, USGS, and DEAFRICA are not regular in space and time. Bands may have different resolutions, images may not cover the entire tile, and time intervals are irregular. For this reason, data from these collections need to be converted to regular data cubes by calling <code><a href="https://rdrr.io/pkg/sits/man/sits_regularize.html">sits_regularize()</a></code>, which uses the <em>gdalcubes</em> package <span class="citation"><a href="references.html#ref-Appel2019" role="doc-biblioref">[3]</a></span>.</p>
 <p>In the following example, the user has created an irregular data cube from the Sentinel-2 collection available in Microsoft’s Planetary Computer (MSPC) for tiles <code>20LKP</code> and <code>20LLP</code> in the state of Rondonia, Brazil. We first build an irregular data cube using <code><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube()</a></code>.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Creating an irregular data cube from MSPC</span></span>
@@ -515,7 +515,7 @@ Figure 22: Regularized image for tile Sentinel-2 tile 20LLP.
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-03.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-04.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

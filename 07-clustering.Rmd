@@ -14,7 +14,7 @@ When working with machine learning classification of Earth observation data, it 
 
 Meyer and Pebesma [@Meyer2022] propose using a spatial distance distribution plot, which displays two distributions of nearest-neighbor distances: sample-to-sample and prediction-location-to-sample. The difference between the two distributions reflects the degree of spatial clustering in the reference data. Ideally, the two distributions should be similar. Cases where the sample-to-sample distance distribution does not match prediction-location-to-sample distribution indicate possible problems in training data collection. 
 
-`sits` implements spatial distance distribution plots with the `sits_geo_dist()` function. This function get a training data in the `samples` parameter, and the study area in the `roi` parameter expressed as an `sf` object. Additional parameters are `n` (maximum number of samples for each distribution) and `crs` (coordinate reference system for the samples). By default, `n` is 1000, and `crs` is "EPSG:4326". The example below shows how to use `sits_geo_dist()`. 
+`sits` implements spatial distance distribution plots with the `sits_geo_dist()` function. This function gets a training data in the `samples` parameter, and the study area in the `roi` parameter expressed as an `sf` object. Additional parameters are `n` (maximum number of samples for each distribution) and `crs` (coordinate reference system for the samples). By default, `n` is 1000, and `crs` is "EPSG:4326". The example below shows how to use `sits_geo_dist()`. 
 
 ```{r, tidy = "styler", out.width = "100%", message = FALSE, warning = FALSE, fig.cap = "Distribution of sample-to-sample and sample-to-prediction distances."}
 # Read a shapefile for the state of Mato Grosso, Brazil
@@ -88,7 +88,7 @@ The input data for quality assessment is a set of training samples, which are hi
 knitr::include_graphics("images/methodology_bayes_som.png")
 ```
 
-As an example, we take a set of time series from the Cerrado region of Brazil, the second largest biome in South America with an area of more than 2 million km2. This data ranges from 2000 to 2017 and includes 50,160 land use and cover samples divided into 12 classes("Dense_Woodland", "Dunes", "Fallow_Cotton", "Millet_Cotton", "Pasture", "Rocky_Savanna", "Savanna", "Savanna_Parkland", "Silviculture", "Soy_Corn", "Soy_Cotton", "Soy_Fallow"). Each time series covers 12 months (23 data points) from MOD13Q1 product, and has 4 bands ("EVI", "NDVI", "MIR", and "NIR"). We use bands "NDVI" and "EVI" for faster processing.
+As an example, we take a set of time series from the Cerrado region of Brazil, the second largest biome in South America with an area of more than 2 million km2. This data ranges from 2000 to 2017 and includes 50,160 samples divided into 12 classes ("Dense_Woodland", "Dunes", "Fallow_Cotton", "Millet_Cotton", "Pasture", "Rocky_Savanna", "Savanna", "Savanna_Parkland", "Silviculture", "Soy_Corn", "Soy_Cotton", and "Soy_Fallow"). Each time series covers 12 months (23 data points) from MOD13Q1 product, and has 4 bands (EVI, NDVI, MIR, and NIR). We use bands NDVI and EVI for faster processing.
 
 ```{r, message = FALSE, tidy = "styler", warning = FALSE}
 # Take only the NDVI and EVI bands
@@ -132,7 +132,7 @@ som_eval <- sits_som_evaluate_cluster(som_cluster)
 som_eval 
 ```
 
-Many labels are associated with clusters where there are some samples with a different label. Such confusion between labels arises because sample labelling is subjective and can be biased. In many cases, interpreters use high-resolution data to identify samples. However, the actual images to be classified are captured by satellites with lower resolution. In our case study, a MOD13Q1 image has pixels with 250 x 250 meter resolution. As such, the correspondence between labelled locations in high-resolution images and mid to low-resolution images is not direct. The confusion by sample label can be visualized in a bar plot using `plot()`, as shown below. The bar plot shows some confusion between the labels associated with the natural vegetation typical of the Brazilian Cerrado ("Savanna", "Savanna_Parkland", "Rocky_Savanna"). This mixture is due to the large variability of the natural vegetation of the Cerrado biome, which makes it difficult to draw sharp boundaries between classes. Some confusion is also visible between the agricultural classes. The "Millet_Cotton" class is a particularly difficult one since many of the samples assigned to this class are confused with "Soy_Cotton" and "Fallow_Cotton". 
+Many labels are associated with clusters where there are some samples with a different label. Such confusion between labels arises because sample labeling is subjective and can be biased. In many cases, interpreters use high-resolution data to identify samples. However, the actual images to be classified are captured by satellites with lower resolution. In our case study, a MOD13Q1 image has pixels with $250 \times 250$ meter resolution. As such, the correspondence between labelled locations in high-resolution images and mid to low-resolution images is not direct. The confusion by sample label can be visualized in a bar plot using `plot()`, as shown below. The bar plot shows some confusion between the labels associated with the natural vegetation typical of the Brazilian Cerrado ("Savanna", "Savanna_Parkland", "Rocky_Savanna"). This mixture is due to the large variability of the natural vegetation of the Cerrado biome, which makes it difficult to draw sharp boundaries between classes. Some confusion is also visible between the agricultural classes. The "Millet_Cotton" class is a particularly difficult one since many of the samples assigned to this class are confused with "Soy_Cotton" and "Fallow_Cotton". 
 
 ```{r, out.width = "90%", fig.align="center", fig.cap="Confusion between classes as measured by SOM."}
 # Plot the confusion between clusters
@@ -183,9 +183,9 @@ new_cluster_mixture <- sits_som_evaluate_cluster(new_cluster)
 plot(new_cluster_mixture)
 ```
 
-As expected, the new confusion map shows a significant improvement over the previous one. This result should be interpreted carefully since it may be due to different effects. The most direct interpretation is that "Millet_Cotton" and "Silviculture" cannot be easily separated from the other classes, given the current attributes (a time series of "NDVI" and "EVI" indices from MODIS images). In such situations, users should consider improving the number of samples from the less represented classes, including more MODIS bands, or working with higher resolution satellites. The results of the SOM method should be interpreted based on the users' understanding of the ecosystems and agricultural practices of the study region. 
+As expected, the new confusion map shows a significant improvement over the previous one. This result should be interpreted carefully since it may be due to different effects. The most direct interpretation is that "Millet_Cotton" and "Silviculture" cannot be easily separated from the other classes, given the current attributes (a time series of NDVI and EVI indices from MODIS images). In such situations, users should consider improving the number of samples from the less represented classes, including more MODIS bands, or working with higher resolution satellites. The results of the SOM method should be interpreted based on the users' understanding of the ecosystems and agricultural practices of the study region. 
 
-A further comparison between the original and clean samples is to run a 5-fold validation on the original and the cleaned sample sets using `sits_kfold_validate()` and a random forests model. The SOM procedure improves the validation results from 95% on the original data set to 99% in the cleaned one. This improvement should not be interpreted as providing a better fit for the final map accuracy. A 5-fold validation procedure only measures how well the machine learning model fits the samples; it is not an accuracy assessment of classification results. The result only indicates that the training set after the SOM sample removal procedure is more internally consistent than the original one. For more details on accuracy measures, please see Chapter [Validation and accuracy measures](https://e-sensing.github.io/sitsbook/validation-and-accuracy-measurements.html).
+A further comparison between the original and clean samples is to run a 5-fold validation on the original and the cleaned sample sets using `sits_kfold_validate()` and a random forest model. The SOM procedure improves the validation results from 95% on the original data set to 99% in the cleaned one. This improvement should not be interpreted as providing a better fit for the final map accuracy. A 5-fold validation procedure only measures how well the machine learning model fits the samples; it is not an accuracy assessment of classification results. The result only indicates that the training set after the SOM sample removal procedure is more internally consistent than the original one. For more details on accuracy measures, please see Chapter [Validation and accuracy measures](https://e-sensing.github.io/sitsbook/validation-and-accuracy-measurements.html).
 
 ```{r, tidy = "styler", message = FALSE, warning = FALSE}
 # Run a k-fold validation
@@ -251,12 +251,12 @@ som_cluster_bal <- sits_som_map(
 som_eval <- sits_som_evaluate_cluster(som_cluster_bal)
 ```
 
-```{r, fig.align="center", out.width="90%", fig.cap="Confusion by cluster for the balanced data set"}
+```{r seval, fig.align="center", out.width="90%", fig.cap="Confusion by cluster for the balanced data set"}
 # Show the result
 plot(som_eval) 
 ```
 
-As shown in the Figure, the balanced data set shows less confusion per label than the unbalanced one. In this case, many classes that were confused with others in the original confusion map are now better represented. Reducing sample imbalance should be tried as an alternative to reducing the number of samples of the classes using SOM. In general, users should balance their training data for better performance. 
+As shown in Figure \@ref(fig:seval), the balanced data set shows less confusion per label than the unbalanced one. In this case, many classes that were confused with others in the original confusion map are now better represented. Reducing sample imbalance should be tried as an alternative to reducing the number of samples of the classes using SOM. In general, users should balance their training data for better performance. 
 
 ## Conclusion{-}
 

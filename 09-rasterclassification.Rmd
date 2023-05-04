@@ -22,7 +22,7 @@ data("samples_prodes_4classes")
 summary(samples_prodes_4classes)
 ```
 
-It is helpful to plot the basic patterns associated with the samples to understand the training set better. The function `sits_patterns()` uses a generalized additive model (GAM) to predict a smooth, idealized approximation to the time series associated with each class for all bands. Since the data cube used in the classification has only three bands ("B02", "B8A", and "B11"), we filter the samples for these bands before showing the patterns. 
+It is helpful to plot the basic patterns associated with the samples to understand the training set better. The function `sits_patterns()` uses a generalized additive model (GAM) to predict a smooth, idealized approximation to the time series associated with each class for all bands. Since the data cube used in the classification has only three bands (B02, B8A, and B11), we filter the samples for these bands before showing the patterns. 
 
 ```{r, tidy = "styler", out.width = "90%", fig.align="center", fig.cap="Patterns associated to the training samples"}
 samples_3bands <- sits_select(
@@ -112,7 +112,7 @@ The labeled map generated from the pixel-based time series classification method
 
 Reclassification of a remote sensing map refers to changing the classes assigned to different pixels in the image. The purpose of reclassification is to modify the information contained in the image to better suit a specific use case. In `sits`, reclassification involves assigning new classes to pixels based on additional information from a reference map. Users define rules according to the desired outcome. These rules are then applied to the classified map. The result is a new map with updated classes.
 
-To illustrate the reclassification operation in `sits`, we take a classified data cube stored in the `sitsdata` package. As discussed in the "Earth observation data cubes" Chapter, `sits` can create a data cube from a classified image file. Users need to provide the original data source and collection, the directory where data is stored (`data_dir`), the information on how to retrieve data cube parameters from file names (`parse_info`), and the labels used in the classification. 
+To illustrate the reclassification in `sits`, we take a classified data cube stored in the `sitsdata` package. As discussed in Chapter [Earth observation data cubes](https://e-sensing.github.io/sitsbook/earth-observation-data-cubes.html), `sits` can create a data cube from a classified image file. Users need to provide the original data source and collection, the directory where data is stored (`data_dir`), the information on how to retrieve data cube parameters from file names (`parse_info`), and the labels used in the classification. 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="original classification map."}
 # Open classification map
@@ -132,7 +132,7 @@ plot(ro_class)
 
 The above map shows the total extent of deforestation by clear cuts estimated by the `sits` random forest algorithm in an area in Rondonia, Brazil, based on a time series of Sentinel-2 images for the period `2020-06-04` to `2021-08-26`. Suppose we want to estimate the deforestation that occurred period from June 2020 to August 2021. We need a reference map containing information on forest cuts before 2020. 
 
-In this example, we use as a reference the PRODES deforestation map of Amazonia created by Brazil's National Institute for Space Research (INPE). This map is produced by visual interpretation. PRODES measures deforestation every year, starting from August of one year to July of the following year. The contains classes that represent the natural world ("Forest", "Water", "NonForest", and  "NonForest2") and classes that capture the yearly deforestation increments. These classes are named "dYYYY" and "rYYYY"; the first refers to deforestation in a given year (e.g., "d2008" for deforestation for August 2007 to July 2008); the second to places where the satellite data is not sufficient to determine the land cover (e.g, "r2010" for 2010). This map is available on package "sitsdata", as shown below.
+In this example, we use as a reference the PRODES deforestation map of Amazonia created by Brazil's National Institute for Space Research (INPE). This map is produced by visual interpretation. PRODES measures deforestation every year, starting from August of one year to July of the following year. It contains classes that represent the natural world ("Forest", "Water", "NonForest", and  "NonForest2") and classes that capture the yearly deforestation increments. These classes are named "dYYYY" and "rYYYY"; the first refers to deforestation in a given year (e.g., "d2008" for deforestation for August 2007 to July 2008); the second to places where the satellite data is not sufficient to determine the land class (e.g, "r2010" for 2010). This map is available on package "sitsdata", as shown below.
 
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap="Deforestation map produced by sits."}
@@ -186,7 +186,7 @@ def_legend <- c(
 plot(prodes2021, legend = def_legend)
 ```
 
-Taking the PRODES map as our reference, we can include new labels in the classified map produced by `sits` using `sits_reclassify()`. The new name "Defor_2020" will be applied to all pixels that PRODES considers that have been deforested before July 2020. We also include a "Non_Forest" class to include all pixels that PRODES takes as not covered by native vegetation, such as wetlands and rocky areas. The PRODES classes will be used as a mask over the `sits` deforestation map.
+Taking the PRODES map as our reference, we can include new labels in the classified map produced by `sits` using `sits_reclassify()`. The new name "Defor_2020" will be applied to all pixels that PRODES considers that have been deforested before July 2020. We also use a "Non_Forest" class to include all pixels that PRODES takes as not covered by native vegetation, such as wetlands and rocky areas. The PRODES classes will be used as a mask over the `sits` deforestation map.
 
 The `sits_reclassify()` operation requires the parameters: (a) `cube`, the classified data cube whose pixels will be reclassified; (b) `mask`, the reference data cube used as a mask; (c) `rules`, a named list. The names of the `rules` list will be the new label. Each new label is associated with a `mask` vector that includes the labels of the reference map that will be joined. `sits_reclassify()` then compares the original and reference map pixel by pixel. For each pixel of the reference map whose labels are in one of the `rules`, the algorithm relabels the original map. The result will be a reclassified map with the original labels plus the new labels that have been masked using the reference map.
 
@@ -230,7 +230,7 @@ This section provides an overview of how the functions `sits_classify()`, `sits_
 
 The classification procedure benefits from the fact that most images available in cloud collections are stored as COGs (cloud-optimized Geotiff). COGs are regular GeoTIFF files organized in regular square blocks to improve visualization and access for large data sets. Thus, data requests can be optimized to access only portions of the images. All cloud services supported by `sits` use COG files. The classification algorithm in `sits` uses COGs to ensure optimal data access, reducing I/O demand as much as possible.
 
-The approach for parallel processing in `sits`, depicted in the figure below, has the following steps:
+The approach for parallel processing in `sits`, depicted in Figure \@ref(fig:par), has the following steps:
 
 1. Based on the block size of individual COG files, calculate the size of each chunk that must be loaded in memory, considering the number of bands and the timeline's length. Chunk access is optimized for the efficient transfer of data blocks.
 2. Divide the total memory available by the chunk size to determine how many processes can run in parallel. 
@@ -239,7 +239,7 @@ The approach for parallel processing in `sits`, depicted in the figure below, ha
 5. Check that subimages have been produced correctly. If there is a problem with one or more subimages, run a failure recovery procedure to ensure all data is processed.
 6. After generating all subimages, join them to obtain the result.
 
-```{r, out.width = "90%", out.height = "90%", echo = FALSE, fig.align="center", fig.cap="Parallel processing in sits (source: Simoes et al.,2021)."}
+```{r par, out.width = "90%", out.height = "90%", echo = FALSE, fig.align="center", fig.cap="Parallel processing in sits (source: Simoes et al.,2021)."}
 knitr::include_graphics("images/sits_parallel.png")
 ```
 

@@ -122,7 +122,7 @@
 #&gt; 2 Cleared_Area      115 0.293
 #&gt; 3 Forest            107 0.272
 #&gt; 4 Highly_Degraded    75 0.191</code></pre>
-<p>It is helpful to plot the basic patterns associated with the samples to understand the training set better. The function <code><a href="https://rdrr.io/pkg/sits/man/sits_patterns.html">sits_patterns()</a></code> uses a generalized additive model (GAM) to predict a smooth, idealized approximation to the time series associated with each class for all bands. Since the data cube used in the classification has only three bands (“B02”, “B8A”, and “B11”), we filter the samples for these bands before showing the patterns.</p>
+<p>It is helpful to plot the basic patterns associated with the samples to understand the training set better. The function <code><a href="https://rdrr.io/pkg/sits/man/sits_patterns.html">sits_patterns()</a></code> uses a generalized additive model (GAM) to predict a smooth, idealized approximation to the time series associated with each class for all bands. Since the data cube used in the classification has only three bands (B02, B8A, and B11), we filter the samples for these bands before showing the patterns.</p>
 <div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">samples_3bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">samples_prodes_4classes</span>,</span>
@@ -130,8 +130,8 @@
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_patterns.html">sits_patterns</a></span><span class="op">(</span><span class="va">samples_3bands</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-110"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-110-1.png" alt="Patterns associated to the training samples" width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-107"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-107-1.png" alt="Patterns associated to the training samples" width="90%"><p class="caption">
 Figure 63: Patterns associated to the training samples
 </p>
 </div>
@@ -154,8 +154,8 @@ Figure 63: Patterns associated to the training samples
 <span><span class="co"># Plot the cube</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_cube_20LKP</span>, dates <span class="op">=</span> <span class="st">"2021-07-25"</span>, red <span class="op">=</span> <span class="st">"B11"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>, blue <span class="op">=</span> <span class="st">"B02"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-111"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-111-1.png" alt="Color composite image of the cube for date 2021-07-25" width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-108"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-108-1.png" alt="Color composite image of the cube for date 2021-07-25" width="90%"><p class="caption">
 Figure 64: Color composite image of the cube for date 2021-07-25
 </p>
 </div>
@@ -180,8 +180,8 @@ Figure 64: Color composite image of the cube for date 2021-07-25
 <span><span class="co"># Plot the evolution of the model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ltae_model</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-112"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-112-1.png" alt="Training evolution of LightTAE model." width="80%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-109"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-109-1.png" alt="Training evolution of LightTAE model." width="80%"><p class="caption">
 Figure 65: Training evolution of LightTAE model.
 </p>
 </div>
@@ -202,8 +202,8 @@ Figure 65: Training evolution of LightTAE model.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_cube_20LKP_probs</span>, palette <span class="op">=</span> <span class="st">"YlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-113"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-113-1.png" alt="Probability maps produced by LightTAE model." width="80%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-110"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-110-1.png" alt="Probability maps produced by LightTAE model." width="80%"><p class="caption">
 Figure 66: Probability maps produced by LightTAE model.
 </p>
 </div>
@@ -219,8 +219,8 @@ Figure 66: Probability maps produced by LightTAE model.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">defor_map</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-114"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-114-1.png" alt="Final classification map." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-111"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-111-1.png" alt="Final classification map." width="100%"><p class="caption">
 Figure 67: Final classification map.
 </p>
 </div>
@@ -230,7 +230,7 @@ Figure 67: Final classification map.
 <h2>Map reclassification<a class="anchor" aria-label="anchor" href="#map-reclassification"><i class="fas fa-link"></i></a>
 </h2>
 <p>Reclassification of a remote sensing map refers to changing the classes assigned to different pixels in the image. The purpose of reclassification is to modify the information contained in the image to better suit a specific use case. In <code>sits</code>, reclassification involves assigning new classes to pixels based on additional information from a reference map. Users define rules according to the desired outcome. These rules are then applied to the classified map. The result is a new map with updated classes.</p>
-<p>To illustrate the reclassification operation in <code>sits</code>, we take a classified data cube stored in the <code>sitsdata</code> package. As discussed in the “Earth observation data cubes” Chapter, <code>sits</code> can create a data cube from a classified image file. Users need to provide the original data source and collection, the directory where data is stored (<code>data_dir</code>), the information on how to retrieve data cube parameters from file names (<code>parse_info</code>), and the labels used in the classification.</p>
+<p>To illustrate the reclassification in <code>sits</code>, we take a classified data cube stored in the <code>sitsdata</code> package. As discussed in Chapter <a href="https://e-sensing.github.io/sitsbook/earth-observation-data-cubes.html">Earth observation data cubes</a>, <code>sits</code> can create a data cube from a classified image file. Users need to provide the original data source and collection, the directory where data is stored (<code>data_dir</code>), the information on how to retrieve data cube parameters from file names (<code>parse_info</code>), and the labels used in the classification.</p>
 <div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Open classification map</span></span>
 <span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/Rondonia-Class"</span>, package <span class="op">=</span> <span class="st">"sitsdata"</span><span class="op">)</span></span>
@@ -250,13 +250,13 @@ Figure 67: Final classification map.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_class</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-115"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-115-1.png" alt="original classification map." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-112"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-112-1.png" alt="original classification map." width="100%"><p class="caption">
 Figure 68: original classification map.
 </p>
 </div>
 <p>The above map shows the total extent of deforestation by clear cuts estimated by the <code>sits</code> random forest algorithm in an area in Rondonia, Brazil, based on a time series of Sentinel-2 images for the period <code>2020-06-04</code> to <code>2021-08-26</code>. Suppose we want to estimate the deforestation that occurred period from June 2020 to August 2021. We need a reference map containing information on forest cuts before 2020.</p>
-<p>In this example, we use as a reference the PRODES deforestation map of Amazonia created by Brazil’s National Institute for Space Research (INPE). This map is produced by visual interpretation. PRODES measures deforestation every year, starting from August of one year to July of the following year. The contains classes that represent the natural world (“Forest”, “Water”, “NonForest”, and “NonForest2”) and classes that capture the yearly deforestation increments. These classes are named “dYYYY” and “rYYYY”; the first refers to deforestation in a given year (e.g., “d2008” for deforestation for August 2007 to July 2008); the second to places where the satellite data is not sufficient to determine the land cover (e.g, “r2010” for 2010). This map is available on package “sitsdata”, as shown below.</p>
+<p>In this example, we use as a reference the PRODES deforestation map of Amazonia created by Brazil’s National Institute for Space Research (INPE). This map is produced by visual interpretation. PRODES measures deforestation every year, starting from August of one year to July of the following year. It contains classes that represent the natural world (“Forest”, “Water”, “NonForest”, and “NonForest2”) and classes that capture the yearly deforestation increments. These classes are named “dYYYY” and “rYYYY”; the first refers to deforestation in a given year (e.g., “d2008” for deforestation for August 2007 to July 2008); the second to places where the satellite data is not sufficient to determine the land class (e.g, “r2010” for 2010). This map is available on package “sitsdata”, as shown below.</p>
 <div class="sourceCode" id="cb116"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/PRODES"</span>, package <span class="op">=</span> <span class="st">"sitsdata"</span><span class="op">)</span></span>
 <span><span class="va">prodes2021</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
@@ -307,12 +307,12 @@ Figure 68: original classification map.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">prodes2021</span>, legend <span class="op">=</span> <span class="va">def_legend</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-117"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-117-1.png" alt="Deforestation map produced by PRODES." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-114"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-114-1.png" alt="Deforestation map produced by PRODES." width="100%"><p class="caption">
 Figure 69: Deforestation map produced by PRODES.
 </p>
 </div>
-<p>Taking the PRODES map as our reference, we can include new labels in the classified map produced by <code>sits</code> using <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code>. The new name “Defor_2020” will be applied to all pixels that PRODES considers that have been deforested before July 2020. We also include a “Non_Forest” class to include all pixels that PRODES takes as not covered by native vegetation, such as wetlands and rocky areas. The PRODES classes will be used as a mask over the <code>sits</code> deforestation map.</p>
+<p>Taking the PRODES map as our reference, we can include new labels in the classified map produced by <code>sits</code> using <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code>. The new name “Defor_2020” will be applied to all pixels that PRODES considers that have been deforested before July 2020. We also use a “Non_Forest” class to include all pixels that PRODES takes as not covered by native vegetation, such as wetlands and rocky areas. The PRODES classes will be used as a mask over the <code>sits</code> deforestation map.</p>
 <p>The <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code> operation requires the parameters: (a) <code>cube</code>, the classified data cube whose pixels will be reclassified; (b) <code>mask</code>, the reference data cube used as a mask; (c) <code>rules</code>, a named list. The names of the <code>rules</code> list will be the new label. Each new label is associated with a <code>mask</code> vector that includes the labels of the reference map that will be joined. <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code> then compares the original and reference map pixel by pixel. For each pixel of the reference map whose labels are in one of the <code>rules</code>, the algorithm relabels the original map. The result will be a reclassified map with the original labels plus the new labels that have been masked using the reference map.</p>
 <div class="sourceCode" id="cb118"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Reclassify cube</span></span>
@@ -343,8 +343,8 @@ Figure 69: Deforestation map produced by PRODES.
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_def_2021</span><span class="op">)</span></span></code></pre></div>
 <pre><code>#&gt; Warning: palette colors names missing for 8, 9. Therefore, palette color names will be ignored</code></pre>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-118"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-118-1.png" alt="Deforestation map by sits masked by PRODES map." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-115"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-115-1.png" alt="Deforestation map by sits masked by PRODES map." width="100%"><p class="caption">
 Figure 70: Deforestation map by sits masked by PRODES map.
 </p>
 </div>
@@ -356,7 +356,7 @@ Figure 70: Deforestation map by sits masked by PRODES map.
 </h2>
 <p>This section provides an overview of how the functions <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>, <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code>, and <code><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification()</a></code> process images in parallel. To achieve efficiency, <code>sits</code> implements a fault-tolerant multitasking procedure for big EO data classification. Users are not burdened with the need to learn how to do multiprocessing. Thus, their learning curve is shortened. Image classification in <code>sits</code> is done by a cluster of independent workers linked to a virtual machine. To avoid communication overhead, all large payloads are read and stored independently; direct interaction between the main process and the workers is kept at a minimum.</p>
 <p>The classification procedure benefits from the fact that most images available in cloud collections are stored as COGs (cloud-optimized Geotiff). COGs are regular GeoTIFF files organized in regular square blocks to improve visualization and access for large data sets. Thus, data requests can be optimized to access only portions of the images. All cloud services supported by <code>sits</code> use COG files. The classification algorithm in <code>sits</code> uses COGs to ensure optimal data access, reducing I/O demand as much as possible.</p>
-<p>The approach for parallel processing in <code>sits</code>, depicted in the figure below, has the following steps:</p>
+<p>The approach for parallel processing in <code>sits</code>, depicted in Figure <a href="image-classification-in-data-cubes.html#fig:par">71</a>, has the following steps:</p>
 <ol style="list-style-type: decimal">
 <li>Based on the block size of individual COG files, calculate the size of each chunk that must be loaded in memory, considering the number of bands and the timeline’s length. Chunk access is optimized for the efficient transfer of data blocks.</li>
 <li>Divide the total memory available by the chunk size to determine how many processes can run in parallel.</li>
@@ -366,7 +366,7 @@ Figure 70: Deforestation map by sits masked by PRODES map.
 <li>After generating all subimages, join them to obtain the result.</li>
 </ol>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-119"></span>
+<span style="display:block;" id="fig:par"></span>
 <img src="images/sits_parallel.png" alt="Parallel processing in sits (source: Simoes et al.,2021)." width="90%" height="90%"><p class="caption">
 Figure 71: Parallel processing in sits (source: Simoes et al.,2021).
 </p>
@@ -405,7 +405,7 @@ Figure 71: Parallel processing in sits (source: Simoes et al.,2021).
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-03.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-04.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

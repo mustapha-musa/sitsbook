@@ -25,9 +25,9 @@ A time series is a set of data points collected at regular intervals over time. 
 
 ## How `sits` works {.unnumbered}
 
-The `sits` package uses satellite image time series for land classification, using  a *time-first, space-later* approach. In the data preparation part, collections of big Earth observation images are organized as data cubes. Each spatial location of a data cube is associated with a time series. Locations with known labels train a machine learning algorithm, which classifies all time series of a data cube, as shown in Figure 1.
+The `sits` package uses satellite image time series for land classification, using  a *time-first, space-later* approach. In the data preparation part, collections of big Earth observation images are organized as data cubes. Each spatial location of a data cube is associated with a time series. Locations with known labels train a machine learning algorithm, which classifies all time series of a data cube, as shown in Figure \@ref(fig:gview).
 
-```{r, echo = FALSE, out.width = "70%", out.height = "70%", fig.align="center", fig.cap="Using time series for land classification (source: authors)."}
+```{r gview, echo = FALSE, out.width = "70%", out.height = "70%", fig.align="center", fig.cap="Using time series for land classification (source: authors)."}
 knitr::include_graphics("images/sits_general_view.png")
 ```
 
@@ -89,10 +89,14 @@ kableExtra::kbl(sits_api,
 ```
 
 
-```{r, echo = FALSE, out.width = "100%", out.height = "100%", fig.align="center", fig.cap="Main functions of the sits API (source: authors)."}
+```{r api, echo = FALSE, out.width = "100%", out.height = "100%", fig.align="center", fig.cap="Main functions of the sits API (source: authors)."}
 
 knitr::include_graphics("images/sits_api.png") 
 ```
+
+## Land use and land cover{-}
+
+Since the main aim of `sits` is to support land use and land cover classification, this section presents a short discussion on the use of these terms. The UN Food and Agriculture Organization define land cover as "the observed biophysical cover on the Earth's surface" [@DiGregorio2016].  Land cover can be observed and mapped directly through remote sensing images. In FAO's guidelines and reports, land use is described as "the human activities or purposes for which land is managed or exploited". FAO's land use classifications include classes such as cropland and pasture. One of the advantages of using image time series for land classification is its capacity of measuring changes in the landscape related to agricultural practices. For example, the time series of a vegetation index in an area used for crop production will show a pattern of minima (planting and sowing stages) and maxima (flowering stage). Thus, classification schemas based on image time series data can be richer and more detailed than those associated only with land cover. This book uses the term "land classification" to refer to image classification that represents both land cover and land use classes.
 
 ## Classes and labels{-}
 
@@ -151,7 +155,7 @@ samples_matogrosso_mod13q1[1:2,]
 
 The time series tibble contains data and metadata. The first six columns contain the metadata: spatial and temporal information, the label assigned to the sample, and the data cube from where the data has been extracted. The `time_series` column contains the time series data for each spatiotemporal location. This data is also organized as a tibble, with a column with the dates and the other columns with the values for each spectral band. For more details on handling time series data, please see the Chapter [Working with time series](https://e-sensing.github.io/sitsbook/working-with-time-series.html).
 
-It is helpful to plot the dispersion of the time series. In what follows, for brevity, we will filter only one label ("Forest") and select one index (NDVI). Note that for filtering the label we use a function from `dplyr` package, while for selecting the index we use `sits_select()`.  The resulting plot shows all the time series associated with the label "Forest" and index "NDVI", highlighting the median and the first and third quartiles.
+It is helpful to plot the dispersion of the time series. In what follows, for brevity, we will filter only one label ("Forest") and select one index (NDVI). Note that for filtering the label we use a function from `dplyr` package, while for selecting the index we use `sits_select()`.  The resulting plot shows all the time series associated with the label "Forest" and index NDVI, highlighting the median and the first and third quartiles.
 
 ```{r, out.width = "80%", tidy="styler", fig.align = 'center', fig.cap="Joint plot of all samples in band NDVI for label Forest.", strip.white = FALSE}
 samples_forest <- dplyr::filter(
@@ -171,7 +175,7 @@ The next step is to train a machine learning (ML) model using `sits_train()`. It
 
 Since the time series data has four attributes (EVI, NDVI, NIR, and MIR) and the data cube images have only two, we select the NDVI and EVI values and use the resulting data for training. To build the classification model, we use a random forest model called by `sits_rfor()`.
 
-```{r, out.width = "80%", tidy="styler", fig.align="center", fig.cap="Most relevant variables of trained random forests model."}
+```{r, out.width = "80%", tidy="styler", fig.align="center", fig.cap="Most relevant variables of trained random forest model."}
 # Select the bands NDVI and EVI
 samples_2bands <- sits_select(
     data = samples_matogrosso_mod13q1, 
