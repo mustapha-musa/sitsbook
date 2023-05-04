@@ -94,7 +94,7 @@ kableExtra::kbl(sits_api,
 knitr::include_graphics("images/sits_api.png") 
 ```
 
-## Classes and labels
+## Classes and labels {.unnumbered}
 
 In this book, we distinguish between the concepts of "class" and "label". A class denotes a group of spatial objects that share similar land cover and land use, such as urban areas, forests, water bodies, or agricultural fields. Classes are defined based on the specific application or study being conducted, and they help to analyse the vast amount of data obtained from remote sensing imagery. A label is the assignment or identification given to a specific feature or object within an image. Labels are markers that indicate to which class a particular pixel, segment, or object belongs. Labels are essential for supervised classification methods, where a training dataset with known labels is used to train a machine learning algorithm to recognize and classify new, unlabelled data. Thus, a "class" represents the overall category or group of features, while a "label" refers to the specific assignment of a class to a particular feature or object within an image. 
 
@@ -151,7 +151,7 @@ samples_matogrosso_mod13q1[1:2,]
 
 The time series tibble contains data and metadata. The first six columns contain the metadata: spatial and temporal information, the label assigned to the sample, and the data cube from where the data has been extracted. The `time_series` column contains the time series data for each spatiotemporal location. This data is also organized as a tibble, with a column with the dates and the other columns with the values for each spectral band. For more details on handling time series data, please see the Chapter [Working with time series](https://e-sensing.github.io/sitsbook/working-with-time-series.html).
 
-It is helpful to plot the dispersion of the time series. In what follows, for brevity, we will filter only one label ("Forest") and select one index (NDVI). Note that for filtering the label we use a function from `dplyr` package, while for selecting the index we use `sits_select()`.  The resulting plot shows all the time series associated with the label "Forest" and index "NDVI", highlighting the median and the first and third quartiles.
+It is helpful to plot the dispersion of the time series. In what follows, for brevity, we will filter only one label ("Forest") and select one index (NDVI). Note that for filtering the label we use a function from `dplyr` package, while for selecting the index we use `sits_select()`.  The resulting plot shows all the time series associated with the label "Forest" and index NDVI, highlighting the median and the first and third quartiles.
 
 ```{r, out.width = "80%", tidy="styler", fig.align = 'center', fig.cap="Joint plot of all samples in band NDVI for label Forest.", strip.white = FALSE}
 samples_forest <- dplyr::filter(
@@ -171,7 +171,7 @@ The next step is to train a machine learning (ML) model using `sits_train()`. It
 
 Since the time series data has four attributes (EVI, NDVI, NIR, and MIR) and the data cube images have only two, we select the NDVI and EVI values and use the resulting data for training. To build the classification model, we use a random forest model called by `sits_rfor()`.
 
-```{r, out.width = "80%", tidy="styler", fig.align="center", fig.cap="Most relevant variables of trained random forests model."}
+```{r, out.width = "80%", tidy="styler", fig.align="center", fig.cap="Most relevant variables of trained random forest model."}
 # Select the bands NDVI and EVI
 samples_2bands <- sits_select(
     data = samples_matogrosso_mod13q1, 
