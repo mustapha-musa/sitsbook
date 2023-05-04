@@ -58,7 +58,7 @@ This data set is available in the package `sitsdata` as `samples_cerrado_lc8`.
 library(sitsdata)
 data("samples_cerrado_lc8")
 # Show the class distribution in the new training set
-sits_labels_summary(samples_cerrado_lc8)
+summary(samples_cerrado_lc8)
 ```
 
 ## Cross-validation of training set{-}
@@ -86,15 +86,15 @@ samples_cerrado_bal <- sits_reduce_imbalance(
     multicores = 4)
 
 # Show new sample distribution
-sits_labels_summary(samples_cerrado_bal)
+summary(samples_cerrado_bal)
 ```
 
 ```{r, tidy = "styler", echo = FALSE, eval=TRUE}
 samples_cerrado_bal <- readRDS("./etc/samples_cerrado_bal.rds")
-sits_labels_summary(samples_cerrado_bal)
+summary(samples_cerrado_bal)
 ```
 
-The following code does a five-fold validation using random forests. 
+The following code does a five-fold validation using the random forest algorithm. 
 
 ```{r, tidy = "styler"}
 # Perform a five-fold validation for the Cerrado data set
@@ -106,10 +106,10 @@ val_rfor <- sits_kfold_validate(
     multicores = 5)
 
 # Print the validation statistics
-sits_accuracy_summary(val_rfor)
+summary(val_rfor)
 ```
 
-One useful function of `sits` is the capacity to compare different validation methods and store them in an XLS file for further analysis. The following example shows how to do this using the Cerrado data set. We take the models: random forests (`sits_rfor()`), extreme gradient boosting (`sits_xgboost()`), temporal CNN (`sits_tempcnn()`), and lightweight temporal attention encoder (`sits_lighttae()`). After computing the confusion matrix and the statistics for each model, we also store the result in a list. When the calculation finishes, `sits_to_xlsx()` writes all the results in an Excel-compatible spreadsheet. 
+One useful function of `sits` is the capacity to compare different validation methods and store them in an XLS file for further analysis. The following example shows how to do this using the Cerrado data set. We take the models: random forest(`sits_rfor()`), extreme gradient boosting (`sits_xgboost()`), temporal CNN (`sits_tempcnn()`), and lightweight temporal attention encoder (`sits_lighttae())`. After computing the confusion matrix and the statistics for each model, we also store the result in a list. When the calculation is finished, the function `sits_to_xlsx()` writes all the results in an Excel-compatible spreadsheet. 
 
 
 ```{r, tidy = "styler", eval = FALSE}
@@ -271,7 +271,6 @@ cerrado_probs_cube <- sits_classify(
 
 cerrado_bayes_cube <- sits_smooth(
     cube = cerrado_probs_cube,
-    type = "bayes",
     memsize = 128,
     multicores = 64,
     output_dir = "./tempdir/chp11")
@@ -287,11 +286,20 @@ Since the above code is included for information only, we use the labeled cube s
 
 ```{r, tidy="styler", out.width = "100%", fig.align="center", fig.cap="Classification of tile 044048 from the Landsat data cube for the Brazilian Cerrado in 2017/2018." }
 # Retrieve the metadata for the classified cube
-# The files are stored as Dropbox links
-cerrado_classif_rds <- system.file("extdata/Cerrado/cerrado_classif_dropbox.rds",
-                                   package = "sitsdata")
+# The files are stored in the sitsdata package
+data_dir <- system.file("extdata/Cerrado", package = "sitsdata")
+# labels for the classification
+labels <- c("Annual_Crop", "Cerrado", "Cerrado", "Nat_NonVeg", "Cerrado",       
+            "Pasture", "Perennial_Crop", "Silviculture", "Sugarcane", "Water")
 # Read the cube metadata
-cerrado_classif <- readRDS(cerrado_classif_rds)
+cerrado_classif <- sits_cube(
+    source = "USGS",
+    collection = "LANDSAT-C2L2-SR",
+    bands = "class",
+    labels = labels,
+    data_dir = data_dir,
+    parse_info = c("X1", "tile", "band", "start_date", "end_date", "version")
+)
 # Plot one tile of the classification
 plot(cerrado_classif, tiles = "044048")
 ```

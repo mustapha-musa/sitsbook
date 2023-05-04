@@ -230,8 +230,8 @@ It is also possible to create local cubes based on results that have been produc
 1. `source`:  Name of the original data provider. 
 2. `collection`: Name of the collection from where the data was extracted. 
 3. `data_dir`: Local directory for the classified images.
-4. `band`: Band name associated with the type of result. Use: (a) `probs` for probability cubes produced by `sits_classify()`; (b) `bayes`, for cubes produced by `sits_smooth()`; (c) `entropy`, `least`, `ratio` or `margin`, according to the method selected when using `sits_uncertainty()`; and (d) `class` for labeled cubes.
-5. `labels`: Labels associated with the classification results (not required for cubes produced by `sits_uncertainty()`).
+4. `band`: Band name associated with the type of result. Use: (a) `probs` for probability cubes produced by `sits_classify()`; (b) `bayes`, for cubes produced by `sits_smooth()`; (c) `entropy`, `least`, `ratio` or `margin`, according to the method selected when using `sits_uncertainty()`; and (d) `class` for classified cubes.
+5. `labels`: Labels associated with the names of the classes (not required for cubes produced by `sits_uncertainty()`).
 6. `version`: Version of the result (default = `v1`).
 7. `parse_info`: File name parsing information to allow `sits` to deduce the values of `tile`, `start_date`, `end_date`, `band`, and `version` from the file name. Unlike non-classified image files, cubes produced by classification and post-classification have both `start_date` and `end_date`. 
 

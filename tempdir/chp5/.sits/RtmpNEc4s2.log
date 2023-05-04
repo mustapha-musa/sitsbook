@@ -1,0 +1,57 @@
+date_time, pid, event, elapsed_time, mem_used, max_mem_used, key, value
+2023-05-02 20:41:15, 40852, block_size, , 97.2, 3640309, list, "list(col = 1, row = 1, ncols = 1830, nrows = 1024)"
+2023-05-02 20:41:15, 40852, start_block_data_read, 0.005223, 97.7, 3773008, band, B02
+2023-05-02 20:41:15, 40852, end_block_data_read, 0.06604, 104.9, 7460306, band, B02
+2023-05-02 20:41:15, 40852, start_block_data_process, 1.597e-05, 104.9, 7460306, band, B02
+2023-05-02 20:41:15, 40852, end_block_data_process, 0.03795, 112.1, 9336320, band, B02
+2023-05-02 20:41:16, 40852, start_block_data_read, 0.01536, 112.1, 9336320, band, B03
+2023-05-02 20:41:16, 40852, end_block_data_read, 0.0742, 119.4, 9607115, band, B03
+2023-05-02 20:41:16, 40852, start_block_data_process, 2.098e-05, 119.4, 9607115, band, B03
+2023-05-02 20:41:16, 40852, end_block_data_process, 0.03194, 126.5, 11387353, band, B03
+2023-05-02 20:41:16, 40852, start_block_data_read, 0.01162, 126.5, 11387353, band, B04
+2023-05-02 20:41:16, 40852, end_block_data_read, 0.04681, 133.7, 11389170, band, B04
+2023-05-02 20:41:16, 40852, start_block_data_process, 1.788e-05, 133.7, 11389170, band, B04
+2023-05-02 20:41:17, 40852, end_block_data_process, 0.02483, 140.8, 13261277, band, B04
+2023-05-02 20:41:17, 40852, start_block_data_read, 0.01152, 140.8, 13261277, band, B8A
+2023-05-02 20:41:17, 40852, end_block_data_read, 0.04991, 148, 13263093, band, B8A
+2023-05-02 20:41:17, 40852, start_block_data_process, 2.122e-05, 148, 13263093, band, B8A
+2023-05-02 20:41:17, 40852, end_block_data_process, 0.0244, 155.1, 18883557, band, B8A
+2023-05-02 20:41:17, 40852, start_block_data_read, 0.01186, 155.1, 18883557, band, B11
+2023-05-02 20:41:17, 40852, end_block_data_read, 0.05654, 162.3, 18883557, band, B11
+2023-05-02 20:41:18, 40852, start_block_data_process, 1.788e-05, 162.3, 18883557, band, B11
+2023-05-02 20:41:18, 40852, end_block_data_process, 0.03124, 169.4, 18883557, band, B11
+2023-05-02 20:41:18, 40852, start_block_data_read, 0.01164, 169.4, 18883557, band, B12
+2023-05-02 20:41:18, 40852, end_block_data_read, 0.04876, 176.6, 18883557, band, B12
+2023-05-02 20:41:18, 40852, start_block_data_process, 2.098e-05, 176.6, 18883557, band, B12
+2023-05-02 20:41:18, 40852, end_block_data_process, 0.02283, 183.7, 22631403, band, B12
+2023-05-02 20:41:18, 40852, start_nnls_solver, 0.01322, 183.7, 22631403, dim_values, "c(1873920, 6)"
+2023-05-02 20:41:23, 40852, end_nnls_solver, 4.926, 155.2, 33877632, dim_values, "c(1873920, 4)"
+2023-05-02 20:41:24, 40852, write_block, 0.01338, 155.2, 33877632, files, "c(""./tempdir/chp5/.sits/SENTINEL-2_MSI_20LKP_FOREST_2018-07-18_block_1_1.tif"", ""./tempdir/chp5/.sits/SENTINEL-2_MSI_20LKP_SOIL_2018-07-18_block_1_1.tif"", ""./tempdir/chp5/.sits/SENTINEL-2_MSI_20LKP_WATER_2018-07-18_block_1_1.tif"", ""./tempdir/chp5/.sits/SENTINEL-2_MSI_20LKP_RMSE_2018-07-18_block_1_1.tif"")"
+2023-05-02 20:41:24, 40852, block_size, 0.6111, 98.2, 34529081, list, "list(col = 1, row = 1025, ncols = 1830, nrows = 806)"
+2023-05-02 20:41:24, 40852, start_block_data_read, 0.00429, 98.2, 34529081, band, B02
+2023-05-02 20:41:25, 40852, end_block_data_read, 0.03657, 103.8, 34529081, band, B02
+2023-05-02 20:41:25, 40852, start_block_data_process, 1.693e-05, 103.8, 34529081, band, B02
+2023-05-02 20:41:25, 40852, end_block_data_process, 0.01639, 109.5, 34529081, band, B02
+2023-05-02 20:41:25, 40852, start_block_data_read, 0.007134, 109.5, 34529081, band, B03
+2023-05-02 20:41:25, 40852, end_block_data_read, 0.03882, 115.1, 34529081, band, B03
+2023-05-02 20:41:25, 40852, start_block_data_process, 2.098e-05, 115.1, 34529081, band, B03
+2023-05-02 20:41:25, 40852, end_block_data_process, 0.01756, 120.7, 34529081, band, B03
+2023-05-02 20:41:25, 40852, start_block_data_read, 0.007416, 120.7, 34529081, band, B04
+2023-05-02 20:41:26, 40852, end_block_data_read, 0.04679, 126.4, 34529081, band, B04
+2023-05-02 20:41:26, 40852, start_block_data_process, 2.193e-05, 126.4, 34529081, band, B04
+2023-05-02 20:41:26, 40852, end_block_data_process, 0.01979, 132, 34529081, band, B04
+2023-05-02 20:41:26, 40852, start_block_data_read, 0.005967, 132, 34529081, band, B8A
+2023-05-02 20:41:26, 40852, end_block_data_read, 0.0429, 137.6, 34529081, band, B8A
+2023-05-02 20:41:26, 40852, start_block_data_process, 1.812e-05, 137.6, 34529081, band, B8A
+2023-05-02 20:41:26, 40852, end_block_data_process, 0.02737, 143.2, 34529081, band, B8A
+2023-05-02 20:41:27, 40852, start_block_data_read, 0.00594, 143.2, 34529081, band, B11
+2023-05-02 20:41:27, 40852, end_block_data_read, 0.0414, 148.9, 34529081, band, B11
+2023-05-02 20:41:27, 40852, start_block_data_process, 1.907e-05, 148.9, 34529081, band, B11
+2023-05-02 20:41:27, 40852, end_block_data_process, 0.01594, 154.5, 34529081, band, B11
+2023-05-02 20:41:27, 40852, start_block_data_read, 0.006833, 154.5, 34529081, band, B12
+2023-05-02 20:41:27, 40852, end_block_data_read, 0.03913, 160.1, 34529081, band, B12
+2023-05-02 20:41:27, 40852, start_block_data_process, 1.788e-05, 160.1, 34529081, band, B12
+2023-05-02 20:41:28, 40852, end_block_data_process, 0.0177, 165.7, 34529081, band, B12
+2023-05-02 20:41:28, 40852, start_nnls_solver, 0.006761, 165.7, 34529081, dim_values, "c(1474980, 6)"
+2023-05-02 20:41:32, 40852, end_nnls_solver, 3.987, 143.2, 34529081, dim_values, "c(1474980, 4)"
+2023-05-02 20:41:32, 40852, write_block, 0.01315, 143.2, 34529081, files, "c(""./tempdir/chp5/.sits/SENTINEL-2_MSI_20LKP_FOREST_2018-07-18_block_1025_1.tif"", ""./tempdir/chp5/.sits/SENTINEL-2_MSI_20LKP_SOIL_2018-07-18_block_1025_1.tif"", ""./tempdir/chp5/.sits/SENTINEL-2_MSI_20LKP_WATER_2018-07-18_block_1025_1.tif"", ""./tempdir/chp5/.sits/SENTINEL-2_MSI_20LKP_RMSE_2018-07-18_block_1025_1.tif"")"
