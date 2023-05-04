@@ -134,13 +134,13 @@ ro_cube_label_rfor <- sits_label_classification(
     output_dir = "./tempdir/chp13/",
     version = "rfor",
     memsize = 16,
-    multicores = 4  
-)
+    multicores = 4)
+
 # Plot the random forest version of the classified cube
 plot(ro_cube_label_rfor)
 ```
 
-Comparing the two results, while most of the land areas have been classified equally, there are places of disagreement concerning the places classified as "Burned_Area" and "Highly Degraded". Since the random forests model is sensitive to the response of images at the end of the period, it tends to be better to distinguish burned areas. However, it tends to reduce the forest areas, classifying some of them as highly degraded. Such misclassification happens because the random forest algorithm disregards the temporal correlation of the input data. Values from a single date are used to distinguish between natural and degraded forest areas. 
+Comparing the two results, while most of the land areas have been classified equally, there are places of disagreement concerning the places classified as "Burned_Area" and "Highly_Degraded". Since the random forests model is sensitive to the response of images at the end of the period, it tends to be better to distinguish burned areas. However, it tends to reduce the forest areas, classifying some of them as highly degraded. Such misclassification happens because the random forest algorithm disregards the temporal correlation of the input data. Values from a single date are used to distinguish between natural and degraded forest areas. 
 
 Given the differences and complementaries between the two predicted outcomes, combining them using `sits_combine_predictions()` is useful. The first option for ensemble prediction is to take the average of the probability maps to reduce noise.
 

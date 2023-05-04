@@ -109,7 +109,7 @@ val_rfor <- sits_kfold_validate(
 summary(val_rfor)
 ```
 
-One useful function of `sits` is the capacity to compare different validation methods and store them in an XLS file for further analysis. The following example shows how to do this using the Cerrado data set. We take the models: random forest(`sits_rfor()`), extreme gradient boosting (`sits_xgboost()`), temporal CNN (`sits_tempcnn()`), and lightweight temporal attention encoder (`sits_lighttae())`. After computing the confusion matrix and the statistics for each model, we also store the result in a list. When the calculation is finished, the function `sits_to_xlsx()` writes all the results in an Excel-compatible spreadsheet. 
+One useful function of `sits` is the capacity to compare different validation methods and store them in an XLS file for further analysis. The following example shows how to do this using the Cerrado data set. We take the models: random forest (`sits_rfor()`), extreme gradient boosting (`sits_xgboost()`), temporal CNN (`sits_tempcnn()`), and lightweight temporal attention encoder (`sits_lighttae()`). After computing the confusion matrix and the statistics for each model, we also store the result in a list. When the calculation is finished, the function `sits_to_xlsx()` writes all the results in an Excel-compatible spreadsheet. 
 
 
 ```{r, tidy = "styler", eval = FALSE}
