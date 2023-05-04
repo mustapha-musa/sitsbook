@@ -29,7 +29,6 @@ First, we define a data cube for a tile in the state of Rondonia, Brazil, includ
 # Create a directory to store files
 if (!file.exists("./tempdir/chp5"))
     dir.create("./tempdir/chp5")
-
 # Create an irregular data cube from MSPC
 s2_cube <- sits_cube(
     source = "AWS",
@@ -41,7 +40,6 @@ s2_cube <- sits_cube(
               "B12","CLOUD"),
     start_date = as.Date("2018-07-01"),
     end_date = as.Date("2018-08-31"))
-
 # Regularize the cube to 15 day intervals
 reg_cube <- sits_regularize(
           cube       = s2_cube,
@@ -63,7 +61,6 @@ reg_cube <- sits_apply(reg_cube,
     output_dir = "./tempdir/chp5",
     multicores = 4,
     memsize = 12)
-
 plot(reg_cube, band = "NDVI", palette = "RdYlGn")
 ```
 We now compare the traditional NDVI with other vegetation indexes computed using red-edge bands. We first compute the NDRE1 using bands B06 and B05. 
@@ -76,35 +73,30 @@ reg_cube <- sits_apply(reg_cube,
     output_dir = "./tempdir/chp5",
     multicores = 4,
     memsize = 12)
-
 # Plot NDRE1 index
 plot(reg_cube, band = "NDRE1",  palette = "RdYlGn")
 ```
 Notice that the contrast between forests and deforested areas is more robust in the NDRE1 index than with NDVI. To compare this index with other red-edge based indexes, one option is to compute NDRE2 using bands B07 and B05, as shown below.
 
 ```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NDRE2 using bands B07 and B05 of Sentinel-2."}
-
 # Calculate NDRE2 index using bands B07 and B05
 reg_cube <- sits_apply(reg_cube,
     NDRE2 = (B07 - B05)/(B07 + B05),
     output_dir = "./tempdir/chp5",
     multicores = 4,
     memsize = 12)
-
 # Plot NDRE2 index
 plot(reg_cube, band = "NDRE2", palette = "RdYlGn")
 ```
 Finally, we can calculate the third red-edge based vegetation index using bands B07 and B06. 
 
 ```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="NDVI using bands B07 and B06 of Sentinel-2."}
-
 # Calculate NDRE3 index using bands B07 and B06 
 reg_cube <- sits_apply(reg_cube,
     NDRE3 = (B07 - B06)/(B07 + B06),
     output_dir = "./tempdir/chp5",
     multicores = 4,
     memsize = 12)
-
 # plot NDRE3 index
 plot(reg_cube, band = "NDRE3", palette = "RdYlGn")
 ```
@@ -120,7 +112,6 @@ reg_cube <- sits_apply(reg_cube,
     output_dir = "./tempdir/chp5",
     multicores = 4,
     memsize = 12)
-
 # Plot the NBR for the first date"
 plot(reg_cube, band = "NBR", palette = "Reds")
 ```
@@ -148,7 +139,6 @@ em <- tibble::tribble(
     "forest",  200,  352,  189, 2800, 1340,  546,
     "soil",    400,  650,  700, 3600, 3500, 1800,
     "water",   700, 1100, 1400,  850,   40,   26)
-
 # Generate the mixture model
 reg_cube <- sits_mixture_model(
     data = reg_cube,
@@ -156,13 +146,11 @@ reg_cube <- sits_mixture_model(
     multicores = 4,
     memsize = 12,
     output_dir = "./tempdir/chp5")
-
 # Plot the FOREST for the first date using the Greens palette
 plot(reg_cube, band = "FOREST", palette = "Greens")
 ```
 
 ```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Percentage of water per pixel estimated by mixture model."}
-
 # Plot the water endmember for the first date using the Blues palette
 plot(reg_cube, band = "WATER", palette = "Blues")
 ```

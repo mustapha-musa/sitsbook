@@ -125,7 +125,7 @@
 <div id="utilities-for-handling-time-series" class="section level2 unnumbered">
 <h2>Utilities for handling time series<a class="anchor" aria-label="anchor" href="#utilities-for-handling-time-series"><i class="fas fa-link"></i></a>
 </h2>
-<p>The package provides functions for data manipulation and displaying information for time series tibbles. For example, <code><a href="https://rdrr.io/pkg/sits/man/sits_labels_summary.html">sits_labels_summary()</a></code> shows the labels of the sample set and their frequencies.</p>
+<p>The package provides functions for data manipulation and displaying information for time series tibbles. For example, <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> shows the labels of the sample set and their frequencies.</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">samples_matogrosso_mod13q1</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; # A tibble: 9 × 3
@@ -146,8 +146,8 @@
 <span><span class="va">samples_new_labels</span> <span class="op">&lt;-</span> <span class="va">samples_matogrosso_mod13q1</span></span>
 <span><span class="co"># Show the current labels</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_labels.html">sits_labels</a></span><span class="op">(</span><span class="va">samples_new_labels</span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode"><code>#&gt; [1] "Cerrado"       "Fallow_Cotton" "Forest"        "Pasture"       "Soy_Corn"      "Soy_Cotton"   
-#&gt; [7] "Soy_Fallow"    "Soy_Millet"    "Soy_Sunflower"</code></pre>
+<pre class="sourceCode"><code>#&gt; [1] "Cerrado"       "Fallow_Cotton" "Forest"        "Pasture"       "Soy_Corn"     
+#&gt; [6] "Soy_Cotton"    "Soy_Fallow"    "Soy_Millet"    "Soy_Sunflower"</code></pre>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Update the labels</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_labels.html">sits_labels</a></span><span class="op">(</span><span class="va">samples_new_labels</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
@@ -157,7 +157,6 @@
 <span>  <span class="st">"Croplands"</span>, <span class="st">"Croplands"</span>,</span>
 <span>  <span class="st">"Croplands"</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">samples_new_labels</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; # A tibble: 4 × 3
 #&gt;   label     count   prop
@@ -172,7 +171,6 @@
 <span><span class="va">samples_ndvi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span><span class="va">samples_matogrosso_mod13q1</span>,</span>
 <span>  bands <span class="op">=</span> <span class="st">"NDVI"</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Select only samples with Cerrado label</span></span>
 <span><span class="va">samples_cerrado</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span></span>
 <span>  <span class="va">samples_ndvi</span>,</span>
@@ -197,8 +195,8 @@ Figure 31: Plot of the first ‘Cerrado’ samples.
 <code class="sourceCode R"><span><span class="co"># Plot all cerrado samples together</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">samples_cerrado</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-69"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-69-1.png" alt="Plot of all Cerrado samples." width="70%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-51"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-51-1.png" alt="Plot of all Cerrado samples." width="70%"><p class="caption">
 Figure 32: Plot of all Cerrado samples.
 </p>
 </div>
@@ -224,21 +222,19 @@ Figure 32: Plot of all Cerrado samples.
 <span>  data_dir   <span class="op">=</span> <span class="va">data_dir</span>,</span>
 <span>  parse_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"X1"</span>, <span class="st">"X2"</span>, <span class="st">"tile"</span>, <span class="st">"band"</span>, <span class="st">"date"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Obtain a time series from the raster cube from a point</span></span>
 <span><span class="va">sample_latlong</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
 <span>  longitude <span class="op">=</span> <span class="op">-</span><span class="fl">55.57320</span>,</span>
 <span>  latitude  <span class="op">=</span> <span class="op">-</span><span class="fl">11.50566</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">series</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_get_data.html">sits_get_data</a></span><span class="op">(</span></span>
 <span>  cube <span class="op">=</span> <span class="va">raster_cube</span>,</span>
 <span>  samples <span class="op">=</span> <span class="va">sample_latlong</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">series</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-70"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-70-1.png" alt="NDVI and EVI time series fetched from local raster cube." width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-52"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-52-1.png" alt="NDVI and EVI time series fetched from local raster cube." width="90%"><p class="caption">
 Figure 33: NDVI and EVI time series fetched from local raster cube.
 </p>
 </div>
@@ -334,8 +330,8 @@ GILBERTO: dates.
 <span><span class="co"># Merge the point and plot the series</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_merge.html">sits_merge</a></span><span class="op">(</span><span class="va">point_sg</span>, <span class="va">point_ndvi</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-75"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-75-1.png" alt="Savitzky-Golay filter applied on a multi-year NDVI time series." width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-57"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-57-1.png" alt="Savitzky-Golay filter applied on a multi-year NDVI time series." width="90%"><p class="caption">
 Figure 34: Savitzky-Golay filter applied on a multi-year NDVI time series.
 </p>
 </div>
@@ -353,8 +349,8 @@ Figure 34: Savitzky-Golay filter applied on a multi-year NDVI time series.
 <span><span class="co"># Merge the point and plot the series</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_merge.html">sits_merge</a></span><span class="op">(</span><span class="va">point_whit</span>, <span class="va">point_ndvi</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-76"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-76-1.png" alt="Whittaker filter applied on a one-year NDVI time series." width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-58"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-58-1.png" alt="Whittaker filter applied on a one-year NDVI time series." width="90%"><p class="caption">
 Figure 35: Whittaker filter applied on a one-year NDVI time series.
 </p>
 </div>

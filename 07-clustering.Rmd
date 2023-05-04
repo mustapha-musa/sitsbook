@@ -113,7 +113,6 @@ som_cluster <- sits_som_map(samples_cerrado_mod13q1_2bands,
     alpha = 1.0,
     distance = "euclidean",
     rlen = 20)
-
 # Plot the SOM map
 plot(som_cluster)
 ```
@@ -162,7 +161,6 @@ new_samples <- sits_som_clean_samples(
     prior_threshold = 0.6,
     posterior_threshold = 0.6,
     keep = c("clean", "analyze"))
-
 # Print the new sample distribution
 summary(new_samples)
 ```
@@ -195,7 +193,6 @@ assess_orig <- sits_kfold_validate(
     samples = samples_cerrado_mod13q1_2bands, 
     folds = 5,
     ml_method = sits_rfor())
-
 # Print summary 
 summary(assess_orig)
 ```
@@ -205,7 +202,6 @@ assess_new <- sits_kfold_validate(
     samples = new_samples,
     folds = 5,
     ml_method = sits_rfor())
-
 # Print summary 
 summary(assess_new)
 ```

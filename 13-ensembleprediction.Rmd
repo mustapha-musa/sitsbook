@@ -100,13 +100,11 @@ The deforestation map produced by the `sits_tempcnn()` algorithm has spatial con
 To build a two-member ensemble, we now classify the same image using a random forest algorithm.  
 
 ```{r, tidy = "styler", out.width = "100%", fig.align="center", fig.cap= "Land classification in Rondonia using a random forests algorithm."}
-
 # Train model using random forest algorithm
 rfor_model <- sits_train(
     samples = samples_3bands, 
     ml_method = sits_rfor()
 )
-
 # Classify the data cube using the tempCNN model
 ro_cube_probs_rfor <- sits_classify(
     data = ro_cube_20LKP,

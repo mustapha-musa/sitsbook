@@ -98,7 +98,6 @@ set.seed(290356)
 rfor_model <- sits_train(
     samples = samples_matogrosso_mod13q1, 
     ml_method = sits_rfor(num_trees = 100))
-
 # Plot the most important variables of the model
 plot(rfor_model)
 ```
@@ -111,7 +110,6 @@ The most important explanatory variables are the NIR (near infrared) band on dat
 point_class <- sits_classify(
     data = point_mt_mod13q1, 
     ml_model  = rfor_model)
-
 plot(point_class, bands = c("NDVI", "EVI"))
 ```
 
@@ -124,7 +122,6 @@ Random forests are robust to outliers and can deal with irrelevant inputs [@Hast
 The support vector machine (SVM) classifier is a generalization of a linear classifier that finds an optimal separation hyperplane that minimizes misclassification [@Cortes1995]. Since a set of samples with $n$ features defines an n-dimensional feature space, hyperplanes are linear ${(n-1)}$-dimensional boundaries that define linear partitions in that space. If the classes are linearly separable on the feature space, there will be an optimal solution defined by the maximal margin hyperplane, which is the separating hyperplane that is farthest from the training observations [@James2013]. The maximal margin is computed as the smallest distance from the observations to the hyperplane. The solution for the hyperplane coefficients depends only on the samples that define the maximum margin criteria, the so-called support vectors.
 
 ```{r, echo = FALSE, out.width = "50%", fig.align="center", fig.cap="Maximum-margin hyperplane and margins for an SVM trained with samples from two classes. Samples on the margin are called the support vectors. (source: Larhmam in Wikipedia - licensed as CC-BY-SA-4.0 )."}
-
 knitr::include_graphics("images/svm_margin.png") 
 ```
 
@@ -148,7 +145,6 @@ svm_model <- sits_train(
 point_class <- sits_classify(
     data = point_mt_mod13q1, 
     ml_model = svm_model)
-
 # Plot the result
 plot(point_class, bands = c("NDVI", "EVI"))
 ```
@@ -174,12 +170,10 @@ set.seed(290356)
 xgb_model <- sits_train(
     samples = samples_matogrosso_mod13q1, 
     ml_method = sits_xgboost(verbose = 0))
-
 # Classify using SVM model and plot the result
 point_class <- sits_classify(
     data = point_mt_mod13q1, 
     ml_model = xgb_model)
-
 plot(point_class, bands = c("NDVI", "EVI"))
 ```
 
@@ -191,8 +185,6 @@ To support deep learning methods, `sits` uses the `torch` R package, which takes
 PEDRO: 25) Qual e' esse capitulo de Extensibility?
 GILBERTO: Texto removido.
 -->
-
-
 
 In `sits`, MLP models can be built using `sits_mlp()`. Since there is no established model for generic classification of satellite image time series, designing MLP models requires parameter customization. The most important decisions are the number of layers in the model and the number of neurons per layer. These values are set by the `layers` parameter, which is a list of integer values. The size of the list is the number of layers, and each element indicates the number of nodes per layer.
 
@@ -231,7 +223,6 @@ mlp_model <- sits_train(
         batch_size       = 64,
         verbose          = FALSE,
         validation_split = 0.2))
-
 # Show training evolution
 plot(mlp_model)
 ```
@@ -256,7 +247,6 @@ TempCNN applies one-dimensional convolutions on the input sequence to capture te
 The TempCNN architecture for satellite image time series classification is proposed by Pelletier et al. [@Pelletier2019].  It has three 1D convolutional layers and a final softmax layer for classification (see figure). The authors combine different methods to avoid overfitting and reduce the vanishing gradient effect, including dropout, regularization, and batch normalization. In the TempCNN reference paper [@Pelletier2019], the authors favorably compare their model with the Recurrent Neural Network proposed by Russwurm and Körner [@Russwurm2018] for land use classification. The figure below shows the architecture of the TempCNN model.
 
 ```{r, echo = FALSE, fig.align="center", out.width = "100%", fig.cap="Structure of tempCNN architecture (source: Pelletier et al.(2019))"}
-
 knitr::include_graphics("images/tempcnn.png")
 ```
 
@@ -280,7 +270,6 @@ tempcnn_model <- sits_train(samples_matogrosso_mod13q1,
                           batch_size           = 64,
                           validation_split     = 0.2,
                           verbose              = FALSE))
-
 # Show training evolution
 plot(tempcnn_model)
 ```
@@ -318,7 +307,6 @@ resnet_model <- sits_train(samples_matogrosso_mod13q1,
                           batch_size           = 64,
                           validation_split     = 0.2,
                           verbose              = FALSE))
-
 # Show training evolution
 plot(resnet_model)
 ```
@@ -453,7 +441,6 @@ tuned <- sits_tuning(
 
 ```{r, eval = TRUE, echo = FALSE}
 tuned <- readRDS("./etc/tuned.rds")
-
 ```
 
 The result is a tibble with different values of accuracy, kappa, decision matrix, and hyperparameters. The 10 best results obtain accuracy values between 0.976 and 0.958, as shown below. The best result is obtained by a learning rate of 0.0011 and a weight decay of 2.14e-05.

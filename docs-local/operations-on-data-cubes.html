@@ -125,7 +125,6 @@
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="st">"./tempdir/chp5"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="st">"./tempdir/chp5"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span></span>
 <span><span class="co"># Create an irregular data cube from MSPC</span></span>
 <span><span class="va">s2_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"AWS"</span>,</span>
@@ -140,7 +139,6 @@
 <span>  start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2018-07-01"</span><span class="op">)</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2018-08-31"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Regularize the cube to 15 day intervals</span></span>
 <span><span class="va">reg_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_regularize.html">sits_regularize</a></span><span class="op">(</span></span>
 <span>  cube       <span class="op">=</span> <span class="va">s2_cube</span>,</span>
@@ -159,11 +157,10 @@
 <span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  memsize <span class="op">=</span> <span class="fl">12</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NDVI"</span>, palette <span class="op">=</span> <span class="st">"RdYlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-56"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-56-1.png" alt="NDVI using bands B08 and B04 of Sentinel-2." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-38"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-38-1.png" alt="NDVI using bands B08 and B04 of Sentinel-2." width="100%"><p class="caption">
 Figure 23: NDVI using bands B08 and B04 of Sentinel-2.
 </p>
 </div>
@@ -176,12 +173,11 @@ Figure 23: NDVI using bands B08 and B04 of Sentinel-2.
 <span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  memsize <span class="op">=</span> <span class="fl">12</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Plot NDRE1 index</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NDRE1"</span>, palette <span class="op">=</span> <span class="st">"RdYlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-57"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-57-1.png" alt="NDRE1 using bands B06 and B05 of Sentinel-2." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-39"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-39-1.png" alt="NDRE1 using bands B06 and B05 of Sentinel-2." width="100%"><p class="caption">
 Figure 24: NDRE1 using bands B06 and B05 of Sentinel-2.
 </p>
 </div>
@@ -194,12 +190,11 @@ Figure 24: NDRE1 using bands B06 and B05 of Sentinel-2.
 <span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  memsize <span class="op">=</span> <span class="fl">12</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Plot NDRE2 index</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NDRE2"</span>, palette <span class="op">=</span> <span class="st">"RdYlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-58"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-58-1.png" alt="NDRE2 using bands B07 and B05 of Sentinel-2." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-40"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-40-1.png" alt="NDRE2 using bands B07 and B05 of Sentinel-2." width="100%"><p class="caption">
 Figure 25: NDRE2 using bands B07 and B05 of Sentinel-2.
 </p>
 </div>
@@ -212,12 +207,11 @@ Figure 25: NDRE2 using bands B07 and B05 of Sentinel-2.
 <span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  memsize <span class="op">=</span> <span class="fl">12</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># plot NDRE3 index</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NDRE3"</span>, palette <span class="op">=</span> <span class="st">"RdYlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-59"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-59-1.png" alt="NDVI using bands B07 and B06 of Sentinel-2." width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-41"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-41-1.png" alt="NDVI using bands B07 and B06 of Sentinel-2." width="90%"><p class="caption">
 Figure 26: NDVI using bands B07 and B06 of Sentinel-2.
 </p>
 </div>
@@ -234,12 +228,11 @@ Figure 26: NDVI using bands B07 and B06 of Sentinel-2.
 <span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  memsize <span class="op">=</span> <span class="fl">12</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Plot the NBR for the first date"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NBR"</span>, palette <span class="op">=</span> <span class="st">"Reds"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-60"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-60-1.png" alt="NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-42"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-42-1.png" alt="NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP." width="100%"><p class="caption">
 Figure 27: NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP.
 </p>
 </div>
@@ -263,7 +256,6 @@ where <span class="math inline">\(i=1,..M\)</span> is the set of spectral bands 
 <span>  <span class="st">"soil"</span>,    <span class="fl">400</span>,  <span class="fl">650</span>,  <span class="fl">700</span>, <span class="fl">3600</span>, <span class="fl">3500</span>, <span class="fl">1800</span>,</span>
 <span>  <span class="st">"water"</span>,   <span class="fl">700</span>, <span class="fl">1100</span>, <span class="fl">1400</span>,  <span class="fl">850</span>,   <span class="fl">40</span>,   <span class="fl">26</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Generate the mixture model</span></span>
 <span><span class="va">reg_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_mixture_model.html">sits_mixture_model</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">reg_cube</span>,</span>
@@ -272,12 +264,11 @@ where <span class="math inline">\(i=1,..M\)</span> is the set of spectral bands 
 <span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
 <span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Plot the FOREST for the first date using the Greens palette</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"FOREST"</span>, palette <span class="op">=</span> <span class="st">"Greens"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-61"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-61-1.png" alt="Percentage of forest per pixel estimated by mixture model." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-43"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-43-1.png" alt="Percentage of forest per pixel estimated by mixture model." width="100%"><p class="caption">
 Figure 28: Percentage of forest per pixel estimated by mixture model.
 </p>
 </div>
@@ -285,8 +276,8 @@ Figure 28: Percentage of forest per pixel estimated by mixture model.
 <code class="sourceCode R"><span><span class="co"># Plot the water endmember for the first date using the Blues palette</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"WATER"</span>, palette <span class="op">=</span> <span class="st">"Blues"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-62"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-62-1.png" alt="Percentage of water per pixel estimated by mixture model." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-44"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-44-1.png" alt="Percentage of water per pixel estimated by mixture model." width="100%"><p class="caption">
 Figure 29: Percentage of water per pixel estimated by mixture model.
 </p>
 </div>
@@ -294,8 +285,8 @@ Figure 29: Percentage of water per pixel estimated by mixture model.
 <code class="sourceCode R"><span><span class="co"># Plot the SOIL endmember for the first date using the orange red (OrRd) palette</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"SOIL"</span>, palette <span class="op">=</span> <span class="st">"OrRd"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-63"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-63-1.png" alt="Percentage of soil per pixel estimated by mixture model." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-45"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-45-1.png" alt="Percentage of soil per pixel estimated by mixture model." width="100%"><p class="caption">
 Figure 30: Percentage of soil per pixel estimated by mixture model.
 </p>
 </div>

@@ -22,7 +22,7 @@ The time series tibble contains data and metadata. The first six columns contain
 
 ## Utilities for handling time series{-}
 
-The package provides functions for data manipulation and displaying information for time series tibbles. For example, `sits_labels_summary()` shows the labels of the sample set and their frequencies.
+The package provides functions for data manipulation and displaying information for time series tibbles. For example, `summary()` shows the labels of the sample set and their frequencies.
 
 ```{r}
 summary(samples_matogrosso_mod13q1)
@@ -40,7 +40,6 @@ sits_labels(samples_new_labels) <- c("Cerrado",   "Croplands",
                                      "Croplands", "Croplands",
                                      "Croplands", "Croplands",
                                      "Croplands")
-
 summary(samples_new_labels)
 ```
 
@@ -50,7 +49,6 @@ Since metadata and the embedded time series use the tibble data format, the func
 # Select NDVI band
 samples_ndvi <- sits_select(samples_matogrosso_mod13q1, 
                             bands = "NDVI")
-
 # Select only samples with Cerrado label
 samples_cerrado <- dplyr::filter(samples_ndvi, 
                                  label == "Cerrado")
@@ -91,12 +89,10 @@ raster_cube <- sits_cube(
     collection = "MOD13Q1-6",
     data_dir   = data_dir,
     parse_info = c("X1", "X2", "tile", "band", "date"))
-
 # Obtain a time series from the raster cube from a point
 sample_latlong <- tibble::tibble(
     longitude = -55.57320, 
     latitude  = -11.50566)
-
 series <- sits_get_data(cube    = raster_cube,
                         samples = sample_latlong)
 plot(series)

@@ -88,9 +88,11 @@ s2_23MMU_cube <- sits_cube(
     tiles = "23MMU",
     bands = c("B02", "B8A", "B11", "CLOUD"),
     start_date = "2018-07-12",
-    end_date = "2019-07-28")
-
-plot(s2_23MMU_cube, red = "B11", blue = "B02", green = "B8A", date = "2018-10-05")
+    end_date = "2019-07-28"
+)
+plot(s2_23MMU_cube, red = "B11", 
+     blue = "B02", green = "B8A", date = "2018-10-05"
+)
 ```
 
 
@@ -106,11 +108,12 @@ s2_20LKP_cube_MPC <- sits_cube(
       tiles = "20LKP",
       bands = c("B02", "B8A", "B11", "CLOUD"),
       start_date = "2019-07-01",
-      end_date = "2019-07-28")
-
+      end_date = "2019-07-28"
+)
 # Plot a color composite of one date of the cube
 plot(s2_20LKP_cube_MPC, red = "B11", blue = "B02", green = "B8A", 
-     date = "2019-07-18")
+     date = "2019-07-18"
+)
 ```
 
 The `LANDSAT-C2-L2` collection provides access to data from Landsat-4/5/7/8/9 satellites. Images from these satellites have been intercalibrated to ensure data consistency. For compatibility between the different Landsat sensors, the band names are `BLUE`, `GREEN`, `RED`,  `NIR08`,  `SWIR16`, and `SWIR22`. All images have 30m resolution. For this collection,  tile search is not supported; the `roi` parameter should be used. The example below shows how to retrieve data from a region of interest covering the city of Brasilia in Brazil. 
@@ -128,8 +131,8 @@ s2_L8_cube_MPC <- sits_cube(
         bands = c("BLUE", "NIR08", "SWIR16", "CLOUD"),
         roi = sf_bsb,
         start_date = "2019-06-01",
-        end_date = "2019-10-01")
-
+        end_date = "2019-10-01"
+)
 # Plot the second tile that covers Brasilia
 plot(s2_L8_cube_MPC[2,], red = "SWIR16", green = "NIR08", blue = "BLUE", 
      date = "2019-07-30")
@@ -148,7 +151,6 @@ dea_cube <- sits_cube(
     bands = c("B05", "B8A", "B11"),
     start_date = "2019-09-01",
     end_date = "2019-10-01")
-
 plot(dea_cube, red = "B11", blue = "B05", green = "B8A")
 ```
 
@@ -156,8 +158,7 @@ plot(dea_cube, red = "B11", blue = "B05", green = "B8A")
 
 The [Brazil Data Cube](http://brazildatacube.org/) (BDC) is built by Brazil’s National Institute for Space Research (INPE). The BDC uses three hierarchical grids based on the Albers Equal Area projection and SIRGAS 2000 datum. The three grids are generated taking -54$^\circ$ longitude as the central reference and defining tiles of $6\times4$, $3\times2$, and $1.5\times1$ degrees. The large grid has tiles of $672\times440$ km^2^ and is used for CBERS-4 AWFI collections at 64 meter resolution; each CBERS-4 AWFI tile contains images of $10,504\times6,865$ pixels. The medium grid is used for Landsat-8 OLI collections at 30 meter resolution; tiles have an extension of $336\times220$ km^2^, and each image has $11,204\times7,324$ pixels. The small grid covers $168\times110$ km^2^ and is used for Sentinel-2 MSI collections at 10m resolutions; each image has $16,806\times10,986$ pixels. The data cubes in the BDC are regularly spaced in time and cloud-corrected [@Ferreira2020a]. 
 
-```{r, echo = FALSE, out.width="80%", fig.align="center", fig.cap="Hierarchical BDC tiling system showing overlayed on Brazilian Biomes (a), illustrating one large tile (b), four medium tiles (c), and sixteen small tiles (d). Source: Ferreira et al.(2020). Reproduction under fair use doctrine."}
-
+```{r, echo = FALSE, out.width="80%", fig.align="center", fig.cap="Hierarchical BDC tiling system showing overlayed on Brazilian Biomes (a), illustrating one large tile (b), four medium tiles (c), and sixteen small tiles (d). Source: Ferreira et al.(2020)."}
 knitr::include_graphics("images/bdc_grid.png")
 ```
 
@@ -179,7 +180,6 @@ cbers_tile <- sits_cube(
     bands = c("B13", "B14", "B15", "B16", "CLOUD"),
     start_date = "2018-09-01",
     end_date = "2019-08-28")
-
 # Plot one time instance
 plot(cbers_tile, red = "B15", green = "B16", blue = "B13", date = "2018-09-30")
 ```
@@ -220,7 +220,8 @@ s2_cube_20LKP <- sits_cube(
     parse_info = c("X1", "tile", "band", "date"))
 
 # Plot the band B8A in the first time instance
-plot(s2_cube_20LKP, red = "B11", green = "B8A", blue = "B02", dates = "2021-07-25")
+plot(s2_cube_20LKP, red = "B11", green = "B8A", blue = "B02", 
+     dates = "2021-07-25")
 ```
 
 ## Defining a data cube using classified images{-}
@@ -239,8 +240,9 @@ The following code creates a results cube based on the classification of defores
 
 ```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Classified data cube for the year 2020/2021 in Rondonia, Brazil."}
 # Create a cube based on a classified image 
-data_dir <- system.file("extdata/Rondonia-20LLP", package = "sitsdata")
-# File is named "SENTINEL-2_MSI_20LLP_2020-06-04_2021-08-26_class_v1.tif" 
+data_dir <- system.file("extdata/Rondonia-20LLP", 
+                        package = "sitsdata")
+# File name  "SENTINEL-2_MSI_20LLP_2020-06-04_2021-08-26_class_v1.tif" 
 Rondonia_class_cube <- sits_cube(
     source = "AWS",
     collection = "SENTINEL-S2-L2A-COGS",
@@ -250,7 +252,6 @@ Rondonia_class_cube <- sits_cube(
     data_dir = data_dir,
     parse_info = c("X1", "X2", "tile", "start_date", "end_date", 
                    "band", "version"))
-
 # Plot the classified cube
 plot(Rondonia_class_cube)
 ```
@@ -270,7 +271,6 @@ s2_cube <- sits_cube(
     bands = c("B05", "B8A", "B12", "CLOUD"),
     start_date = as.Date("2018-07-01"),
     end_date = as.Date("2018-08-31"))
-
 # Show the different timelines of the cube tiles
 sits_timeline(s2_cube)
 ```
@@ -293,7 +293,6 @@ reg_cube <- sits_regularize(
           res        = 120,
           period     = "P15D",
           multicores = 4)
-
 # Plot the first image of the tile 20LLP of the regularized cube
 # The pixels of the regular data cube cover the full MGRS tile
 reg_cube %>% 

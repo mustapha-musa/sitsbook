@@ -50,7 +50,6 @@ ro_cube_20LKP <- sits_cube(
     data_dir = data_dir,
     parse_info = c('X1', "tile", "band", "date")
 )
-
 # Plot the cube
 plot(ro_cube_20LKP, dates = "2021-07-25", red = "B11", green = "B8A", blue = "B02")
 ```
@@ -65,7 +64,6 @@ samples_3bands <- sits_select(
     data = samples_prodes_4classes, 
     bands = sits_bands(ro_cube_20LKP)
 )
-
 # Train model using LightTAE algorithm
 ltae_model <- sits_train(
     samples = samples_3bands, 
@@ -82,7 +80,6 @@ plot(ltae_model)
 To classify both data cubes and sets of time series, use the function `sits_classify()`, which uses parallel processing to speed up the performance, as described at the end of this Chapter. Its most relevant parameters are: (a) `data`, either a data cube or a set of time series; (b) `ml_model`, a trained model using one of the machine learning methods provided; (c) `multicores`, number of CPU cores that will be used for processing; (d) `memsize`, memory available for classification; (e) `output_dir`, directory where results will be stored; (f) `version`, for version control. If users want to follow the processing steps, they should turn on the parameters `verbose` to print information and `progress` to get a progress bar. The classification result is a data cube with a set of probability layers, one for each output class. Each probability layer contains the model's assessment of how likely each pixel belongs to the related class. The probability cube can be visualized with `plot()`. 
 
 ```{r, tidy = "styler", out.width = "80%", fig.align="center", fig.cap="Probability maps produced by LightTAE model."}
-
 # Classify data cube
 ro_cube_20LKP_probs <- sits_classify(
     data     = ro_cube_20LKP,
@@ -243,7 +240,6 @@ The approach for parallel processing in `sits`, depicted in the figure below, ha
 6. After generating all subimages, join them to obtain the result.
 
 ```{r, out.width = "90%", out.height = "90%", echo = FALSE, fig.align="center", fig.cap="Parallel processing in sits (source: Simoes et al.,2021)."}
-
 knitr::include_graphics("images/sits_parallel.png")
 ```
 

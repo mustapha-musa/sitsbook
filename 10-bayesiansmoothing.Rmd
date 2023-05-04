@@ -16,7 +16,6 @@ The `sits` package uses a *time-first, space-later* approach. Since machine lear
 
 Most statistical classifiers use training samples derived from "pure" pixels that users have selected to represent the desired output classes. However, images contain many mixed pixels irrespective of the resolution. Also, there is a considerable degree of data variability in each class. These effects lead to outliers whose chance of misclassification is significant. To offset these problems, most post-processing methods use the "smoothness assumption" [@Schindler2012]: nearby pixels tend to have the same label. To put this assumption in practice, smoothing methods in `sits` use the neighborhood information to remove outliers and enhance consistency in the resulting product.
 
-
 ## Motivation{-}
 
 The smoothing method available in `sits` uses Bayesian inference. Bayesian inference is a way of allowing the inclusion of expert knowledge on the derivation of probabilities. As stated by [@Spiegelhalter2009]: "In the Bayesian paradigm, degrees of belief in states of nature are specified. Bayesian statistical methods start with existing 'prior' beliefs and update these using data to give 'posterior' beliefs, which may be used as the basis for inferential decisions". Bayesian inference has now been established as a major method for assessing probability. 
@@ -28,7 +27,6 @@ Bayesian inference allows the inclusion of expert knowledge. The assumption is t
 The Bayesian estimate is based on two random variables: (a) The observed class probabilities for each pixel denoted by a random variable $p_{i,k}$ where $i$ is the index of the pixel and $k$ indicates the class; (b) The underlying class probabilities for each pixel, denoted by a random variable $\phi_{i,k}$. The probabilities $p_{i,k}$ are the classifier's output and are subject to noise, outliers, and classification errors. Our estimation aims to remove these effects and obtain $\phi_{i,k}$ to approximate the actual class probability better. 
 
 To more our inference tractable, we first convert the class probability values $p_{i,k}$  to log-odds values using the logit function, as shown below. The logit function converts probability values from 0 to 1 to values from negative infinity to infinity. The conversion from probabilities ranging from $0$ to $1$ to logit values is helpful to support our assumption of normal distribution functions for our data. 
-
 
 $$
     x_{i,k} = \ln \left(\frac{p_{i,k}}{1 - p_{i,k}}\right)

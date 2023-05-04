@@ -30,7 +30,6 @@ roi_cerrado_shp <- system.file(
     package = "sitsdata")
 # Read the shapefile as an object of the "sf" package
 roi_cerrado <- sf::st_read(roi_cerrado_shp, quiet = TRUE)
-
 # Create a data cube for the entire cerrado biome
 cerrado_cube <- sits_cube(
         source = "BDC",
@@ -109,7 +108,6 @@ summary(val_rfor)
 
 One useful function of `sits` is the capacity to compare different validation methods and store them in an XLS file for further analysis. The following example shows how to do this using the Cerrado data set. We take the models: random forest(`sits_rfor()`), extreme gradient boosting (`sits_xgboost()`), temporal CNN (`sits_tempcnn()`), and lightweight temporal attention encoder (`sits_lighttae())`. After computing the confusion matrix and the statistics for each model, we also store the result in a list. When the calculation is finished, the function `sits_to_xlsx()` writes all the results in an Excel-compatible spreadsheet. 
 
-
 ```{r, tidy = "styler", eval = FALSE}
 # Compare different models for the Cerrado data set
 # Create a list to store the results
@@ -118,7 +116,6 @@ results <- list()
 val_rfor$name <- "rfor"
 # Store the rfor results in a list
 results[[length(results) + 1]] <- val_rfor
-
 # Extreme Gradient Boosting
 val_xgb <- sits_kfold_validate(
     samples = samples_cerrado_bal,
@@ -126,7 +123,6 @@ val_xgb <- sits_kfold_validate(
     folds = 5,
     multicores = 5
 )
-
 # Give a name to the SVM model
 val_xgb$name <- "xgboost"
 # store the results in a list
@@ -142,12 +138,10 @@ val_tcnn <- sits_kfold_validate(
     folds = 5,
     multicores = 5
 )
-
 # Give a name to the result
 val_tcnn$name <- "TempCNN"
 # store the results in a list
 results[[length(results) + 1]] <- val_tcnn
-
 # Light TAE
 val_ltae <- sits_kfold_validate(
     samples = samples_cerrado_bal,
@@ -158,7 +152,6 @@ val_ltae <- sits_kfold_validate(
     folds = 5,
     multicores = 5
 )
-
 # Give a name to the result
 val_ltae$name <- "LightTAE"
 # store the results in a list

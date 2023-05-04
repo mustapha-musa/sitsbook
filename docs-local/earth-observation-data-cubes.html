@@ -201,11 +201,13 @@ Figure 12: Conceptual view of data cubes (source: authors).
 <span>  start_date <span class="op">=</span> <span class="st">"2018-07-12"</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="st">"2019-07-28"</span></span>
 <span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">s2_23MMU_cube</span>, red <span class="op">=</span> <span class="st">"B11"</span>, blue <span class="op">=</span> <span class="st">"B02"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>, date <span class="op">=</span> <span class="st">"2018-10-05"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">s2_23MMU_cube</span>,</span>
+<span>  red <span class="op">=</span> <span class="st">"B11"</span>,</span>
+<span>  blue <span class="op">=</span> <span class="st">"B02"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>, date <span class="op">=</span> <span class="st">"2018-10-05"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-40"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-40-1.png" alt="Sentinel-2 image in an area of the Northeastern coast of Brazil." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-22"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-22-1.png" alt="Sentinel-2 image in an area of the Northeastern coast of Brazil." width="100%"><p class="caption">
 Figure 13: Sentinel-2 image in an area of the Northeastern coast of Brazil.
 </p>
 </div>
@@ -224,15 +226,14 @@ Figure 13: Sentinel-2 image in an area of the Northeastern coast of Brazil.
 <span>  start_date <span class="op">=</span> <span class="st">"2019-07-01"</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="st">"2019-07-28"</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Plot a color composite of one date of the cube</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">s2_20LKP_cube_MPC</span>,</span>
 <span>  red <span class="op">=</span> <span class="st">"B11"</span>, blue <span class="op">=</span> <span class="st">"B02"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>,</span>
 <span>  date <span class="op">=</span> <span class="st">"2019-07-18"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-41"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-41-1.png" alt="Sentinel-2 image in an area of the state of Rondonia, Brazil." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-23"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-23-1.png" alt="Sentinel-2 image in an area of the state of Rondonia, Brazil." width="100%"><p class="caption">
 Figure 14: Sentinel-2 image in an area of the state of Rondonia, Brazil.
 </p>
 </div>
@@ -252,15 +253,14 @@ Figure 14: Sentinel-2 image in an area of the state of Rondonia, Brazil.
 <span>  start_date <span class="op">=</span> <span class="st">"2019-06-01"</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="st">"2019-10-01"</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Plot the second tile that covers Brasilia</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">s2_L8_cube_MPC</span><span class="op">[</span><span class="fl">2</span>, <span class="op">]</span>,</span>
 <span>  red <span class="op">=</span> <span class="st">"SWIR16"</span>, green <span class="op">=</span> <span class="st">"NIR08"</span>, blue <span class="op">=</span> <span class="st">"BLUE"</span>,</span>
 <span>  date <span class="op">=</span> <span class="st">"2019-07-30"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-42"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-42-1.png" alt="Landsat-8 image in an area of the city of Brasilia, Brazil." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-24"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-24-1.png" alt="Landsat-8 image in an area of the city of Brasilia, Brazil." width="100%"><p class="caption">
 Figure 15: Landsat-8 image in an area of the city of Brasilia, Brazil.
 </p>
 </div>
@@ -281,11 +281,10 @@ Figure 15: Landsat-8 image in an area of the city of Brasilia, Brazil.
 <span>  start_date <span class="op">=</span> <span class="st">"2019-09-01"</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="st">"2019-10-01"</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">dea_cube</span>, red <span class="op">=</span> <span class="st">"B11"</span>, blue <span class="op">=</span> <span class="st">"B05"</span>, green <span class="op">=</span> <span class="st">"B8A"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-43"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-43-1.png" alt="Sentinel-2 image in an area over South Africa." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-25"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-25-1.png" alt="Sentinel-2 image in an area over South Africa." width="100%"><p class="caption">
 Figure 16: Sentinel-2 image in an area over South Africa.
 </p>
 </div>
@@ -295,9 +294,9 @@ Figure 16: Sentinel-2 image in an area over South Africa.
 </h2>
 <p>The <a href="http://brazildatacube.org/">Brazil Data Cube</a> (BDC) is built by Brazil’s National Institute for Space Research (INPE). The BDC uses three hierarchical grids based on the Albers Equal Area projection and SIRGAS 2000 datum. The three grids are generated taking -54<span class="math inline">\(^\circ\)</span> longitude as the central reference and defining tiles of <span class="math inline">\(6\times4\)</span>, <span class="math inline">\(3\times2\)</span>, and <span class="math inline">\(1.5\times1\)</span> degrees. The large grid has tiles of <span class="math inline">\(672\times440\)</span> km<sup>2</sup> and is used for CBERS-4 AWFI collections at 64 meter resolution; each CBERS-4 AWFI tile contains images of <span class="math inline">\(10,504\times6,865\)</span> pixels. The medium grid is used for Landsat-8 OLI collections at 30 meter resolution; tiles have an extension of <span class="math inline">\(336\times220\)</span> km<sup>2</sup>, and each image has <span class="math inline">\(11,204\times7,324\)</span> pixels. The small grid covers <span class="math inline">\(168\times110\)</span> km<sup>2</sup> and is used for Sentinel-2 MSI collections at 10m resolutions; each image has <span class="math inline">\(16,806\times10,986\)</span> pixels. The data cubes in the BDC are regularly spaced in time and cloud-corrected <span class="citation"><a href="references.html#ref-Ferreira2020a" role="doc-biblioref">[3]</a></span>.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-44"></span>
-<img src="images/bdc_grid.png" alt="Hierarchical BDC tiling system showing overlayed on Brazilian Biomes (a), illustrating one large tile (b), four medium tiles (c), and sixteen small tiles (d). Source: Ferreira et al.(2020). Reproduction under fair use doctrine." width="80%"><p class="caption">
-Figure 17: Hierarchical BDC tiling system showing overlayed on Brazilian Biomes (a), illustrating one large tile (b), four medium tiles (c), and sixteen small tiles (d). Source: Ferreira et al.(2020). Reproduction under fair use doctrine.
+<span style="display:block;" id="fig:unnamed-chunk-26"></span>
+<img src="images/bdc_grid.png" alt="Hierarchical BDC tiling system showing overlayed on Brazilian Biomes (a), illustrating one large tile (b), four medium tiles (c), and sixteen small tiles (d). Source: Ferreira et al.(2020)." width="80%"><p class="caption">
+Figure 17: Hierarchical BDC tiling system showing overlayed on Brazilian Biomes (a), illustrating one large tile (b), four medium tiles (c), and sixteen small tiles (d). Source: Ferreira et al.(2020).
 </p>
 </div>
 <p>The collections available in the BDC are: <code>LC8_30_16D_STK-1</code> (Landsat-8 OLI, 30m resolution, 16-day intervals), <code>S2-SEN2COR_10_16D_STK-1</code> (Sentinel-2 MSI images at 10 meter resolution, 16-day intervals), <code>CB4_64_16D_STK-1</code> (CBERS 4/4A AWFI, 64m resolution, 16 days intervals), <code>CB4_20_1M_STK-1</code> (CBERS 4/4A MUX, 20m resolution, one month intervals), and <code>MOD13Q1-6</code> (MODIS MOD13SQ1 product, collection 6, 250m resolution, 16-day intervals). For more details, use <code>sits_list_collections(source = "BDC")</code>.</p>
@@ -314,11 +313,10 @@ Figure 17: Hierarchical BDC tiling system showing overlayed on Brazilian Biomes 
 <span>  start_date <span class="op">=</span> <span class="st">"2018-09-01"</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="st">"2019-08-28"</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Plot one time instance</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">cbers_tile</span>, red <span class="op">=</span> <span class="st">"B15"</span>, green <span class="op">=</span> <span class="st">"B16"</span>, blue <span class="op">=</span> <span class="st">"B13"</span>, date <span class="op">=</span> <span class="st">"2018-09-30"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-47"></span>
+<span style="display:block;" id="fig:unnamed-chunk-29"></span>
 <img src="images/cbers_4_image_bdc.png" alt="Plot of CBERS-4 image obtained from the BDC with a single tile covering an area in the Brazilian Cerrado." width="100%"><p class="caption">
 Figure 18: Plot of CBERS-4 image obtained from the BDC with a single tile covering an area in the Brazilian Cerrado.
 </p>
@@ -360,10 +358,13 @@ Figure 18: Plot of CBERS-4 image obtained from the BDC with a single tile coveri
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the band B8A in the first time instance</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">s2_cube_20LKP</span>, red <span class="op">=</span> <span class="st">"B11"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>, blue <span class="op">=</span> <span class="st">"B02"</span>, dates <span class="op">=</span> <span class="st">"2021-07-25"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">s2_cube_20LKP</span>,</span>
+<span>  red <span class="op">=</span> <span class="st">"B11"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>, blue <span class="op">=</span> <span class="st">"B02"</span>,</span>
+<span>  dates <span class="op">=</span> <span class="st">"2021-07-25"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-49"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-49-1.png" alt="CBERS-4 NDVI in an area over Brazil." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-31"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-31-1.png" alt="CBERS-4 NDVI in an area over Brazil." width="100%"><p class="caption">
 Figure 19: CBERS-4 NDVI in an area over Brazil.
 </p>
 </div>
@@ -391,8 +392,10 @@ Figure 19: CBERS-4 NDVI in an area over Brazil.
 <p>The following code creates a results cube based on the classification of deforestation in Brazil. This classified cube was obtained by a large data cube of Sentinel-2 images, covering the state of Rondonia, Brazil comprising 40 tiles, 10 spectral bands, and covering the period from 2020-06-01 to 2021-09-11. Samples of four classes were trained by a random forest classifier.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a cube based on a classified image</span></span>
-<span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/Rondonia-20LLP"</span>, package <span class="op">=</span> <span class="st">"sitsdata"</span><span class="op">)</span></span>
-<span><span class="co"># File is named "SENTINEL-2_MSI_20LLP_2020-06-04_2021-08-26_class_v1.tif"</span></span>
+<span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/Rondonia-20LLP"</span>,</span>
+<span>  package <span class="op">=</span> <span class="st">"sitsdata"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># File name  "SENTINEL-2_MSI_20LLP_2020-06-04_2021-08-26_class_v1.tif"</span></span>
 <span><span class="va">Rondonia_class_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"AWS"</span>,</span>
 <span>  collection <span class="op">=</span> <span class="st">"SENTINEL-S2-L2A-COGS"</span>,</span>
@@ -407,12 +410,11 @@ Figure 19: CBERS-4 NDVI in an area over Brazil.
 <span>    <span class="st">"band"</span>, <span class="st">"version"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Plot the classified cube</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">Rondonia_class_cube</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-50"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-50-1.png" alt="Classified data cube for the year 2020/2021 in Rondonia, Brazil." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-32"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-32-1.png" alt="Classified data cube for the year 2020/2021 in Rondonia, Brazil." width="100%"><p class="caption">
 Figure 20: Classified data cube for the year 2020/2021 in Rondonia, Brazil.
 </p>
 </div>
@@ -432,7 +434,6 @@ Figure 20: Classified data cube for the year 2020/2021 in Rondonia, Brazil.
 <span>  start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2018-07-01"</span><span class="op">)</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2018-08-31"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Show the different timelines of the cube tiles</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_timeline.html">sits_timeline</a></span><span class="op">(</span><span class="va">s2_cube</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; $`20LKP`
@@ -450,8 +451,8 @@ Figure 20: Classified data cube for the year 2020/2021 in Rondonia, Brazil.
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">tile</span> <span class="op">==</span> <span class="st">"20LLP"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>red <span class="op">=</span> <span class="st">"B12"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>, blue <span class="op">=</span> <span class="st">"B05"</span>, date <span class="op">=</span> <span class="st">"2018-07-03"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-52"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-52-1.png" alt="Sentinel-2 tile 20LLP for date 2018-07-03." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-34"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-34-1.png" alt="Sentinel-2 tile 20LLP for date 2018-07-03." width="100%"><p class="caption">
 Figure 21: Sentinel-2 tile 20LLP for date 2018-07-03.
 </p>
 </div>
@@ -465,15 +466,14 @@ Figure 21: Sentinel-2 tile 20LLP for date 2018-07-03.
 <span>  period     <span class="op">=</span> <span class="st">"P15D"</span>,</span>
 <span>  multicores <span class="op">=</span> <span class="fl">4</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Plot the first image of the tile 20LLP of the regularized cube</span></span>
 <span><span class="co"># The pixels of the regular data cube cover the full MGRS tile</span></span>
 <span><span class="va">reg_cube</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">tile</span> <span class="op">==</span> <span class="st">"20LLP"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>red <span class="op">=</span> <span class="st">"B12"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>, blue <span class="op">=</span> <span class="st">"B05"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-53"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-53-1.png" alt="Regularized image for tile Sentinel-2 tile 20LLP." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-35"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-35-1.png" alt="Regularized image for tile Sentinel-2 tile 20LLP." width="100%"><p class="caption">
 Figure 22: Regularized image for tile Sentinel-2 tile 20LLP.
 </p>
 </div>

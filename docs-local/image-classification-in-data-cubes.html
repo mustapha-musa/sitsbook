@@ -130,8 +130,8 @@
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_patterns.html">sits_patterns</a></span><span class="op">(</span><span class="va">samples_3bands</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-128"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-128-1.png" alt="Patterns associated to the training samples" width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-110"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-110-1.png" alt="Patterns associated to the training samples" width="90%"><p class="caption">
 Figure 63: Patterns associated to the training samples
 </p>
 </div>
@@ -151,12 +151,11 @@ Figure 63: Patterns associated to the training samples
 <span>  data_dir <span class="op">=</span> <span class="va">data_dir</span>,</span>
 <span>  parse_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"X1"</span>, <span class="st">"tile"</span>, <span class="st">"band"</span>, <span class="st">"date"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Plot the cube</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_cube_20LKP</span>, dates <span class="op">=</span> <span class="st">"2021-07-25"</span>, red <span class="op">=</span> <span class="st">"B11"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>, blue <span class="op">=</span> <span class="st">"B02"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-129"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-129-1.png" alt="Color composite image of the cube for date 2021-07-25" width="90%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-111"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-111-1.png" alt="Color composite image of the cube for date 2021-07-25" width="90%"><p class="caption">
 Figure 64: Color composite image of the cube for date 2021-07-25
 </p>
 </div>
@@ -171,7 +170,6 @@ Figure 64: Color composite image of the cube for date 2021-07-25
 <span>  data <span class="op">=</span> <span class="va">samples_prodes_4classes</span>,</span>
 <span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_bands.html">sits_bands</a></span><span class="op">(</span><span class="va">ro_cube_20LKP</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Train model using LightTAE algorithm</span></span>
 <span><span class="va">ltae_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_train.html">sits_train</a></span><span class="op">(</span></span>
 <span>  samples <span class="op">=</span> <span class="va">samples_3bands</span>,</span>
@@ -182,8 +180,8 @@ Figure 64: Color composite image of the cube for date 2021-07-25
 <span><span class="co"># Plot the evolution of the model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ltae_model</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-130"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-130-1.png" alt="Training evolution of LightTAE model." width="80%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-112"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-112-1.png" alt="Training evolution of LightTAE model." width="80%"><p class="caption">
 Figure 65: Training evolution of LightTAE model.
 </p>
 </div>
@@ -204,8 +202,8 @@ Figure 65: Training evolution of LightTAE model.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_cube_20LKP_probs</span>, palette <span class="op">=</span> <span class="st">"YlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-131"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-131-1.png" alt="Probability maps produced by LightTAE model." width="80%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-113"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-113-1.png" alt="Probability maps produced by LightTAE model." width="80%"><p class="caption">
 Figure 66: Probability maps produced by LightTAE model.
 </p>
 </div>
@@ -221,8 +219,8 @@ Figure 66: Probability maps produced by LightTAE model.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">defor_map</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-132"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-132-1.png" alt="Final classification map." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-114"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-114-1.png" alt="Final classification map." width="100%"><p class="caption">
 Figure 67: Final classification map.
 </p>
 </div>
@@ -252,8 +250,8 @@ Figure 67: Final classification map.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_class</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-133"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-133-1.png" alt="original classification map." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-115"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-115-1.png" alt="original classification map." width="100%"><p class="caption">
 Figure 68: original classification map.
 </p>
 </div>
@@ -309,8 +307,8 @@ Figure 68: original classification map.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">prodes2021</span>, legend <span class="op">=</span> <span class="va">def_legend</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-135"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-135-1.png" alt="Deforestation map produced by PRODES." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-117"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-117-1.png" alt="Deforestation map produced by PRODES." width="100%"><p class="caption">
 Figure 69: Deforestation map produced by PRODES.
 </p>
 </div>
@@ -345,8 +343,8 @@ Figure 69: Deforestation map produced by PRODES.
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_def_2021</span><span class="op">)</span></span></code></pre></div>
 <pre><code>#&gt; Warning: palette colors names missing for 8, 9. Therefore, palette color names will be ignored</code></pre>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-136"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-136-1.png" alt="Deforestation map by sits masked by PRODES map." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-118"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-118-1.png" alt="Deforestation map by sits masked by PRODES map." width="100%"><p class="caption">
 Figure 70: Deforestation map by sits masked by PRODES map.
 </p>
 </div>
@@ -368,7 +366,7 @@ Figure 70: Deforestation map by sits masked by PRODES map.
 <li>After generating all subimages, join them to obtain the result.</li>
 </ol>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-137"></span>
+<span style="display:block;" id="fig:unnamed-chunk-119"></span>
 <img src="images/sits_parallel.png" alt="Parallel processing in sits (source: Simoes et al.,2021)." width="90%" height="90%"><p class="caption">
 Figure 71: Parallel processing in sits (source: Simoes et al.,2021).
 </p>

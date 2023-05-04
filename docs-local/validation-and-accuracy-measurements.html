@@ -122,7 +122,6 @@
 <span><span class="op">)</span></span>
 <span><span class="co"># Read the shapefile as an object of the "sf" package</span></span>
 <span><span class="va">roi_cerrado</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">st_read</a></span><span class="op">(</span><span class="va">roi_cerrado_shp</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Create a data cube for the entire cerrado biome</span></span>
 <span><span class="va">cerrado_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="st">"BDC"</span>,</span>
@@ -140,8 +139,8 @@
 <span>  blue <span class="op">=</span> <span class="st">"B4"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-147"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-147-1.png" alt="Color composite image of the first date of the cube" width="80%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-129"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-129-1.png" alt="Color composite image of the first date of the cube" width="80%"><p class="caption">
 Figure 78: Color composite image of the first date of the cube
 </p>
 </div>
@@ -210,9 +209,9 @@ Figure 78: Color composite image of the first date of the cube
 <span><span class="co"># Print the validation statistics</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">val_rfor</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; Overall Statistics                            
-#&gt;  Accuracy : 0.875           
-#&gt;    95% CI : (0.8676, 0.8822)
-#&gt;     Kappa : 0.8601</code></pre>
+#&gt;  Accuracy : 0.8777          
+#&gt;    95% CI : (0.8704, 0.8848)
+#&gt;     Kappa : 0.8631</code></pre>
 <p>One useful function of <code>sits</code> is the capacity to compare different validation methods and store them in an XLS file for further analysis. The following example shows how to do this using the Cerrado data set. We take the models: random forest(<code><a href="https://rdrr.io/pkg/sits/man/sits_rfor.html">sits_rfor()</a></code>), extreme gradient boosting (<code><a href="https://rdrr.io/pkg/sits/man/sits_xgboost.html">sits_xgboost()</a></code>), temporal CNN (<code><a href="https://rdrr.io/pkg/sits/man/sits_tempcnn.html">sits_tempcnn()</a></code>), and lightweight temporal attention encoder (<code>sits_lighttae())</code>. After computing the confusion matrix and the statistics for each model, we also store the result in a list. When the calculation is finished, the function <code><a href="https://rdrr.io/pkg/sits/man/sits_to_xlsx.html">sits_to_xlsx()</a></code> writes all the results in an Excel-compatible spreadsheet.</p>
 <div class="sourceCode" id="cb134"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare different models for the Cerrado data set</span></span>
@@ -222,7 +221,6 @@ Figure 78: Color composite image of the first date of the cube
 <span><span class="va">val_rfor</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="st">"rfor"</span></span>
 <span><span class="co"># Store the rfor results in a list</span></span>
 <span><span class="va">results</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">val_rfor</span></span>
-<span></span>
 <span><span class="co"># Extreme Gradient Boosting</span></span>
 <span><span class="va">val_xgb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_kfold_validate.html">sits_kfold_validate</a></span><span class="op">(</span></span>
 <span>  samples <span class="op">=</span> <span class="va">samples_cerrado_bal</span>,</span>
@@ -230,7 +228,6 @@ Figure 78: Color composite image of the first date of the cube
 <span>  folds <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  multicores <span class="op">=</span> <span class="fl">5</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Give a name to the SVM model</span></span>
 <span><span class="va">val_xgb</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="st">"xgboost"</span></span>
 <span><span class="co"># store the results in a list</span></span>
@@ -246,12 +243,10 @@ Figure 78: Color composite image of the first date of the cube
 <span>  folds <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  multicores <span class="op">=</span> <span class="fl">5</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Give a name to the result</span></span>
 <span><span class="va">val_tcnn</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="st">"TempCNN"</span></span>
 <span><span class="co"># store the results in a list</span></span>
 <span><span class="va">results</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">val_tcnn</span></span>
-<span></span>
 <span><span class="co"># Light TAE</span></span>
 <span><span class="va">val_ltae</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_kfold_validate.html">sits_kfold_validate</a></span><span class="op">(</span></span>
 <span>  samples <span class="op">=</span> <span class="va">samples_cerrado_bal</span>,</span>
@@ -262,7 +257,6 @@ Figure 78: Color composite image of the first date of the cube
 <span>  folds <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  multicores <span class="op">=</span> <span class="fl">5</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Give a name to the result</span></span>
 <span><span class="va">val_ltae</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="st">"LightTAE"</span></span>
 <span><span class="co"># store the results in a list</span></span>
@@ -274,7 +268,7 @@ Figure 78: Color composite image of the first date of the cube
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_to_xlsx.html">sits_to_xlsx</a></span><span class="op">(</span><span class="va">results</span>, file <span class="op">=</span> <span class="va">xlsx_file</span><span class="op">)</span></span></code></pre></div>
 <p>The resulting Excel file can be opened with R or using spreadsheet programs. The figure below shows a printout of what is read by Excel. As shown below, each sheet corresponds to the output of one model. For simplicity, we show only the result of TempCNN, which has an overall accuracy of 90%.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-154"></span>
+<span style="display:block;" id="fig:unnamed-chunk-136"></span>
 <img src="images/k_fold_validation_xlsx.png" alt="Result of 5-fold cross validation of Mato Grosso data using LightTAE" width="90%" height="90%"><p class="caption">
 Figure 79: Result of 5-fold cross validation of Mato Grosso data using LightTAE
 </p>
@@ -390,8 +384,8 @@ This unbiased area estimator includes the effect of false negatives (omission er
 <span><span class="co"># Plot one tile of the classification</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">cerrado_classif</span>, tiles <span class="op">=</span> <span class="st">"044048"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-160"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-160-1.png" alt="Classification of tile 044048 from the Landsat data cube for the Brazilian Cerrado in 2017/2018." width="100%"><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-142"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-142-1.png" alt="Classification of tile 044048 from the Landsat data cube for the Brazilian Cerrado in 2017/2018." width="100%"><p class="caption">
 Figure 80: Classification of tile 044048 from the Landsat data cube for the Brazilian Cerrado in 2017/2018.
 </p>
 </div>
@@ -409,15 +403,25 @@ Figure 80: Classification of tile 044048 from the Landsat data cube for the Braz
 <span><span class="va">area_acc</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; $error_matrix
 #&gt;                 
-#&gt;                  Annual_Crop Cerrado Nat_NonVeg Pasture Perennial_Crop Silviculture Sugarcane Water
-#&gt;   Annual_Crop            469      13          0      47              0            0         2     0
-#&gt;   Cerrado                  4    2813          0     191              3           12         2     4
-#&gt;   Nat_NonVeg               0       2         43       0              0            0         0     2
-#&gt;   Pasture                 67     287          0     999              5            3         2     4
-#&gt;   Perennial_Crop           0      23          0       2             26            2         0     0
-#&gt;   Silviculture             0      16          0       2              4           77         0     0
-#&gt;   Sugarcane               13       0          0       5              0            0        71     0
-#&gt;   Water                    0       1          1       0              0            0         0    69
+#&gt;                  Annual_Crop Cerrado Nat_NonVeg Pasture Perennial_Crop Silviculture Sugarcane
+#&gt;   Annual_Crop            469      13          0      47              0            0         2
+#&gt;   Cerrado                  4    2813          0     191              3           12         2
+#&gt;   Nat_NonVeg               0       2         43       0              0            0         0
+#&gt;   Pasture                 67     287          0     999              5            3         2
+#&gt;   Perennial_Crop           0      23          0       2             26            2         0
+#&gt;   Silviculture             0      16          0       2              4           77         0
+#&gt;   Sugarcane               13       0          0       5              0            0        71
+#&gt;   Water                    0       1          1       0              0            0         0
+#&gt;                 
+#&gt;                  Water
+#&gt;   Annual_Crop        0
+#&gt;   Cerrado            4
+#&gt;   Nat_NonVeg         2
+#&gt;   Pasture            4
+#&gt;   Perennial_Crop     0
+#&gt;   Silviculture       0
+#&gt;   Sugarcane          0
+#&gt;   Water             69
 #&gt; 
 #&gt; $area_pixels
 #&gt;    Annual_Crop        Cerrado     Nat_NonVeg        Pasture Perennial_Crop   Silviculture 
