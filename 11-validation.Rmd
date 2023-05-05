@@ -19,7 +19,7 @@ Sys.setenv(
 
 After obtaining the BDC access key, we can now create a data cube for the Cerrado biome. 
 
-```{r, tidy = "styler", out.width = "80%", fig.align="center", fig.cap="Color composite image of the first date of the cube"}
+```{r, tidy = "styler", out.width = "80%", fig.align="center", fig.cap="Color composite image of the first date of the cube (Source: Authors)."}
 
 # Files are available in the Brazil Data Cube
 # 
@@ -47,10 +47,7 @@ plot(cerrado_cube,
 ```
 
 To classify the Cerrado, we use a training data set produced by Simoes et al. [@Simoes2021]. The authors carried out a systematic sampling using a $5 \times 5$ km grid throughout the Cerrado biome, collecting 85,026 samples. The training data labels were extracted from three sources: the 2018 pastureland map from Parente et al. [@Parente2019], MapBiomas Collection 5 for 2018 [@Souza2020], and Brazil's National Mapping Agency IBGE land maps for 2016--2018. Out of the 85,026 samples, the authors selected those without disagreement between the labels assigned by the three sources. The final training set consists of 48,850 points from which the authors extracted the time series using the Landsat-8 data cube available in the BDC. The classes for this training set are: "Annual Crop", "Cerradao", "Cerrado", "Open Cerrado", "Nat_NonVeg" (Dunes), "Pasture", "Perennial_Crop", "Silviculture" (Planted Forests), "Sugarcane", and "Water".
-<!---
-PEDRO: 39) As classes de uso e cobertura estavam sendo usadas entre aspas durante o texto. Aqui estao entre crases. Qual dos dois usar?
-GILBERTO: Aspas.
--->
+
 The data set is available in the package `sitsdata` as `samples_cerrado_lc8`. 
 
 ```{r, tidy = "styler", out.width = "70%"}
@@ -161,14 +158,9 @@ xlsx_file <- "./model_comparison.xlsx"
 sits_to_xlsx(results, file = xlsx_file)
 ```
 
-The resulting Excel file can be opened with R or using spreadsheet programs. Figure \@ref(fig:xls) shows a printout of what is read by Excel. 
-<!---
-PEDRO: 40) Todo o texto do livro faz referencias a figuras "below", posso trocar pelo numero da figura?
-GILBERTO: Tentei arrumar todas as referencias das figuras de forma mais generica. Veja como ficou.
--->
-As shown below, each sheet corresponds to the output of one model. For simplicity, we show only the result of TempCNN, which has an overall accuracy of 90%. 
+The resulting Excel file can be opened with R or using spreadsheet programs. Figure \@ref(fig:xls) shows a printout of what is read by Excel. Each sheet corresponds to the output of one model. For simplicity, we show only the result of TempCNN, which has an overall accuracy of 90%. 
 
-```{r xls, echo = FALSE, fig.align="center", out.width = "90%", out.height = "90%", fig.cap= "Result of 5-fold cross-validation of Mato Grosso data using LightTAE"}
+```{r xls, echo = FALSE, fig.align="center", out.width = "90%", out.height = "90%", fig.cap= "Result of 5-fold cross-validation of Mato Grosso data using LightTAE (Source: Authors)."}
 
 knitr::include_graphics("images/k_fold_validation_xlsx.png")
 ```
@@ -231,18 +223,11 @@ where the total area of the map is $A_{tot}$, the mapping area of class $i$ is $
 $$
 \hat{A_j} = A_{tot}\sum_{i=1}^KW_i\frac{n_{i,j}}{n_i}.
 $$
-<!---
-PEDRO: 41) A frase anterior termina sem um ponto. Pode colocar no final da formula?
-Tem outros lugares do texto que frases terminam assim tambem.
-GILBERTO: Pode.
--->
+
 This unbiased area estimator includes the effect of false negatives (omission error) while not considering the effect of false positives (commission error). The area estimates also allow for an unbiased estimate of the user's and producer's accuracy for each class. Following Olofsson et al. @Olofsson2013, we provide the 95% confidence interval for $\hat{A_j}$. 
 
 To produce the adjusted area estimates, `sits_accuracy()` must get the classified image together with a csv file containing a set of well-selected labeled points. The csv file should have the same format as the one used to obtain samples, as discussed earlier.
-<!---
-PEDRO: 42) csv ou CSV?
-GILBERTO: csv.
--->
+
 The labeled points should be based on a random stratified sample. All areas associated with each class should contribute to the test data used for accuracy assessment. 
 
 Because of the biases inherent in cross-validation of training data, an independent validation data set should be used to measure classification accuracy. In this case study, Simoes et al. [@Simoes2021] did a systematic sampling of the Cerrado biome using a $20 \times 20$ km grid with a total of 5,402 points. These samples are independent of the training set used in the classification. They were interpreted by five specialists using high-resolution images from the same period of the classification. This resulted in 5,286 evaluation samples thus distributed: "Annual Crop" (553), "Cerrado" (3,155), "Natural Non Vegetated" (44), "Pasture" (1,246), "Perennial Crop" (38), "Silviculture" (94), "Sugarcane" (77), and "Water" (79). This data set is available in package `sitsdata`, as described below. In this validation file, all samples belonging to classes "Cerrado", "Open Cerrado", and "Cerradao" (Woody Savanna) have been grouped together in a single class. 
@@ -281,7 +266,7 @@ cerrado_classif <- sits_label_classification(
 
 Since the above code is included for information only, we use the labeled cube stored in a Dropbox folder to perform the accuracy assessment. First, we retrieve the metadata for the cube.
 
-```{r, tidy="styler", out.width = "100%", fig.align="center", fig.cap="Classification of tile 044048 from the Landsat data cube for the Brazilian Cerrado in 2017/2018." }
+```{r, tidy="styler", out.width = "100%", fig.align="center", fig.cap="Classification of tile 044048 from the Landsat data cube for the Brazilian Cerrado in 2017/2018 (Source: Authors)." }
 # Retrieve the metadata for the classified cube
 # The files are stored in the sitsdata package
 data_dir <- system.file("extdata/Cerrado", package = "sitsdata")
@@ -300,7 +285,7 @@ cerrado_classif <- sits_cube(
 # Plot one tile of the classification
 plot(cerrado_classif, tiles = "044048")
 ```
-The next step is to provide a CSV file with the validation points, as described above.
+The next step is to provide a csv file with the validation points, as described above.
 
 ```{r, eval = FALSE, echo = TRUE}
 # Get ground truth points

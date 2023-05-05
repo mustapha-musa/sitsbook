@@ -58,14 +58,14 @@ samples_cerrado <- dplyr::filter(samples_ndvi,
 
 Given a few samples to display, `plot()` tries to group as many spatial locations together. In the following example, the first 12 samples labelled with "Cerrado" refer to the same spatial location in consecutive time periods. For this reason, these samples are plotted together.
 
-```{r cerrado-12, fig.align="center", out.width="70%", fig.cap="Plot of the first 'Cerrado' samples." }
+```{r cerrado-12, fig.align="center", out.width="70%", fig.cap="Plot of the first 'Cerrado' samples (Source: Authors)." }
 # Plot the first 12 samples
 plot(samples_cerrado[1:12,])
 ```
 
 For many samples, the default visualization combines all samples together in a single temporal interval, even if they belong to different years. This plot shows the spread of values for the time series of each band. The strong red line in the plot indicates the median of the values, while the two orange lines are the first and third interquartile ranges. See `?sits::plot` for more details on data visualization in  `sits`.
 
-```{r fig.align="center", out.width="70%", fig.cap="Plot of all Cerrado samples."}
+```{r fig.align="center", out.width="70%", fig.cap="Plot of all Cerrado samples (Source: Authors)."}
 # Plot all cerrado samples together
 plot(samples_cerrado)
 ```
@@ -81,7 +81,7 @@ To get a set of time series in `sits`, first create a regular data cube and then
 
 In the example below, given a data cube, the user provides the latitude and longitude of the desired location. Since the bands, start date, and end date of the time series are missing, `sits` obtains them from the data cube. The result is a tibble with one time series that can be visualized using `plot()`.
 \newpage
-```{r, tidy="styler", fig.align="center", out.width="90%", fig.cap="NDVI and EVI time series fetched from local raster cube.", message = FALSE}
+```{r, tidy="styler", fig.align="center", out.width="90%", fig.cap="NDVI and EVI time series fetched from local raster cube (Source: Authors).", message = FALSE}
 # Obtain a raster cube based on local files
 data_dir <- system.file("extdata/sinop", package = "sitsdata")
 raster_cube <- sits_cube(
@@ -98,13 +98,13 @@ series <- sits_get_data(cube    = raster_cube,
 plot(series)
 ```
 
-A useful case is when a set of labeled samples can be used as a training data set. In this case, trusted observations are usually labeled and commonly stored in plain text files in comma-separated values (CSV) or using shapefiles (SHP). 
+A useful case is when a set of labeled samples can be used as a training data set. In this case, trusted observations are usually labeled and commonly stored in plain text files in comma-separated values (csv) or using shapefiles (shp). 
 
 ```{r, tidy="styler", message=FALSE}
-# Retrieve a list of samples described by a CSV file
+# Retrieve a list of samples described by a csv file
 samples_csv_file <- system.file("extdata/samples/samples_sinop_crop.csv",
                                 package = "sits")
-# Read the CSV file into an R object
+# Read the csv file into an R object
 samples_csv <- read.csv(samples_csv_file)
 # Print the first three samples
 samples_csv[1:3,]
@@ -113,7 +113,7 @@ samples_csv[1:3,]
 To retrieve training samples for time series analysis, users must provide the temporal information (`start_date` and `end_date`). In the simplest case, all samples share the same dates. That is not a strict requirement. It is possible to specify different dates as long as they have a compatible duration. For example, the data set `samples_matogrosso_mod13q1` provided with the `sitsdata` package contains samples from different years covering the same duration. These samples are from the MOD13Q1 product, which contains the same number of images per year. Thus, all time series in the data set `samples_matogrosso_mod13q1` have the same number of dates. 
 
 
-Given a suitably built CSV sample file, `sits_get_data()` requires two parameters: (a) `cube`, the name of the R object that describes the data cube; (b) `samples`, the name of the CSV file. 
+Given a suitably built csv sample file, `sits_get_data()` requires two parameters: (a) `cube`, the name of the R object that describes the data cube; (b) `samples`, the name of the CSV file. 
 ```{r, tidy="styler"}
 # Get the points from a data cube in raster brick format
 points <- sits_get_data(cube = raster_cube, 
@@ -163,7 +163,7 @@ The literature on satellite image time series has several applications of filter
 The Savitzky-Golay filter fits a successive array of $2n+1$ adjacent data points with a $d$-degree polynomial through linear least squares. The main parameters for the filter are the polynomial degree ($d$) and the length of the window data points ($n$). It generally produces smoother results for a larger value of $n$ and/or a smaller value of $d$ [@Chen2004]. The optimal value for these two parameters can vary from case to case. In `sits`, the parameter `order` sets the order of the polynomial (default = 3), the parameter `length` sets the size of the temporal window (default = 5), and the parameter `scaling` sets the temporal expansion (default = 1). The following example shows the effect of Savitsky-Golay filter on a point extracted from the MOD13Q1 product, ranging from 2000-02-18 to 2018-01-01.
 
 
-```{r, fig.align="center", out.width="90%", fig.cap="Savitzky-Golay filter applied on a multi-year NDVI time series."}
+```{r, fig.align="center", out.width="90%", fig.cap="Savitzky-Golay filter applied on a multi-year NDVI time series (Source: Authors)."}
 
 # Take NDVI band of the first sample data set
 point_ndvi <- sits_select(point_mt_6bands, band = "NDVI")
@@ -179,7 +179,7 @@ The resulting smoothed curve has both desirable and unwanted properties. From 20
 
 The Whittaker smoother attempts to fit a curve representing the raw data, but is penalized if subsequent points vary too much [@Atzberger2011]. The Whittaker filter balances the residual to the original data and the smoothness of the fitted curve. The filter has one parameter: $\lambda{}$ that works as a smoothing weight parameter. The following example shows the effect of the Whittaker filter on a point extracted from the MOD13Q1 product, ranging from 2000-02-18 to 2018-01-01. The `lambda` parameter controls the smoothing of the filter. By default, it is set to 0.5, a small value. The example shows the effect of a larger smoothing parameter.
 
-```{r, fig.align="center", out.width="90%", fig.cap="Whittaker filter applied on a one-year NDVI time series."}
+```{r, fig.align="center", out.width="90%", fig.cap="Whittaker filter applied on a one-year NDVI time series (Source: Authors)."}
 
 # Take NDVI band of the first sample data set
 point_ndvi <- sits_select(point_mt_6bands, band = "NDVI")
