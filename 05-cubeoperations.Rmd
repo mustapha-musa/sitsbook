@@ -53,7 +53,7 @@ There are many options for calculating NDVI-related indexes for Sentinel-2 bands
 
 We first calculate the NDVI in the usual way, using bands B08 and B04.
 
-```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NDVI using bands B08 and B04 of Sentinel-2."}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NDVI using bands B08 and B04 of Sentinel-2 (Source: Authors)."}
 
 # Calculate NDVI index using bands B08 and B04
 reg_cube <- sits_apply(reg_cube,
@@ -65,7 +65,7 @@ plot(reg_cube, band = "NDVI", palette = "RdYlGn")
 ```
 We now compare the traditional NDVI with other vegetation indexes computed using red-edge bands. We first compute the NDRE1 using bands B06 and B05. 
 
-```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NDRE1 using bands B06 and B05 of Sentinel-2."}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NDRE1 using bands B06 and B05 of Sentinel-2 (Source: Authors)."}
 
 # Calculate NDRE1 index using bands B06 and B05
 reg_cube <- sits_apply(reg_cube,
@@ -78,7 +78,7 @@ plot(reg_cube, band = "NDRE1",  palette = "RdYlGn")
 ```
 Notice that the contrast between forests and deforested areas is more robust in the NDRE1 index than with NDVI. To compare this index with other red-edge based indexes, one option is to compute NDRE2 using bands B07 and B05, as shown below.
 
-```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NDRE2 using bands B07 and B05 of Sentinel-2."}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NDRE2 using bands B07 and B05 of Sentinel-2 (Source: Authors)."}
 # Calculate NDRE2 index using bands B07 and B05
 reg_cube <- sits_apply(reg_cube,
     NDRE2 = (B07 - B05)/(B07 + B05),
@@ -90,7 +90,7 @@ plot(reg_cube, band = "NDRE2", palette = "RdYlGn")
 ```
 Finally, we can calculate the third red-edge based vegetation index using bands B07 and B06. 
 
-```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="NDVI using bands B07 and B06 of Sentinel-2."}
+```{r, tidy="styler", out.width="90%", fig.align="center", fig.cap="NDVI using bands B07 and B06 of Sentinel-2 (Source: Authors)."}
 # Calculate NDRE3 index using bands B07 and B06 
 reg_cube <- sits_apply(reg_cube,
     NDRE3 = (B07 - B06)/(B07 + B06),
@@ -105,7 +105,7 @@ plot(reg_cube, band = "NDRE3", palette = "RdYlGn")
 
 Band combination can also generate spectral indices for detecting degradation by fires, which are an important element in environmental degradation. Forest fires significantly impact emissions and impoverish natural ecosystems [@Nepstad1999]. Fires open the canopy, making the microclimate drier and increasing the amount of dry fuel [@Gao2020]. One well-established technique for detecting burned areas with remote sensing images is the normalized burn ratio (NBR), the difference between the near-infrared and the short wave infrared band,  calculated using bands B8A and B12.
 
-```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP."}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP (Source: Authors)."}
 # Calculate the NBR index
 reg_cube <- sits_apply(reg_cube,
     NBR = (B12 - B8A)/(B12 + B8A),
@@ -124,7 +124,7 @@ The main idea behind the linear mixture model is that the observed pixel spectru
 
 
 $$
-R_i = \sum_{j=1}^N a_{i,j}*x_j + \epsilon_i, i \in {1,...M}, M > N
+R_i = \sum_{j=1}^N a_{i,j}*x_j + \epsilon_i, i \in {1,...M}, M > N,
 $$
 where $i=1,..M$ is the set of spectral bands and $j=1,..N$ is the set of land classes. For each pixel, $R_i$ is the reflectance in the i-th spectral band, $x_j$ is the reflectance value due to the j-th endmember, and $a_{i,j}$ is the proportion between the j-th endmember and the i-th spectral band. The model includes an error term $e_i$. The linear model can be interpreted as a system of equations where the spectral response of the pixel is a linear combination of the spectral response of the endmembers [@Shimabukuro2019]. To solve this system of equations and obtain the proportion of each endmember, `sits` uses a non-negative least squares (NNLS) regression algorithm, which is available in the R package `RStoolbox` and was developed by Jakob Schwalb-Willmann, based on the sequential coordinate-wise algorithm (SCA) proposed on Franc et al. [@Franc2005]. 
 
@@ -132,7 +132,7 @@ To run the mixture model in `sits`, it is necessary to inform the values of pixe
 
 In `sits`, spectral mixture analysis is done by `sits_mixture_model()`, which has two mandatory parameters: `cube` (a data cube) and `endmembers`, a named table (or equivalent) that defines the pure pixels. The `endmembers` table must have the following named columns: (a) `type`, which defines the class associated with an endmember; (b) names, the names of the bands. Each line of the table must contain the value of each endmember for all bands (see example). To improve readability, we suggest that the `endmembers` parameters be defined as a `tribble`. A `tribble` is a `tibble` with an easier to read row-by-row layout. In the example below, we define three endmembers for classes "forest", "soil", and "water".  Note that the values for each band are expressed as integers ranging from 0 to 10,000. 
 
-```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Percentage of forest per pixel estimated by mixture model."}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Percentage of forest per pixel estimated by mixture model (Source: Authors)."}
 # Define the endmembers for three classes and six bands
 em <- tibble::tribble(
     ~class,   ~B02, ~B03, ~B04, ~B8A, ~B11, ~B12,
@@ -150,12 +150,12 @@ reg_cube <- sits_mixture_model(
 plot(reg_cube, band = "FOREST", palette = "Greens")
 ```
 
-```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Percentage of water per pixel estimated by mixture model."}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Percentage of water per pixel estimated by mixture model (Source: Authors)."}
 # Plot the water endmember for the first date using the Blues palette
 plot(reg_cube, band = "WATER", palette = "Blues")
 ```
 
-```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Percentage of soil per pixel estimated by mixture model."}
+```{r, tidy="styler", out.width="100%", fig.align="center", fig.cap="Percentage of soil per pixel estimated by mixture model (Source: Authors)."}
 # Plot the SOIL endmember for the first date using the orange red (OrRd) palette 
 plot(reg_cube, band = "SOIL", palette = "OrRd")
 ```
