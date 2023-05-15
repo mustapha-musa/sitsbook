@@ -25,8 +25,8 @@
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.5/font.css" rel="stylesheet">
-<link href="libs/IBM_Plex_Mono-0.4.5/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.6/font.css" rel="stylesheet">
+<link href="libs/IBM_Plex_Mono-0.4.6/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
@@ -107,40 +107,20 @@
 <h2>Introduction<a class="anchor" aria-label="anchor" href="#introduction-1"><i class="fas fa-link"></i></a>
 </h2>
 <p>Image classification post-processing has been defined as “a refinement of the labeling in a classified image to enhance its classification accuracy” <span class="citation"><a href="references.html#ref-Huang2014" role="doc-biblioref">[77]</a></span>. In remote sensing image analysis, these procedures combine pixel-based classification methods with a spatial post-processing method to remove outliers and misclassified pixels. For pixel-based classifiers, post-processing methods allow including spatial information in the final results.</p>
-<p>The <code>sits</code> package uses a <em>time-first, space-later</em> approach. Since machine learning classifiers in <code>sits</code> are mostly pixel-based, it is necessary to complement them with spatial smoothing methods. These methods improve the accuracy of land classification by incorporating spatial and contextual information into the classification process.
-<!---
-PEDRO: 30) Por todo texto, sao usados termos como "land use and land cover classes", "land use classification", "land-cover classification" (acima), "land use/land cover". Acho que seria bom definirmos um padrao.
-GILBERTO: Boa observação. Ajustei tudo para usar "land classification" e "land class". Coloquei um novo parágrafo na Introdução que fala de "land use" e "land cover".  
---></p>
+<p>The <code>sits</code> package uses a <em>time-first, space-later</em> approach. Since machine learning classifiers in <code>sits</code> are mostly pixel-based, it is necessary to complement them with spatial smoothing methods. These methods improve the accuracy of land classification by incorporating spatial and contextual information into the classification process.</p>
 <p>Most statistical classifiers use training samples derived from “pure” pixels that users have selected to represent the desired output classes. However, images contain many mixed pixels irrespective of the resolution. Also, there is a considerable degree of data variability in each class. These effects lead to outliers whose chance of misclassification is significant. To offset these problems, most post-processing methods use the “smoothness assumption” <span class="citation"><a href="references.html#ref-Schindler2012" role="doc-biblioref">[78]</a></span>: nearby pixels tend to have the same label. To put this assumption in practice, smoothing methods in <code>sits</code> use the neighborhood information to remove outliers and enhance consistency in the resulting map.</p>
-<!---
-PEDRO: 31) Existem duas ocorrencias de "product" neste capitulo. Usar classification?
-GILBERTO: resolvido.
--->
 </div>
 <div id="motivation" class="section level2 unnumbered">
 <h2>Motivation<a class="anchor" aria-label="anchor" href="#motivation"><i class="fas fa-link"></i></a>
 </h2>
 <p>The smoothing method available in <code>sits</code> uses Bayesian inference for including expert knowledge on the derivation of probabilities. As stated by Spiegelhalter and Rice <span class="citation"><a href="references.html#ref-Spiegelhalter2009" role="doc-biblioref">[79]</a></span>: “In the Bayesian paradigm, degrees of belief in states of nature are specified. Bayesian statistical methods start with existing ‘prior’ beliefs and update these using data to give ‘posterior’ beliefs, which may be used as the basis for inferential decisions”. Bayesian inference has been established as a major method for assessing probability.</p>
-<!---
-PEDRO: 32) Esta frase acima ja esta no paragrafo anterior.
-GILBERTO: DE acordo. 
--->
 <p>The assumption is that class probabilities at the local level should be similar and provide the baseline for comparison with the pixel values produced by the classifier. Based on these two elements, Bayesian smoothing adjusts the probabilities for the pixels, considering spatial dependence.</p>
 </div>
 <div id="bayesian-estimation" class="section level2 unnumbered">
 <h2>Bayesian estimation<a class="anchor" aria-label="anchor" href="#bayesian-estimation"><i class="fas fa-link"></i></a>
 </h2>
 <p>The Bayesian estimate is based on two random variables: (a) The observed class probabilities for each pixel denoted by a random variable <span class="math inline">\(p_{i,k}\)</span>, where <span class="math inline">\(i\)</span> is the index of the pixel and <span class="math inline">\(k\)</span> indicates the class; (b) The underlying class probabilities for each pixel, denoted by a random variable <span class="math inline">\(\phi_{i,k}\)</span>. The probabilities <span class="math inline">\(p_{i,k}\)</span> are the classifier’s output, being subject to noise, outliers, and classification errors. Our estimation aims to remove these effects and obtain <span class="math inline">\(\phi_{i,k}\)</span> to approximate the actual class probability better.</p>
-<!---
-PEDRO: 33) To make our inference tractable?
-GILBERTO: Removido.
--->
-<p>We first convert the class probability values <span class="math inline">\(p_{i,k}\)</span> to log-odds values using the logit function, as shown below. The logit function converts probability values ranging from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span> to values from negative infinity to infinity. The conversion from probabilities logit values is helpful to support our assumption of normal distribution for our data.
-<!---
-PEDRO: 34) "assumption of normal distribution [sem o functions] for our data?"
-GILBERTO: Corrigido.
---></p>
+<p>We first convert the class probability values <span class="math inline">\(p_{i,k}\)</span> to log-odds values using the logit function, as shown below. The logit function converts probability values ranging from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span> to values from negative infinity to infinity. The conversion from probabilities logit values is helpful to support our assumption of normal distribution for our data.</p>
 <p><span class="math display">\[
     x_{i,k} = \ln \left(\frac{p_{i,k}}{1 - p_{i,k}}\right)
 \]</span>
@@ -149,16 +129,7 @@ In what follows, we consider two random variables for each pixel <span class="ma
     \pi(\mu|x) \propto{} \pi(x|\mu)\pi(\mu).
 \]</span>
 To estimate the conditional posterior distribution <span class="math inline">\(\pi(\theta{}|x)\)</span>, we combine two distributions: (a) the distribution <span class="math inline">\(\pi(x|\mu)\)</span>, known as the likelihood function, which expresses the dependency of the measured values <span class="math inline">\(x_{i,k}\)</span> in the underlying values <span class="math inline">\(\mu_{i,k}\)</span>; and (b) <span class="math inline">\(\pi(\mu)\)</span>, which is our guess on the actual data distribution, known as the prior. For simplicity, we also assume independence between the different classes <span class="math inline">\(k\)</span>, instead of considering a multivariate distribution. Therefore, each class <span class="math inline">\(k\)</span> is updated separately.</p>
-<p>We assume that the likelihood <span class="math inline">\(x_{i,k} | \mu_{i,k}\)</span> follows a normal distribution, <span class="math inline">\(N(\mu_{i,k}, \sigma^2_{k})\)</span>, with mean <span class="math inline">\(\mu_{i,k}\)</span> and variance <span class="math inline">\(\sigma^2_{k}\)</span>.
-<!---
-PEDRO: 35) "with parameters $\mu_{i,k}$ and $\sigma^2_{k}$" poderia ser removido, visto que ja esta explicito na formula.
-GILBERTO: mean and variance fica melhor.
---></p>
-<p>The variance <span class="math inline">\(\sigma^2_{k}\)</span> is a hyperparameter that controls the smoothness of the resulting estimate. Therefore
-<!---
-PEDRO: 36) Poderia ser algo do tipo "The variance $\sigma^2_{k}$ is a hyperparameter that controls the smoothness of the resulting estimate."?
-GILBERTO: De acordo.
---></p>
+<p>We assume that the likelihood <span class="math inline">\(x_{i,k} | \mu_{i,k}\)</span> follows a normal distribution, <span class="math inline">\(N(\mu_{i,k}, \sigma^2_{k})\)</span>, with mean <span class="math inline">\(\mu_{i,k}\)</span> and variance <span class="math inline">\(\sigma^2_{k}\)</span>. The variance <span class="math inline">\(\sigma^2_{k}\)</span> is a hyperparameter that controls the smoothness of the resulting estimate. Therefore</p>
 <p><span class="math display">\[
 x_{i,k} | \mu_{i,k} \sim N(\mu_{i,k}, \sigma^2_{k})
 \]</span>
@@ -179,7 +150,7 @@ Given these assumptions, the Bayesian update for the expected conditional mean <
 \begin{equation}
 {E}[\mu_{i,k} | x_{i,k}] =
 \frac{m_{i,t} \times \sigma^2_{k} +
-x_{i,k} \times s^2_{i,k}}{ \sigma^2_{k} +s^2_{i,k}}
+x_{i,k} \times s^2_{i,k}}{ \sigma^2_{k} +s^2_{i,k}},
 \end{equation}
 \]</span></p>
 <p>which can be expressed as a weighted mean</p>
@@ -187,7 +158,7 @@ x_{i,k} \times s^2_{i,k}}{ \sigma^2_{k} +s^2_{i,k}}
 {E}[\mu_{i,k} | x_{i,k}] =
 \Biggl [ \frac{s^2_{i,k}}{\sigma^2_{k} +s^2_{i,k}} \Biggr ] \times
 x_{i,k} +
-\Biggl [ \frac{\sigma^2_{k}}{\sigma^2_{k} +s^2_{i,k}} \Biggr ] \times m_{i,k}
+\Biggl [ \frac{\sigma^2_{k}}{\sigma^2_{k} +s^2_{i,k}} \Biggr ] \times m_{i,k},
 \]</span></p>
 <p>where</p>
 <ol style="list-style-type: decimal">
@@ -216,12 +187,8 @@ x_{i,k} +
 <h2>Defining the neighborhood<a class="anchor" aria-label="anchor" href="#defining-the-neighborhood"><i class="fas fa-link"></i></a>
 </h2>
 <p>The intuition for Bayesian smoothing is that homogeneous neighborhoods should have the same class. In homogeneous neighborhoods, the dominant class has both higher average probabilities and lower variance than the other classes. In these neighborhoods, a pixel of a different class is likely to be associated to lower average probabilities and higher local variance. Mixed pixels at the limits between areas with different classes pose a problem. These pixels contain signatures of two classes. To account for these cases, Bayesian smoothing in <code>sits</code> uses a special definition of a neighborhood.</p>
-<p>To be reliable, local statistics should only include pixels likely to belong to a single class. Windows centred on border pixels contain only some pixels belonging to the same class as the central pixel; the others belong to a different class. Consider a window of size <span class="math inline">\(7 \times 7\)</span> around a pixel in the probability map of class “Forest”. It will contain the central pixel and 48 neighbours.
-<!---
-PEDRO: 37) Nao seria 48 vizinhos? 7*7-1? Ou seria uma vizinhanca 9x9?
-GILBERTO: Corrigido.
--->
-Not all surrounding pixels are used to compute the local statistics. Local statistics estimates use only pixels with high probability of belonging to the class “Forest”. The window is then defined by taking the percentage of surrounding pixels with the highest probabilities to calculate the local statistics. By default, this percentage is set to 50%. The intuition is that border pixels will have about half of their neighbours from one class and half of them from another.</p>
+<p>To be reliable, local statistics should only include pixels likely to belong to a single class. Windows centred on border pixels contain only some pixels belonging to the same class as the central pixel; the others belong to a different class. Consider a window of size <span class="math inline">\(7 \times 7\)</span> around a pixel in the probability map of class “Forest”. It will contain the central pixel and 48 neighbours.</p>
+<p>Not all surrounding pixels are used to compute the local statistics. Local statistics estimates use only pixels with high probability of belonging to the class “Forest”. The window is then defined by taking the percentage of surrounding pixels with the highest probabilities to calculate the local statistics. By default, this percentage is set to 50%. The intuition is that border pixels will have about half of their neighbours from one class and half of them from another.</p>
 </div>
 <div id="measuring-the-local-variance" class="section level2 unnumbered">
 <h2>Measuring the local variance<a class="anchor" aria-label="anchor" href="#measuring-the-local-variance"><i class="fas fa-link"></i></a>
@@ -229,48 +196,44 @@ Not all surrounding pixels are used to compute the local statistics. Local stati
 <p>As discussed above, the effect of the Bayesian estimator depends on the values of the a prior variance <span class="math inline">\(\sigma^2_k\)</span> set by the user and of the local variance <span class="math inline">\(s^2_{i,1}\)</span> measured for each pixel. To illustrate the impact of the choices of the <span class="math inline">\(\sigma^2_k\)</span> parameter, we present a detailed example. The first step is to take a probability cube for a deforestation detection application in an area of the Brazilian Amazon. This cube has been produced by a random forest model with six classes. We first build the data cube and then plot the probabilities for classes “Water” and “Forest”.</p>
 <div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define the classes of the probability cube</span></span>
-<span><span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"Water"</span>, <span class="st">"ClearCut_Burn"</span>, <span class="st">"ClearCut_Soil"</span>,</span>
-<span>  <span class="st">"ClearCut_Veg"</span>, <span class="st">"Forest"</span>, <span class="st">"Wetland"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># directory where the data is stored</span></span>
+<span><span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Water"</span>, <span class="st">"ClearCut_Burn"</span>, <span class="st">"ClearCut_Soil"</span>,</span>
+<span>            <span class="st">"ClearCut_Veg"</span>, <span class="st">"Forest"</span>, <span class="st">"Wetland"</span><span class="op">)</span></span>
+<span><span class="co"># directory where the data is stored </span></span>
 <span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/Rondonia-20LLQ/"</span>, package <span class="op">=</span> <span class="st">"sitsdata"</span><span class="op">)</span></span>
-<span><span class="co"># create a probability data cube from a file</span></span>
+<span><span class="co"># create a probability data cube from a file </span></span>
 <span><span class="va">probs_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
-<span>  source <span class="op">=</span> <span class="st">"MPC"</span>,</span>
-<span>  collection <span class="op">=</span> <span class="st">"SENTINEL-2-L2A"</span>,</span>
-<span>  data_dir <span class="op">=</span> <span class="va">data_dir</span>,</span>
-<span>  bands <span class="op">=</span> <span class="st">"probs"</span>,</span>
-<span>  labels <span class="op">=</span> <span class="va">labels</span>,</span>
-<span>  parse_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"X1"</span>, <span class="st">"X2"</span>, <span class="st">"tile"</span>, <span class="st">"start_date"</span>, <span class="st">"end_date"</span>, <span class="st">"band"</span>, <span class="st">"version"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span>    source <span class="op">=</span> <span class="st">"MPC"</span>,</span>
+<span>    collection <span class="op">=</span> <span class="st">"SENTINEL-2-L2A"</span>,</span>
+<span>    data_dir <span class="op">=</span> <span class="va">data_dir</span>,</span>
+<span>    bands <span class="op">=</span> <span class="st">"probs"</span>,</span>
+<span>    labels <span class="op">=</span> <span class="va">labels</span>,</span>
+<span>    parse_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"X1"</span>, <span class="st">"X2"</span>, <span class="st">"tile"</span>, <span class="st">"start_date"</span>, <span class="st">"end_date"</span>, <span class="st">"band"</span>, <span class="st">"version"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># plot the probabilities for water and forest</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">probs_cube</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Water"</span>, <span class="st">"Forest"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-117"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-117-1.png" alt="Probability map produced for classes Forest and Water." width="100%"><p class="caption">
-Figure 72: Probability map produced for classes Forest and Water.
+<span style="display:block;" id="fig:unnamed-chunk-114"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-114-1.png" alt="Probability map produced for classes Forest and Water (Source: Authors)." width="100%"><p class="caption">
+Figure 72: Probability map produced for classes Forest and Water (Source: Authors).
 </p>
 </div>
 <p>The probability map for class “Forest” shows high values associated with compact patches and linear stretches in riparian areas. By contrast, the probability map for class “Water” has mostly low values, except in a few places with a high chance of occurrence of this class. To further understand the behavior of the Bayesian estimator, it is helpful to examine the local variance associated with the logits of the probabilities.</p>
 <p>The <code><a href="https://rdrr.io/pkg/sits/man/sits_variance.html">sits_variance()</a></code> function estimates the local variances for the logits, which correspond to the <span class="math inline">\(s^2_{i,k}\)</span> parameter in the Bayesian estimator. It has the following parameters: (a) <code>cube</code>, a probability cube; (b) <code>window_size</code>, the dimension of the local neighborhood; (c) <code>neigh_fraction</code>, the percentage of pixels in the neighborhood which will be used to calculate the variance; (d) <code>multicores</code>, number of CPU cores that will be used for processing; (e) <code>memsize</code>, memory available; (f) <code>output_dir</code>, directory where results will be stored; (g) <code>version</code>, for version control. In the example below, we will use half of the pixels of a <span class="math inline">\(7 \times 7\)</span> window to estimate the variance. The chosen pixels will be those with the highest probability to be more representative of the actual class distribution. The output values are the variances of the logits.</p>
 <div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">var_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_variance.html">sits_variance</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">probs_cube</span>,</span>
-<span>  window_size <span class="op">=</span> <span class="fl">7</span>,</span>
-<span>  neigh_fraction <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">24</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp10"</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"w7-n05"</span></span>
-<span><span class="op">)</span></span>
+<span>    cube <span class="op">=</span> <span class="va">probs_cube</span>,</span>
+<span>    window_size <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>    neigh_fraction <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">24</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp10"</span>,</span>
+<span>    version <span class="op">=</span> <span class="st">"w7-n05"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">var_cube</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Water"</span>, <span class="st">"Forest"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-118"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-118-1.png" alt="Variance map for class Forest." width="100%"><p class="caption">
-Figure 73: Variance map for class Forest.
+<span style="display:block;" id="fig:unnamed-chunk-115"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-115-1.png" alt="Variance map for class Forest (Source: Authors)." width="100%"><p class="caption">
+Figure 73: Variance map for class Forest (Source: Authors).
 </p>
 </div>
 <p>The plot for the “Forest” class shows that the areas of low variance are associated both with dense forest patches as well as areas where trees have been completely removed. Areas of high variance are primarily associated with the borders between forest areas and the other classes. By contrast, the plot for the “Water” class is not informative, with small areas of high variance located near the areas of high water probability. Both plots show that most variance values are low, and high values reach 30. This information is relevant for setting the values of the prior variance <span class="math inline">\(\sigma^2\)</span>, as discussed below.</p>
@@ -284,97 +247,88 @@ Figure 73: Variance map for class Forest.
 <div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate the thematic map</span></span>
 <span><span class="va">class_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">probs_cube</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp10"</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"no_smooth"</span></span>
-<span><span class="op">)</span></span>
+<span>    cube <span class="op">=</span> <span class="va">probs_cube</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp10"</span>,</span>
+<span>    version <span class="op">=</span> <span class="st">"no_smooth"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the result</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">class_map</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-119"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-119-1.png" alt="Classified map without smoothing." width="100%"><p class="caption">
-Figure 74: Classified map without smoothing.
+<span style="display:block;" id="fig:unnamed-chunk-116"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-116-1.png" alt="Classified map without smoothing (Source: Authors)." width="100%"><p class="caption">
+Figure 74: Classified map without smoothing (Source: Authors).
 </p>
 </div>
-<p>To remove the outliers and classification errors, we run a smoothing procedure where all prior variances are set to the same value of <span class="math inline">\(20\)</span>, which is relatively high compared with the maximum local class variance shown above. In this case, for most situations, the new value of the probability will be strongly influenced by the local average.
-<!---
-PEDRO: 38) Esta faltando terminar a frase
-GILBERTO: Resolvido.
---></p>
+<p>To remove the outliers and classification errors, we run a smoothing procedure where all prior variances are set to the same value of <span class="math inline">\(20\)</span>, which is relatively high compared with the maximum local class variance shown above. In this case, for most situations, the new value of the probability will be strongly influenced by the local average.</p>
 <div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute Bayesian smoothing</span></span>
 <span><span class="va">cube_smooth_w7_f05_s20</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">probs_cube</span>,</span>
-<span>  window_size <span class="op">=</span> <span class="fl">7</span>,</span>
-<span>  neigh_fraction <span class="op">=</span> <span class="fl">0.50</span>,</span>
-<span>  smoothness <span class="op">=</span> <span class="fl">20</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"w7-f05-s20"</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp10"</span></span>
-<span><span class="op">)</span></span>
+<span>    cube <span class="op">=</span> <span class="va">probs_cube</span>,</span>
+<span>    window_size <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>    neigh_fraction <span class="op">=</span> <span class="fl">0.50</span>,</span>
+<span>    smoothness <span class="op">=</span> <span class="fl">20</span>, </span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>    version <span class="op">=</span> <span class="st">"w7-f05-s20"</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp10"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the result</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">cube_smooth_w7_f05_s20</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Water"</span>, <span class="st">"Forest"</span><span class="op">)</span>, palette <span class="op">=</span> <span class="st">"YlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-120"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-120-1.png" alt="Probability maps after bayesian smoothing." width="100%"><p class="caption">
-Figure 75: Probability maps after bayesian smoothing.
+<span style="display:block;" id="fig:unnamed-chunk-117"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-117-1.png" alt="Probability maps after bayesian smoothing (Source: Authors)." width="100%"><p class="caption">
+Figure 75: Probability maps after bayesian smoothing (Source: Authors).
 </p>
 </div>
 <p>Bayesian smoothing has removed some of the local variability associated with misclassified pixels that differ from their neighbors. There is a side effect: the water areas surrounded by forests have not been preserved in the forest probability map. The smoothing impact is best appreciated by comparing the labeled map produced without smoothing to the one that follows the procedure, as shown below.</p>
 <div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate the thematic map</span></span>
 <span><span class="va">defor_map_w7_f05_20</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">cube_smooth_w7_f05_s20</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp8"</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"w7-f05-s20"</span></span>
-<span><span class="op">)</span></span>
+<span>    cube <span class="op">=</span> <span class="va">cube_smooth_w7_f05_s20</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp8"</span>,</span>
+<span>    version <span class="op">=</span> <span class="st">"w7-f05-s20"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">defor_map_w7_f05_20</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-121"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-121-1.png" alt="Final classification map after Bayesian smoothing with 7 x 7 window, neigh_fraction = 0.5 and smoothness = 20." width="100%"><p class="caption">
-Figure 76: Final classification map after Bayesian smoothing with 7 x 7 window, neigh_fraction = 0.5 and smoothness = 20.
+<span style="display:block;" id="fig:unnamed-chunk-118"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-118-1.png" alt="Final classification map after Bayesian smoothing with 7 x 7 window, using neigh_fraction = 0.5 and smoothness = 20 (Source: Authors)." width="100%"><p class="caption">
+Figure 76: Final classification map after Bayesian smoothing with 7 x 7 window, using neigh_fraction = 0.5 and smoothness = 20 (Source: Authors).
 </p>
 </div>
 <p>In the smoothed map, the outliers have been removed by expanding forest areas. Forests have replaced small corridors of water and soil encircled by trees. This effect is due to the high probability of forest detection in the training data. To keep the water areas and reduce the expansion of the forest area, a viable alternative is to reduce the smoothness (<span class="math inline">\(\sigma^2\)</span>) for the “Forest” and “Water” classes. In this way, the local influence of the forest in the other classes is reduced. As for the water areas, since they are narrow, their neighborhoods will have many low probability values, which would reduce the expected value of the Bayesian estimator.</p>
 <div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Reduce smoothing for classes Water and Forest</span></span>
-<span><span class="co"># Labels:  "Water", "ClearCut_Burn", "ClearCut_Soil",</span></span>
+<span><span class="co"># Labels:  "Water", "ClearCut_Burn", "ClearCut_Soil", </span></span>
 <span><span class="co">#          "ClearCut_Veg", "Forest", "Wetland"</span></span>
 <span><span class="va">smooth_water_forest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">20</span>, <span class="fl">20</span>, <span class="fl">20</span>, <span class="fl">5</span>, <span class="fl">20</span><span class="op">)</span></span>
 <span><span class="co"># Compute Bayesian smoothing</span></span>
 <span><span class="va">cube_smooth_w7_f05_swf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">probs_cube</span>,</span>
-<span>  window_size <span class="op">=</span> <span class="fl">7</span>,</span>
-<span>  neigh_fraction <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>  smoothness <span class="op">=</span> <span class="va">smooth_water_forest</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"w7-f05-swf"</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp10"</span></span>
-<span><span class="op">)</span></span>
+<span>    cube <span class="op">=</span> <span class="va">probs_cube</span>,</span>
+<span>    window_size <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>    neigh_fraction <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>    smoothness <span class="op">=</span> <span class="va">smooth_water_forest</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>    version <span class="op">=</span> <span class="st">"w7-f05-swf"</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp10"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Computed labeled map</span></span>
 <span><span class="va">defor_map_w7_f05_swf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">cube_smooth_w7_f05_swf</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp10"</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"w7-f05-swf"</span></span>
-<span><span class="op">)</span></span>
+<span>    cube <span class="op">=</span> <span class="va">cube_smooth_w7_f05_swf</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp10"</span>,</span>
+<span>    version <span class="op">=</span> <span class="st">"w7-f05-swf"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">defor_map_w7_f05_swf</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-122"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-122-1.png" alt="Probability maps after Bayesian smoothing with 7 x 7 window with low smoothness for classes Water and Forest" width="100%"><p class="caption">
-Figure 77: Probability maps after Bayesian smoothing with 7 x 7 window with low smoothness for classes Water and Forest
+<span style="display:block;" id="fig:unnamed-chunk-119"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-119-1.png" alt="Probability maps after Bayesian smoothing with 7 x 7 window with low smoothness for classes Water and Forest (Source: Authors)." width="100%"><p class="caption">
+Figure 77: Probability maps after Bayesian smoothing with 7 x 7 window with low smoothness for classes Water and Forest (Source: Authors).
 </p>
 </div>
 <p>Comparing the two maps, the narrow water streams inside the forest area have been better preserved. Small corridors between forest areas have also been maintained. A better comparison between the two maps requires importing them into QGIS. Exporting data from <code>sits</code> to QGIS is discussed in the Chapter <a href="https://e-sensing.github.io/sitsbook/visualising-and-exporting-data.html">Visualising and exporting data</a>.</p>
@@ -411,7 +365,7 @@ Figure 77: Probability maps after Bayesian smoothing with 7 x 7 window with low 
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-04.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -25,8 +25,8 @@
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.5/font.css" rel="stylesheet">
-<link href="libs/IBM_Plex_Mono-0.4.5/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.6/font.css" rel="stylesheet">
+<link href="libs/IBM_Plex_Mono-0.4.6/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
@@ -114,22 +114,20 @@
 <div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read a shapefile for the state of Mato Grosso, Brazil</span></span>
 <span><span class="va">mt_shp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/shapefiles/mato_grosso/mt.shp"</span>,</span>
-<span>  package <span class="op">=</span> <span class="st">"sits"</span></span>
-<span><span class="op">)</span></span>
+<span>                      package <span class="op">=</span> <span class="st">"sits"</span><span class="op">)</span></span>
 <span><span class="co"># Convert to an sf object</span></span>
 <span><span class="va">mt_sf</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">read_sf</a></span><span class="op">(</span><span class="va">mt_shp</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate sample-to-sample and sample-to-prediction distances</span></span>
 <span><span class="va">distances</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_geo_dist.html">sits_geo_dist</a></span><span class="op">(</span></span>
-<span>  samples <span class="op">=</span> <span class="va">samples_modis_ndvi</span>,</span>
-<span>  roi <span class="op">=</span> <span class="va">mt_sf</span></span>
-<span><span class="op">)</span></span>
+<span>    samples <span class="op">=</span> <span class="va">samples_modis_ndvi</span>,</span>
+<span>    roi <span class="op">=</span> <span class="va">mt_sf</span><span class="op">)</span></span>
 <span><span class="co"># Plot sample-to-sample and sample-to-prediction distances</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">distances</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-60"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-60-1.png" alt="Distribution of sample-to-sample and sample-to-prediction distances." width="100%"><p class="caption">
-Figure 36: Distribution of sample-to-sample and sample-to-prediction distances.
+<span style="display:block;" id="fig:unnamed-chunk-58"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-58-1.png" alt="Distribution of sample-to-sample and sample-to-prediction distances (Source: Authors)." width="100%"><p class="caption">
+Figure 36: Distribution of sample-to-sample and sample-to-prediction distances (Source: Authors).
 </p>
 </div>
 <p>The plot shows a mismatch between the sample-to-sample and the sample-to-prediction distributions. Most samples are closer to each other than they are close to the location where values need to be predicted. In this case, there are many areas where few or no samples have been collected and where the prediction uncertainty will be higher. In this and similar cases, improving the distribution of training samples is always welcome. If that is not possible, areas with insufficient samples could have lower accuracy. This information must be reported to potential users of classification results.</p>
@@ -143,15 +141,14 @@ Figure 36: Distribution of sample-to-sample and sample-to-prediction distances.
 <code class="sourceCode R"><span><span class="co"># Take a set of patterns for 2 classes</span></span>
 <span><span class="co"># Create a dendrogram, plot, and get the optimal cluster based on ARI index</span></span>
 <span><span class="va">clusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_clustering.html">sits_cluster_dendro</a></span><span class="op">(</span></span>
-<span>  samples <span class="op">=</span> <span class="va">cerrado_2classes</span>,</span>
-<span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span><span class="op">)</span>,</span>
-<span>  dist_method <span class="op">=</span> <span class="st">"dtw_basic"</span>,</span>
-<span>  linkage <span class="op">=</span> <span class="st">"ward.D2"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span>    samples <span class="op">=</span> <span class="va">cerrado_2classes</span>, </span>
+<span>    bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span><span class="op">)</span>,</span>
+<span>    dist_method <span class="op">=</span> <span class="st">"dtw_basic"</span>,</span>
+<span>    linkage <span class="op">=</span>  <span class="st">"ward.D2"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-61"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-61-1.png" alt="Example of hierarchical clustering for a two class set of time series." width="90%"><p class="caption">
-Figure 37: Example of hierarchical clustering for a two class set of time series.
+<span style="display:block;" id="fig:unnamed-chunk-59"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-59-1.png" alt="Example of hierarchical clustering for a two class set of time series (Source: Authors)." width="90%"><p class="caption">
+Figure 37: Example of hierarchical clustering for a two class set of time series (Source: Authors).
 </p>
 </div>
 <p>The <code><a href="https://rdrr.io/pkg/sits/man/sits_clustering.html">sits_cluster_dendro()</a></code> function has one mandatory parameter (<code>samples</code>), with the samples to be evaluated. Optional parameters include <code>bands</code>, <code>dist_method</code>, and <code>linkage</code>. The <code>dist_method</code> parameter specifies how to calculate the distance between two time series. We recommend a metric that uses dynamic time warping (DTW) <span class="citation"><a href="references.html#ref-Petitjean2012" role="doc-biblioref">[29]</a></span>, as DTW is a reliable method for measuring differences between satellite image time series <span class="citation"><a href="references.html#ref-Maus2016" role="doc-biblioref">[30]</a></span>. The options available in <code>sits</code> are based on those provided by package <code>dtwclust</code>, which include <code>dtw_basic</code>, <code>dtw_lb</code>, and <code>dtw2</code>. Please check <code><a href="https://rdrr.io/pkg/dtwclust/man/tsclust.html">?dtwclust::tsclust</a></code> for more information on DTW distances.</p>
@@ -182,27 +179,26 @@ Figure 37: Example of hierarchical clustering for a two class set of time series
 <h2>Using SOM for sample quality control<a class="anchor" aria-label="anchor" href="#using-som-for-sample-quality-control"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="https://www.kaggle.com/esensing/using-som-for-sample-quality-control-in-sits" target="_blank"><img src="https://kaggle.com/static/images/open-in-kaggle.svg"></a></p>
-<p><code>sits</code> provides a clustering technique based on self-organizing maps (SOM) as an alternative to hierarchical clustering for quality control of training samples. SOM is a dimensionality reduction technique <span class="citation"><a href="references.html#ref-Kohonen1990" role="doc-biblioref">[33]</a></span>, where high-dimensional data is mapped into a two-dimensional map, keeping the topological relations between data patterns. As shown below, the SOM 2D map is composed of units called neurons. Each neuron has a weight vector, with the same dimension as the training samples. At the start, neurons are assigned a small random value and then trained by competitive learning. The algorithm computes the distances of each member of the training set to all neurons and finds the neuron closest to the input, called the best matching unit.</p>
+<p><code>sits</code> provides a clustering technique based on self-organizing maps (SOM) as an alternative to hierarchical clustering for quality control of training samples. SOM is a dimensionality reduction technique <span class="citation"><a href="references.html#ref-Kohonen1990" role="doc-biblioref">[33]</a></span>, where high-dimensional data is mapped into a two-dimensional map, keeping the topological relations between data patterns. As shown in Figure <a href="improving-the-quality-of-training-samples.html#fig:som2d">38</a>, the SOM 2D map is composed of units called neurons. Each neuron has a weight vector, with the same dimension as the training samples. At the start, neurons are assigned a small random value and then trained by competitive learning. The algorithm computes the distances of each member of the training set to all neurons and finds the neuron closest to the input, called the best matching unit.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-64"></span>
-<img src="images/som_structure.png" alt="SOM 2D map creation (source: Santos et al.(2021). Reproduction under fair use doctrine." width="90%" height="90%"><p class="caption">
-Figure 38: SOM 2D map creation (source: Santos et al.(2021). Reproduction under fair use doctrine.
+<span style="display:block;" id="fig:som2d"></span>
+<img src="images/som_structure.png" alt="SOM 2D map creation (Source: Santos et al. (2021). Reproduction under fair use doctrine)." width="90%" height="90%"><p class="caption">
+Figure 38: SOM 2D map creation (Source: Santos et al. (2021). Reproduction under fair use doctrine).
 </p>
 </div>
 <p>The input data for quality assessment is a set of training samples, which are high-dimensional data; for example, a time series with 25 instances of 4 spectral bands has 100 dimensions. When projecting a high-dimensional data set into a 2D SOM map, the units of the map (called neurons) compete for each sample. Each time series will be mapped to one of the neurons. Since the number of neurons is smaller than the number of classes, each neuron will be associated with many time series. The resulting 2D map will be a set of clusters. Given that SOM preserves the topological structure of neighborhoods in multiple dimensions, clusters that contain training samples with a given label will usually be neighbours in 2D space. The neighbors of each neuron of a SOM map provide information on intraclass and interclass variability, which is used to detect noisy samples. The methodology of using SOM for sample quality assessment is discussed in detail in the reference paper <span class="citation"><a href="references.html#ref-Santos2021a" role="doc-biblioref">[34]</a></span>.</p>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-65"></span>
-<img src="images/methodology_bayes_som.png" alt="Using SOM for class noise reduction (source: Santos et al.(2021). Reproduction under fair use doctrine." width="90%" height="90%"><p class="caption">
-Figure 39: Using SOM for class noise reduction (source: Santos et al.(2021). Reproduction under fair use doctrine.
+<span style="display:block;" id="fig:unnamed-chunk-62"></span>
+<img src="images/methodology_bayes_som.png" alt="Using SOM for class noise reduction (Source: Santos et al. (2021). Reproduction under fair use doctrine)." width="90%" height="90%"><p class="caption">
+Figure 39: Using SOM for class noise reduction (Source: Santos et al. (2021). Reproduction under fair use doctrine).
 </p>
 </div>
 <p>As an example, we take a set of time series from the Cerrado region of Brazil, the second largest biome in South America with an area of more than 2 million km2. This data ranges from 2000 to 2017 and includes 50,160 samples divided into 12 classes (“Dense_Woodland”, “Dunes”, “Fallow_Cotton”, “Millet_Cotton”, “Pasture”, “Rocky_Savanna”, “Savanna”, “Savanna_Parkland”, “Silviculture”, “Soy_Corn”, “Soy_Cotton”, and “Soy_Fallow”). Each time series covers 12 months (23 data points) from MOD13Q1 product, and has 4 bands (EVI, NDVI, MIR, and NIR). We use bands NDVI and EVI for faster processing.</p>
 <div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Take only the NDVI and EVI bands</span></span>
 <span><span class="va">samples_cerrado_mod13q1_2bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">samples_cerrado_mod13q1</span>,</span>
-<span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span>    data <span class="op">=</span> <span class="va">samples_cerrado_mod13q1</span>, </span>
+<span>    bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Show the summary of the samples</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">samples_cerrado_mod13q1_2bands</span><span class="op">)</span></span></code></pre></div>
@@ -229,18 +225,17 @@ Figure 39: Using SOM for class noise reduction (source: Santos et al.(2021). Rep
 <div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Clustering time series using SOM</span></span>
 <span><span class="va">som_cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_som.html">sits_som_map</a></span><span class="op">(</span><span class="va">samples_cerrado_mod13q1_2bands</span>,</span>
-<span>  grid_xdim <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>  grid_ydim <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>  alpha <span class="op">=</span> <span class="fl">1.0</span>,</span>
-<span>  distance <span class="op">=</span> <span class="st">"euclidean"</span>,</span>
-<span>  rlen <span class="op">=</span> <span class="fl">20</span></span>
-<span><span class="op">)</span></span>
+<span>    grid_xdim <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>    grid_ydim <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>    alpha <span class="op">=</span> <span class="fl">1.0</span>,</span>
+<span>    distance <span class="op">=</span> <span class="st">"euclidean"</span>,</span>
+<span>    rlen <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
 <span><span class="co"># Plot the SOM map</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">som_cluster</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-67"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-67-1.png" alt="SOM map for the Cerrado samples" width="100%"><p class="caption">
-Figure 40: SOM map for the Cerrado samples
+<span style="display:block;" id="fig:unnamed-chunk-64"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-64-1.png" alt="SOM map for the Cerrado samples (Source: Authors)." width="100%"><p class="caption">
+Figure 40: SOM map for the Cerrado samples (Source: Authors).
 </p>
 </div>
 <p>The output of the <code><a href="https://rdrr.io/pkg/sits/man/sits_som.html">sits_som_map()</a></code> is a list with three elements: (a) <code>data</code>, the original set of time series with two additional columns for each time series: <code>id_sample</code> (the original id of each sample) and <code>id_neuron</code> (the id of the neuron to which it belongs); (b) <code>labelled_neurons</code>, a tibble with information on the neurons. For each neuron, it gives the prior and posterior probabilities of all labels which occur in the samples assigned to it; and (c) the SOM grid. To plot the SOM grid, use <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code>. The neurons are labelled using majority voting.</p>
@@ -254,7 +249,7 @@ Figure 40: SOM map for the Cerrado samples
 <code class="sourceCode R"><span><span class="co"># Produce a tibble with a summary of the mixed labels</span></span>
 <span><span class="va">som_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_som_evaluate_cluster.html">sits_som_evaluate_cluster</a></span><span class="op">(</span><span class="va">som_cluster</span><span class="op">)</span></span>
 <span><span class="co"># Show the result</span></span>
-<span><span class="va">som_eval</span></span></code></pre></div>
+<span><span class="va">som_eval</span> </span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; # A tibble: 77 × 4
 #&gt;    id_cluster cluster        class          mixture_percentage
 #&gt;         &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;                       &lt;dbl&gt;
@@ -274,9 +269,9 @@ Figure 40: SOM map for the Cerrado samples
 <code class="sourceCode R"><span><span class="co"># Plot the confusion between clusters</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">som_eval</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-69"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-69-1.png" alt="Confusion between classes as measured by SOM." width="90%"><p class="caption">
-Figure 41: Confusion between classes as measured by SOM.
+<span style="display:block;" id="fig:unnamed-chunk-66"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-66-1.png" alt="Confusion between classes as measured by SOM (Source: Authors)." width="90%"><p class="caption">
+Figure 41: Confusion between classes as measured by SOM (Source: Authors).
 </p>
 </div>
 </div>
@@ -297,11 +292,10 @@ Figure 41: Confusion between classes as measured by SOM.
 <p>The default value for both <code>prior_threshold</code> and <code>posterior_threshold</code> is 60%. The <code><a href="https://rdrr.io/pkg/sits/man/sits_som_clean_samples.html">sits_som_clean_samples()</a></code> has an additional parameter (<code>keep</code>), which indicates which samples should be kept in the set based on their prior and posterior probabilities. The default for <code>keep</code> is <code>c("clean", "analyze")</code>. As a result of the cleaning, about 900 samples have been considered to be noisy and thus removed.</p>
 <div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_som_clean_samples.html">sits_som_clean_samples</a></span><span class="op">(</span></span>
-<span>  som_map <span class="op">=</span> <span class="va">som_cluster</span>,</span>
-<span>  prior_threshold <span class="op">=</span> <span class="fl">0.6</span>,</span>
-<span>  posterior_threshold <span class="op">=</span> <span class="fl">0.6</span>,</span>
-<span>  keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"clean"</span>, <span class="st">"analyze"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span>    som_map <span class="op">=</span> <span class="va">som_cluster</span>, </span>
+<span>    prior_threshold <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>    posterior_threshold <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>    keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"clean"</span>, <span class="st">"analyze"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># Print the new sample distribution</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">new_samples</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; # A tibble: 11 × 3
@@ -322,20 +316,19 @@ Figure 41: Confusion between classes as measured by SOM.
 <div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Evaluate the mixture in the SOM clusters of new samples</span></span>
 <span><span class="va">new_cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_som.html">sits_som_map</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">new_samples</span>,</span>
-<span>  grid_xdim <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>  grid_ydim <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>  alpha <span class="op">=</span> <span class="fl">1.0</span>,</span>
-<span>  distance <span class="op">=</span> <span class="st">"euclidean"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span>   data <span class="op">=</span> <span class="va">new_samples</span>,</span>
+<span>   grid_xdim <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>   grid_ydim <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>   alpha <span class="op">=</span> <span class="fl">1.0</span>,</span>
+<span>   distance <span class="op">=</span> <span class="st">"euclidean"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_cluster_mixture</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_som_evaluate_cluster.html">sits_som_evaluate_cluster</a></span><span class="op">(</span><span class="va">new_cluster</span><span class="op">)</span></span>
 <span><span class="co"># Plot the mixture information.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">new_cluster_mixture</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-72"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-72-1.png" alt="Cluster confusion plot for samples cleaned by SOM" width="90%"><p class="caption">
-Figure 42: Cluster confusion plot for samples cleaned by SOM
+<span style="display:block;" id="fig:unnamed-chunk-69"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-69-1.png" alt="Cluster confusion plot for samples cleaned by SOM (Source: Authors)." width="90%"><p class="caption">
+Figure 42: Cluster confusion plot for samples cleaned by SOM (Source: Authors).
 </p>
 </div>
 <p>As expected, the new confusion map shows a significant improvement over the previous one. This result should be interpreted carefully since it may be due to different effects. The most direct interpretation is that “Millet_Cotton” and “Silviculture” cannot be easily separated from the other classes, given the current attributes (a time series of NDVI and EVI indices from MODIS images). In such situations, users should consider improving the number of samples from the less represented classes, including more MODIS bands, or working with higher resolution satellites. The results of the SOM method should be interpreted based on the users’ understanding of the ecosystems and agricultural practices of the study region.</p>
@@ -343,28 +336,26 @@ Figure 42: Cluster confusion plot for samples cleaned by SOM
 <div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Run a k-fold validation</span></span>
 <span><span class="va">assess_orig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_kfold_validate.html">sits_kfold_validate</a></span><span class="op">(</span></span>
-<span>  samples <span class="op">=</span> <span class="va">samples_cerrado_mod13q1_2bands</span>,</span>
-<span>  folds <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  ml_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_rfor.html">sits_rfor</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># Print summary</span></span>
+<span>    samples <span class="op">=</span> <span class="va">samples_cerrado_mod13q1_2bands</span>, </span>
+<span>    folds <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>    ml_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_rfor.html">sits_rfor</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Print summary </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">assess_orig</span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode"><code>#&gt; Overall Statistics                          
-#&gt;  Accuracy : 0.946         
-#&gt;    95% CI : (0.944, 0.948)
-#&gt;     Kappa : 0.9371</code></pre>
+<pre class="sourceCode"><code>#&gt; Overall Statistics                            
+#&gt;  Accuracy : 0.9451          
+#&gt;    95% CI : (0.9431, 0.9471)
+#&gt;     Kappa : 0.936</code></pre>
 <div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">assess_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_kfold_validate.html">sits_kfold_validate</a></span><span class="op">(</span></span>
-<span>  samples <span class="op">=</span> <span class="va">new_samples</span>,</span>
-<span>  folds <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  ml_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_rfor.html">sits_rfor</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># Print summary</span></span>
+<span>    samples <span class="op">=</span> <span class="va">new_samples</span>,</span>
+<span>    folds <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>    ml_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_rfor.html">sits_rfor</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Print summary </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">assess_new</span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode"><code>#&gt; Overall Statistics                          
-#&gt;  Accuracy : 0.99          
-#&gt;    95% CI : (0.989, 0.991)
-#&gt;     Kappa : 0.9883</code></pre>
+<pre class="sourceCode"><code>#&gt; Overall Statistics                            
+#&gt;  Accuracy : 0.9901          
+#&gt;    95% CI : (0.9891, 0.9911)
+#&gt;     Kappa : 0.9884</code></pre>
 <p>The SOM-based analysis discards samples that can be confused with samples of other classes. After removing noisy samples or uncertain classes, the data set obtains a better validation score since there is less confusion between classes. Users should analyse the results with care. Not all discarded samples are low-quality ones. Confusion between samples of different classes can result from inconsistent labelling or from the lack of capacity of satellite data to distinguish between chosen classes. When many samples are discarded, as in the current example, revising the whole classification schema is advisable. The aim of selecting training data should always be to match the reality on the ground to the power of remote sensing data to identify differences. No analysis procedure can replace actual user experience and knowledge of the study region.</p>
 </div>
 <div id="reducing-sample-imbalance" class="section level2 unnumbered">
@@ -377,11 +368,10 @@ Figure 42: Cluster confusion plot for samples cleaned by SOM
 <div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Reducing imbalances in the Cerrado data set</span></span>
 <span><span class="va">balanced_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_reduce_imbalance.html">sits_reduce_imbalance</a></span><span class="op">(</span></span>
-<span>  samples <span class="op">=</span> <span class="va">samples_cerrado_mod13q1_2bands</span>,</span>
-<span>  n_samples_over <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  n_samples_under <span class="op">=</span> <span class="fl">1500</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span>    samples <span class="op">=</span> <span class="va">samples_cerrado_mod13q1_2bands</span>,</span>
+<span>    n_samples_over <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>    n_samples_under <span class="op">=</span> <span class="fl">1500</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Print the balanced samples</span></span>
 <span><span class="co"># Some classes have more than 1500 samples due to the SOM map</span></span>
@@ -390,38 +380,37 @@ Figure 42: Cluster confusion plot for samples cleaned by SOM
 <pre class="sourceCode"><code>#&gt; # A tibble: 12 × 3
 #&gt;    label            count   prop
 #&gt;    &lt;chr&gt;            &lt;int&gt;  &lt;dbl&gt;
-#&gt;  1 Dense_Woodland    1600 0.0965
-#&gt;  2 Dunes             1000 0.0603
-#&gt;  3 Fallow_Cotton     1000 0.0603
-#&gt;  4 Millet_Cotton     1000 0.0603
-#&gt;  5 Pasture           1600 0.0965
-#&gt;  6 Rocky_Savanna     1524 0.0919
-#&gt;  7 Savanna           1600 0.0965
-#&gt;  8 Savanna_Parkland  1588 0.0958
-#&gt;  9 Silviculture      1000 0.0603
-#&gt; 10 Soy_Corn          1588 0.0958
-#&gt; 11 Soy_Cotton        1560 0.0941
-#&gt; 12 Soy_Fallow        1524 0.0919</code></pre>
+#&gt;  1 Dense_Woodland    1600 0.0969
+#&gt;  2 Dunes             1000 0.0605
+#&gt;  3 Fallow_Cotton     1000 0.0605
+#&gt;  4 Millet_Cotton     1000 0.0605
+#&gt;  5 Pasture           1600 0.0969
+#&gt;  6 Rocky_Savanna     1496 0.0906
+#&gt;  7 Savanna           1596 0.0966
+#&gt;  8 Savanna_Parkland  1584 0.0959
+#&gt;  9 Silviculture      1000 0.0605
+#&gt; 10 Soy_Corn          1588 0.0961
+#&gt; 11 Soy_Cotton        1560 0.0944
+#&gt; 12 Soy_Fallow        1496 0.0906</code></pre>
 <div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Clustering time series using SOM</span></span>
 <span><span class="va">som_cluster_bal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_som.html">sits_som_map</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">balanced_samples</span>,</span>
-<span>  grid_xdim <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  grid_ydim <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  alpha <span class="op">=</span> <span class="fl">1.0</span>,</span>
-<span>  distance <span class="op">=</span> <span class="st">"euclidean"</span>,</span>
-<span>  rlen <span class="op">=</span> <span class="fl">20</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span>    data <span class="op">=</span> <span class="va">balanced_samples</span>,</span>
+<span>    grid_xdim <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>    grid_ydim <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>    alpha <span class="op">=</span> <span class="fl">1.0</span>,</span>
+<span>    distance <span class="op">=</span> <span class="st">"euclidean"</span>,</span>
+<span>    rlen <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Produce a tibble with a summary of the mixed labels</span></span>
 <span><span class="va">som_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_som_evaluate_cluster.html">sits_som_evaluate_cluster</a></span><span class="op">(</span><span class="va">som_cluster_bal</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Show the result</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">som_eval</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">som_eval</span><span class="op">)</span> </span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:seval"></span>
-<img src="sitsbook_files/figure-html/seval-1.png" alt="Confusion by cluster for the balanced data set" width="90%"><p class="caption">
-Figure 43: Confusion by cluster for the balanced data set
+<img src="sitsbook_files/figure-html/seval-1.png" alt="Confusion by cluster for the balanced data set (Source: Authors)." width="90%"><p class="caption">
+Figure 43: Confusion by cluster for the balanced data set (Source: Authors).
 </p>
 </div>
 <p>As shown in Figure <a href="improving-the-quality-of-training-samples.html#fig:seval">43</a>, the balanced data set shows less confusion per label than the unbalanced one. In this case, many classes that were confused with others in the original confusion map are now better represented. Reducing sample imbalance should be tried as an alternative to reducing the number of samples of the classes using SOM. In general, users should balance their training data for better performance.</p>
@@ -466,7 +455,7 @@ Figure 43: Confusion by cluster for the balanced data set
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-04.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

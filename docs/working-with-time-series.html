@@ -25,8 +25,8 @@
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.5/font.css" rel="stylesheet">
-<link href="libs/IBM_Plex_Mono-0.4.5/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.6/font.css" rel="stylesheet">
+<link href="libs/IBM_Plex_Mono-0.4.6/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
@@ -112,7 +112,7 @@
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Samples</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"samples_matogrosso_mod13q1"</span><span class="op">)</span></span>
-<span><span class="va">samples_matogrosso_mod13q1</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span></code></pre></div>
+<span><span class="va">samples_matogrosso_mod13q1</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,<span class="op">]</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; # A tibble: 4 × 7
 #&gt;   longitude latitude start_date end_date   label   cube     time_series      
 #&gt;       &lt;dbl&gt;    &lt;dbl&gt; &lt;date&gt;     &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt;    &lt;list&gt;           
@@ -142,7 +142,7 @@
 #&gt; 9 Soy_Sunflower    26 0.0137</code></pre>
 <p>In many cases, it is helpful to relabel the data set. For example, there may be situations where using a smaller set of labels is desirable because samples in one label on the original set may not be distinguishable from samples with other labels. We then could use <code>sits_labels()&lt;-</code> to assign new labels. The example below shows how to do relabeling on a time series set shown above; all samples associated with crops are grouped in a single “Croplands” label.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Copy the sample set for Mato Grosso</span></span>
+<code class="sourceCode R"><span><span class="co"># Copy the sample set for Mato Grosso </span></span>
 <span><span class="va">samples_new_labels</span> <span class="op">&lt;-</span> <span class="va">samples_matogrosso_mod13q1</span></span>
 <span><span class="co"># Show the current labels</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_labels.html">sits_labels</a></span><span class="op">(</span><span class="va">samples_new_labels</span><span class="op">)</span></span></code></pre></div>
@@ -150,13 +150,11 @@
 #&gt; [6] "Soy_Cotton"    "Soy_Fallow"    "Soy_Millet"    "Soy_Sunflower"</code></pre>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Update the labels</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_labels.html">sits_labels</a></span><span class="op">(</span><span class="va">samples_new_labels</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"Cerrado"</span>, <span class="st">"Croplands"</span>,</span>
-<span>  <span class="st">"Forest"</span>, <span class="st">"Pasture"</span>,</span>
-<span>  <span class="st">"Croplands"</span>, <span class="st">"Croplands"</span>,</span>
-<span>  <span class="st">"Croplands"</span>, <span class="st">"Croplands"</span>,</span>
-<span>  <span class="st">"Croplands"</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_labels.html">sits_labels</a></span><span class="op">(</span><span class="va">samples_new_labels</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Cerrado"</span>,   <span class="st">"Croplands"</span>, </span>
+<span>                                     <span class="st">"Forest"</span>,    <span class="st">"Pasture"</span>,</span>
+<span>                                     <span class="st">"Croplands"</span>, <span class="st">"Croplands"</span>,</span>
+<span>                                     <span class="st">"Croplands"</span>, <span class="st">"Croplands"</span>,</span>
+<span>                                     <span class="st">"Croplands"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">samples_new_labels</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; # A tibble: 4 × 3
 #&gt;   label     count   prop
@@ -168,14 +166,11 @@
 <p>Since metadata and the embedded time series use the tibble data format, the functions from <code>dplyr</code>, <code>tidyr</code>, and <code>purrr</code> packages of the <code>tidyverse</code> <span class="citation"><a href="references.html#ref-Wickham2017" role="doc-biblioref">[19]</a></span> can be used to process the data. For example, the following code uses <code><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select()</a></code> to get a subset of the sample data set with two bands (NDVI and EVI) and then uses the <code><a href="https://dplyr.tidyverse.org/reference/filter.html">dplyr::filter()</a></code> to select the samples labeled as “Cerrado”.</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Select NDVI band</span></span>
-<span><span class="va">samples_ndvi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span><span class="va">samples_matogrosso_mod13q1</span>,</span>
-<span>  bands <span class="op">=</span> <span class="st">"NDVI"</span></span>
-<span><span class="op">)</span></span>
+<span><span class="va">samples_ndvi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span><span class="va">samples_matogrosso_mod13q1</span>, </span>
+<span>                            bands <span class="op">=</span> <span class="st">"NDVI"</span><span class="op">)</span></span>
 <span><span class="co"># Select only samples with Cerrado label</span></span>
-<span><span class="va">samples_cerrado</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span></span>
-<span>  <span class="va">samples_ndvi</span>,</span>
-<span>  <span class="va">label</span> <span class="op">==</span> <span class="st">"Cerrado"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">samples_cerrado</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">samples_ndvi</span>, </span>
+<span>                                 <span class="va">label</span> <span class="op">==</span> <span class="st">"Cerrado"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div id="time-series-visualisation" class="section level2 unnumbered">
 <h2>Time series visualisation<a class="anchor" aria-label="anchor" href="#time-series-visualisation"><i class="fas fa-link"></i></a>
@@ -183,11 +178,11 @@
 <p>Given a few samples to display, <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> tries to group as many spatial locations together. In the following example, the first 12 samples labelled with “Cerrado” refer to the same spatial location in consecutive time periods. For this reason, these samples are plotted together.</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the first 12 samples</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">samples_cerrado</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span>, <span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">samples_cerrado</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span>,<span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:cerrado-12"></span>
-<img src="sitsbook_files/figure-html/cerrado-12-1.png" alt="Plot of the first 'Cerrado' samples." width="70%"><p class="caption">
-Figure 31: Plot of the first ‘Cerrado’ samples.
+<img src="sitsbook_files/figure-html/cerrado-12-1.png" alt="Plot of the first 'Cerrado' samples (Source: Authors)." width="70%"><p class="caption">
+Figure 31: Plot of the first ‘Cerrado’ samples (Source: Authors).
 </p>
 </div>
 <p>For many samples, the default visualization combines all samples together in a single temporal interval, even if they belong to different years. This plot shows the spread of values for the time series of each band. The strong red line in the plot indicates the median of the values, while the two orange lines are the first and third interquartile ranges. See <code><a href="https://rdrr.io/pkg/sits/man/plot.html">?sits::plot</a></code> for more details on data visualization in <code>sits</code>.</p>
@@ -195,9 +190,9 @@ Figure 31: Plot of the first ‘Cerrado’ samples.
 <code class="sourceCode R"><span><span class="co"># Plot all cerrado samples together</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">samples_cerrado</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-51"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-51-1.png" alt="Plot of all Cerrado samples." width="70%"><p class="caption">
-Figure 32: Plot of all Cerrado samples.
+<span style="display:block;" id="fig:unnamed-chunk-49"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-49-1.png" alt="Plot of all Cerrado samples (Source: Authors)." width="70%"><p class="caption">
+Figure 32: Plot of all Cerrado samples (Source: Authors).
 </p>
 </div>
 </div>
@@ -217,37 +212,32 @@ Figure 32: Plot of all Cerrado samples.
 <code class="sourceCode R"><span><span class="co"># Obtain a raster cube based on local files</span></span>
 <span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/sinop"</span>, package <span class="op">=</span> <span class="st">"sitsdata"</span><span class="op">)</span></span>
 <span><span class="va">raster_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
-<span>  source     <span class="op">=</span> <span class="st">"BDC"</span>,</span>
-<span>  collection <span class="op">=</span> <span class="st">"MOD13Q1-6"</span>,</span>
-<span>  data_dir   <span class="op">=</span> <span class="va">data_dir</span>,</span>
-<span>  parse_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"X1"</span>, <span class="st">"X2"</span>, <span class="st">"tile"</span>, <span class="st">"band"</span>, <span class="st">"date"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span>    source     <span class="op">=</span> <span class="st">"BDC"</span>,</span>
+<span>    collection <span class="op">=</span> <span class="st">"MOD13Q1-6"</span>,</span>
+<span>    data_dir   <span class="op">=</span> <span class="va">data_dir</span>,</span>
+<span>    parse_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"X1"</span>, <span class="st">"X2"</span>, <span class="st">"tile"</span>, <span class="st">"band"</span>, <span class="st">"date"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># Obtain a time series from the raster cube from a point</span></span>
 <span><span class="va">sample_latlong</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
-<span>  longitude <span class="op">=</span> <span class="op">-</span><span class="fl">55.57320</span>,</span>
-<span>  latitude  <span class="op">=</span> <span class="op">-</span><span class="fl">11.50566</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">series</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_get_data.html">sits_get_data</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">raster_cube</span>,</span>
-<span>  samples <span class="op">=</span> <span class="va">sample_latlong</span></span>
-<span><span class="op">)</span></span>
+<span>    longitude <span class="op">=</span> <span class="op">-</span><span class="fl">55.57320</span>, </span>
+<span>    latitude  <span class="op">=</span> <span class="op">-</span><span class="fl">11.50566</span><span class="op">)</span></span>
+<span><span class="va">series</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_get_data.html">sits_get_data</a></span><span class="op">(</span>cube    <span class="op">=</span> <span class="va">raster_cube</span>,</span>
+<span>                        samples <span class="op">=</span> <span class="va">sample_latlong</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">series</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-52"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-52-1.png" alt="NDVI and EVI time series fetched from local raster cube." width="90%"><p class="caption">
-Figure 33: NDVI and EVI time series fetched from local raster cube.
+<span style="display:block;" id="fig:unnamed-chunk-50"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-50-1.png" alt="NDVI and EVI time series fetched from local raster cube (Source: Authors)." width="90%"><p class="caption">
+Figure 33: NDVI and EVI time series fetched from local raster cube (Source: Authors).
 </p>
 </div>
-<p>A useful case is when a set of labeled samples can be used as a training data set. In this case, trusted observations are usually labeled and commonly stored in plain text files in comma-separated values (CSV) or using shapefiles (SHP).</p>
+<p>A useful case is when a set of labeled samples can be used as a training data set. In this case, trusted observations are usually labeled and commonly stored in plain text files in comma-separated values (csv) or using shapefiles (shp).</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Retrieve a list of samples described by a CSV file</span></span>
+<code class="sourceCode R"><span><span class="co"># Retrieve a list of samples described by a csv file</span></span>
 <span><span class="va">samples_csv_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/samples/samples_sinop_crop.csv"</span>,</span>
-<span>  package <span class="op">=</span> <span class="st">"sits"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># Read the CSV file into an R object</span></span>
+<span>                                package <span class="op">=</span> <span class="st">"sits"</span><span class="op">)</span></span>
+<span><span class="co"># Read the csv file into an R object</span></span>
 <span><span class="va">samples_csv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="va">samples_csv_file</span><span class="op">)</span></span>
 <span><span class="co"># Print the first three samples</span></span>
-<span><span class="va">samples_csv</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="op">]</span></span></code></pre></div>
+<span><span class="va">samples_csv</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="op">]</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; # A tibble: 3 × 6
 #&gt;      id longitude latitude start_date end_date   label  
 #&gt;   &lt;int&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;  
@@ -255,15 +245,13 @@ Figure 33: NDVI and EVI time series fetched from local raster cube.
 #&gt; 2     2     -55.6    -11.8 2013-09-14 2014-08-29 Pasture
 #&gt; 3     3     -55.7    -11.8 2013-09-14 2014-08-29 Forest</code></pre>
 <p>To retrieve training samples for time series analysis, users must provide the temporal information (<code>start_date</code> and <code>end_date</code>). In the simplest case, all samples share the same dates. That is not a strict requirement. It is possible to specify different dates as long as they have a compatible duration. For example, the data set <code>samples_matogrosso_mod13q1</code> provided with the <code>sitsdata</code> package contains samples from different years covering the same duration. These samples are from the MOD13Q1 product, which contains the same number of images per year. Thus, all time series in the data set <code>samples_matogrosso_mod13q1</code> have the same number of dates.</p>
-<p>Given a suitably built CSV sample file, <code><a href="https://rdrr.io/pkg/sits/man/sits_get_data.html">sits_get_data()</a></code> requires two parameters: (a) <code>cube</code>, the name of the R object that describes the data cube; (b) <code>samples</code>, the name of the CSV file.</p>
+<p>Given a suitably built csv sample file, <code><a href="https://rdrr.io/pkg/sits/man/sits_get_data.html">sits_get_data()</a></code> requires two parameters: (a) <code>cube</code>, the name of the R object that describes the data cube; (b) <code>samples</code>, the name of the CSV file.</p>
 <div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get the points from a data cube in raster brick format</span></span>
-<span><span class="va">points</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_get_data.html">sits_get_data</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">raster_cube</span>,</span>
-<span>  samples <span class="op">=</span> <span class="va">samples_csv_file</span></span>
-<span><span class="op">)</span></span>
+<span><span class="va">points</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_get_data.html">sits_get_data</a></span><span class="op">(</span>cube <span class="op">=</span> <span class="va">raster_cube</span>, </span>
+<span>                        samples <span class="op">=</span> <span class="va">samples_csv_file</span><span class="op">)</span></span>
 <span><span class="co"># Show the tibble with the first three points</span></span>
-<span><span class="va">points</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="op">]</span></span></code></pre></div>
+<span><span class="va">points</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="op">]</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; # A tibble: 3 × 7
 #&gt;   longitude latitude start_date end_date   label    cube      time_series      
 #&gt;       &lt;dbl&gt;    &lt;dbl&gt; &lt;date&gt;     &lt;date&gt;     &lt;chr&gt;    &lt;chr&gt;     &lt;list&gt;           
@@ -273,13 +261,12 @@ Figure 33: NDVI and EVI time series fetched from local raster cube.
 <p>Users can also specify samples by providing shapefiles or <code>sf</code> objects containing <code>POINT</code> or <code>POLYGON</code> geometries. The geographical location is inferred from the geometries associated with the shapefile or <code>sf</code> object. For files containing points, the geographical location is obtained directly. For polygon geometries, the parameter <code>n_sam_pol</code> (defaults to 20) determines the number of samples to be extracted from each polygon. The temporal information can be provided explicitly by the user; if absent, it is inferred from the data cube. If label information is available in the shapefile or <code>sf</code> object, the parameter <code>label_attr</code> is compulsory to indicate which column contains the label associated with each time series.</p>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Obtain a set of points inside the state of Mato Grosso, Brazil</span></span>
-<span><span class="va">shp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/shapefiles/mato_grosso/mt.shp"</span>,</span>
-<span>  package <span class="op">=</span> <span class="st">"sits"</span></span>
-<span><span class="op">)</span></span>
+<span><span class="va">shp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/shapefiles/mato_grosso/mt.shp"</span>, </span>
+<span>                        package <span class="op">=</span> <span class="st">"sits"</span><span class="op">)</span></span>
 <span><span class="co"># Read the shapefile into an "sf" object</span></span>
 <span><span class="va">sf_shape</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">st_read</a></span><span class="op">(</span><span class="va">shp_file</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode"><code>#&gt; Reading layer `mt' from data source 
-#&gt;   `/Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/library/sits/extdata/shapefiles/mato_grosso/mt.shp' 
+#&gt;   `/Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/library/sits/extdata/shapefiles/mato_grosso/mt.shp' 
 #&gt;   using driver `ESRI Shapefile'
 #&gt; Simple feature collection with 1 feature and 3 fields
 #&gt; Geometry type: MULTIPOLYGON
@@ -289,23 +276,21 @@ Figure 33: NDVI and EVI time series fetched from local raster cube.
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a data cube based on MOD13Q1 collection from BDC</span></span>
 <span><span class="va">modis_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
-<span>  source      <span class="op">=</span> <span class="st">"BDC"</span>,</span>
-<span>  collection  <span class="op">=</span> <span class="st">"MOD13Q1-6"</span>,</span>
-<span>  bands       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span><span class="op">)</span>,</span>
-<span>  roi         <span class="op">=</span> <span class="va">sf_shape</span>,</span>
-<span>  start_date  <span class="op">=</span> <span class="st">"2020-06-01"</span>,</span>
-<span>  end_date    <span class="op">=</span> <span class="st">"2021-08-29"</span></span>
-<span><span class="op">)</span></span>
+<span>    source      <span class="op">=</span> <span class="st">"BDC"</span>,</span>
+<span>    collection  <span class="op">=</span> <span class="st">"MOD13Q1-6"</span>,</span>
+<span>    bands       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NDVI"</span>, <span class="st">"EVI"</span><span class="op">)</span>,</span>
+<span>    roi         <span class="op">=</span> <span class="va">sf_shape</span>,</span>
+<span>    start_date  <span class="op">=</span> <span class="st">"2020-06-01"</span>, </span>
+<span>    end_date    <span class="op">=</span> <span class="st">"2021-08-29"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Read the points from the cube and produce a tibble with time series</span></span>
 <span><span class="va">samples_mt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_get_data.html">sits_get_data</a></span><span class="op">(</span></span>
-<span>  cube         <span class="op">=</span> <span class="va">modis_cube</span>,</span>
-<span>  samples      <span class="op">=</span> <span class="va">shp_file</span>,</span>
-<span>  start_date   <span class="op">=</span> <span class="st">"2020-06-01"</span>,</span>
-<span>  end_date     <span class="op">=</span> <span class="st">"2021-08-29"</span>,</span>
-<span>  n_sam_pol    <span class="op">=</span> <span class="fl">20</span>,</span>
-<span>  multicores   <span class="op">=</span> <span class="fl">4</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span>    cube         <span class="op">=</span> <span class="va">modis_cube</span>, </span>
+<span>    samples      <span class="op">=</span> <span class="va">shp_file</span>, </span>
+<span>    start_date   <span class="op">=</span> <span class="st">"2020-06-01"</span>,</span>
+<span>    end_date     <span class="op">=</span> <span class="st">"2021-08-29"</span>, </span>
+<span>    n_sam_pol    <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>    multicores   <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div id="filtering-time-series" class="section level2 unnumbered">
 <h2>Filtering time series<a class="anchor" aria-label="anchor" href="#filtering-time-series"><i class="fas fa-link"></i></a>
@@ -324,9 +309,9 @@ Figure 33: NDVI and EVI time series fetched from local raster cube.
 <span><span class="co"># Merge the point and plot the series</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_merge.html">sits_merge</a></span><span class="op">(</span><span class="va">point_sg</span>, <span class="va">point_ndvi</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-57"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-57-1.png" alt="Savitzky-Golay filter applied on a multi-year NDVI time series." width="90%"><p class="caption">
-Figure 34: Savitzky-Golay filter applied on a multi-year NDVI time series.
+<span style="display:block;" id="fig:unnamed-chunk-55"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-55-1.png" alt="Savitzky-Golay filter applied on a multi-year NDVI time series (Source: Authors)." width="90%"><p class="caption">
+Figure 34: Savitzky-Golay filter applied on a multi-year NDVI time series (Source: Authors).
 </p>
 </div>
 <p>The resulting smoothed curve has both desirable and unwanted properties. From 2000 to 2008, the Savitsky-Golay filter removes noise from clouds. However, after 2010, when the region was converted to agriculture, the filter removes an important part of the natural variability from the crop cycle. Therefore, the <code>length</code> parameter is arguably too big, resulting in oversmoothing.</p>
@@ -343,9 +328,9 @@ Figure 34: Savitzky-Golay filter applied on a multi-year NDVI time series.
 <span><span class="co"># Merge the point and plot the series</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_merge.html">sits_merge</a></span><span class="op">(</span><span class="va">point_whit</span>, <span class="va">point_ndvi</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-58"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-58-1.png" alt="Whittaker filter applied on a one-year NDVI time series." width="90%"><p class="caption">
-Figure 35: Whittaker filter applied on a one-year NDVI time series.
+<span style="display:block;" id="fig:unnamed-chunk-56"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-56-1.png" alt="Whittaker filter applied on a one-year NDVI time series (Source: Authors)." width="90%"><p class="caption">
+Figure 35: Whittaker filter applied on a one-year NDVI time series (Source: Authors).
 </p>
 </div>
 <p>Similar to what is observed in the Savitsky-Golay filter, high values of the smoothing parameter <code>lambda</code> produce an over-smoothed time series that reduces the capacity of the time series to represent natural variations in crop growth. For this reason, low smoothing values are recommended when using <code><a href="https://rdrr.io/pkg/sits/man/sits_filters.html">sits_whittaker()</a></code>.</p>
@@ -386,7 +371,7 @@ Figure 35: Whittaker filter applied on a one-year NDVI time series.
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-04.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

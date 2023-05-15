@@ -25,8 +25,8 @@
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.5/font.css" rel="stylesheet">
-<link href="libs/IBM_Plex_Mono-0.4.5/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.6/font.css" rel="stylesheet">
+<link href="libs/IBM_Plex_Mono-0.4.6/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
@@ -108,10 +108,10 @@
 <div id="training-the-classification-model" class="section level2 unnumbered">
 <h2>Training the classification model<a class="anchor" aria-label="anchor" href="#training-the-classification-model"><i class="fas fa-link"></i></a>
 </h2>
-<p>The case study uses the training data set <code>samples_prodes_4bands</code>, available in package <code>sitsdata</code>. This data set consists of 480 samples collected from Sentinel-2 images covering the state of Rondonia. The samples are intended to detect deforestation events and include four classes: “Forest”, “Burned_Area”, “Cleared_Area”, and “Highly_Degraded”. The time series cover a set of 29 dates with a period of 16 days, ranging from “2020-06-04” to “2021-08-26”. The data has 12 attributes, including original bands (“B02”, “B03”, “B04”, “B05”, “B08”, “B8A”, “B11”, and “B12”) and indices (“NDVI”, “EVI” and “NBR”).</p>
+<p>The case study uses the training data set <code>samples_prodes_4bands</code>, available in package <code>sitsdata</code>. This data set consists of 480 samples collected from Sentinel-2 images covering the state of Rondonia. The samples are intended to detect deforestation events and include four classes: “Forest”, “Burned_Area”, “Cleared_Area”, and “Highly_Degraded”. The time series cover a set of 29 dates with a period of 16 days, ranging from 2020-06-04 to 2021-08-26. The data has 12 attributes, including original bands (B02, B03, B04, B05, B08, B8A, B11, and B12) and indices (NDVI, EVI, and NBR).</p>
 <div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/e-sensing/sitsdata/">sitsdata</a></span><span class="op">)</span></span>
-<span><span class="co"># Obtain the samples</span></span>
+<span><span class="co"># Obtain the samples </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"samples_prodes_4classes"</span><span class="op">)</span></span>
 <span><span class="co"># Show the contents of the samples</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">samples_prodes_4classes</span><span class="op">)</span></span></code></pre></div>
@@ -125,103 +125,101 @@
 <p>It is helpful to plot the basic patterns associated with the samples to understand the training set better. The function <code><a href="https://rdrr.io/pkg/sits/man/sits_patterns.html">sits_patterns()</a></code> uses a generalized additive model (GAM) to predict a smooth, idealized approximation to the time series associated with each class for all bands. Since the data cube used in the classification has only three bands (B02, B8A, and B11), we filter the samples for these bands before showing the patterns.</p>
 <div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">samples_3bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">samples_prodes_4classes</span>,</span>
-<span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"B02"</span>, <span class="st">"B8A"</span>, <span class="st">"B11"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span>    data <span class="op">=</span> <span class="va">samples_prodes_4classes</span>,</span>
+<span>    bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"B02"</span>, <span class="st">"B8A"</span>, <span class="st">"B11"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_patterns.html">sits_patterns</a></span><span class="op">(</span><span class="va">samples_3bands</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-107"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-107-1.png" alt="Patterns associated to the training samples" width="90%"><p class="caption">
-Figure 63: Patterns associated to the training samples
+<span style="display:block;" id="fig:unnamed-chunk-104"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-104-1.png" alt="Patterns associated to the training samples (Source: Authors)." width="90%"><p class="caption">
+Figure 63: Patterns associated to the training samples (Source: Authors).
 </p>
 </div>
-<p>The patterns show different temporal responses for the selected classes. They match the typical behavior of deforestation in the Amazon. First, the forest is cut at the start of the dry season (June/July). At the end of the dry season, some clear-cut areas are burned to clean the remains; this action is reflected in the steep fall of the response of “B8A” values of burned area samples after July. In cleared but not burned areas, response in the middle infra-red band “B11” increases significantly at the end of the dry season, while “B8A” values remain high. This is a sign of mixed pixels, which combine forest remains with bare soil. Forest areas show a constant spectral response during the year. Degraded areas show an increase in values of the middle infra-red band “B11” compared to native forests, showing a mixed response of vegetation and soil.</p>
+<p>The patterns show different temporal responses for the selected classes. They match the typical behavior of deforestation in the Amazon. First, the forest is cut at the start of the dry season (June/July). At the end of the dry season, some clear-cut areas are burned to clean the remains; this action is reflected in the steep fall of the response of B8A values of burned area samples after July. In cleared but not burned areas, response in the middle infra-red band B11 increases significantly at the end of the dry season, while B8A values remain high. This is a sign of mixed pixels, which combine forest remains with bare soil. Forest areas show a constant spectral response during the year. Degraded areas show an increase in values of the middle infra-red band B11 compared to native forests, showing a mixed response of vegetation and soil.</p>
 </div>
 <div id="building-a-data-cube" class="section level2 unnumbered">
 <h2>Building a data cube<a class="anchor" aria-label="anchor" href="#building-a-data-cube"><i class="fas fa-link"></i></a>
 </h2>
-<p>We now build a data cube from the Sentinel-2 images available in the package <code>sitsdata</code>. These images are from the <code>SENTINEL-2-L2A</code> collection in Microsoft Planetary Computer (<code>MPC</code>). We have chosen bands “BO2”, “B8A” and “B11” images in a small area of 1000 x 1000 pixels in the state of Rondonia. As explained in the “Earth observation data cubes” Chapter, we must inform <code>sits</code> how to parse these file names to obtain tile, date, and band information. Image files are named according to the convention “cube_tile_band_date” (e.g., <code>cube_20LKP_BO2_2020_06_04.tif</code>).</p>
+<p>We now build a data cube from the Sentinel-2 images available in the package <code>sitsdata</code>. These images are from the <code>SENTINEL-2-L2A</code> collection in Microsoft Planetary Computer (<code>MPC</code>). We have chosen bands BO2, B8A, and B11 images in a small area of <span class="math inline">\(1000 \times 1000\)</span> pixels in the state of Rondonia. As explained in Chapter <a href="https://e-sensing.github.io/sitsbook/earth-observation-data-cubes.html">Earth observation data cubes</a>, we must inform <code>sits</code> how to parse these file names to obtain tile, date, and band information. Image files are named according to the convention “cube_tile_band_date” (e.g., <code>cube_20LKP_BO2_2020_06_04.tif</code>).</p>
 <div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Files are available in a local directory</span></span>
+<code class="sourceCode R"><span><span class="co"># Files are available in a local directory </span></span>
 <span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/Rondonia-20LKP/"</span>, package <span class="op">=</span> <span class="st">"sitsdata"</span><span class="op">)</span></span>
 <span><span class="co"># Read data cube</span></span>
 <span><span class="va">ro_cube_20LKP</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
-<span>  source <span class="op">=</span> <span class="st">"MPC"</span>,</span>
-<span>  collection <span class="op">=</span> <span class="st">"SENTINEL-2-L2A"</span>,</span>
-<span>  data_dir <span class="op">=</span> <span class="va">data_dir</span>,</span>
-<span>  parse_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"X1"</span>, <span class="st">"tile"</span>, <span class="st">"band"</span>, <span class="st">"date"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span>    source <span class="op">=</span> <span class="st">"MPC"</span>,</span>
+<span>    collection <span class="op">=</span> <span class="st">"SENTINEL-2-L2A"</span>,</span>
+<span>    data_dir <span class="op">=</span> <span class="va">data_dir</span>,</span>
+<span>    parse_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'X1'</span>, <span class="st">"tile"</span>, <span class="st">"band"</span>, <span class="st">"date"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Plot the cube</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_cube_20LKP</span>, dates <span class="op">=</span> <span class="st">"2021-07-25"</span>, red <span class="op">=</span> <span class="st">"B11"</span>, green <span class="op">=</span> <span class="st">"B8A"</span>, blue <span class="op">=</span> <span class="st">"B02"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-108"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-108-1.png" alt="Color composite image of the cube for date 2021-07-25" width="90%"><p class="caption">
-Figure 64: Color composite image of the cube for date 2021-07-25
+<span style="display:block;" id="fig:unnamed-chunk-105"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-105-1.png" alt="Color composite image of the cube for date 2021-07-25 (Source: Authors)." width="90%"><p class="caption">
+Figure 64: Color composite image of the cube for date 2021-07-25 (Source: Authors).
 </p>
 </div>
 </div>
 <div id="training-a-deep-learning-model" class="section level2 unnumbered">
 <h2>Training a deep learning model<a class="anchor" aria-label="anchor" href="#training-a-deep-learning-model"><i class="fas fa-link"></i></a>
 </h2>
-<p>The next step is to train a Lightweigth Temporal Attention Enconder model, using the <code>adamw</code> optimizer and a learning rate of 0.001. Since the data cube to be classified has bands <code>BO2</code>, <code>B8A</code>, and <code>B11</code>, we select these bands from the training data.</p>
+<p>The next step is to train a Lightweight Temporal Attention Encoder (LightTAE) model, using the <code>adamw</code> optimizer and a learning rate of 0.001. Since the data cube to be classified has bands BO2, B8A, and B11, we select such bands from the training data.</p>
 <div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use only the bands available in the cube</span></span>
 <span><span class="va">samples_3bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_select.html">sits_select</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">samples_prodes_4classes</span>,</span>
-<span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_bands.html">sits_bands</a></span><span class="op">(</span><span class="va">ro_cube_20LKP</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span>    data <span class="op">=</span> <span class="va">samples_prodes_4classes</span>, </span>
+<span>    bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_bands.html">sits_bands</a></span><span class="op">(</span><span class="va">ro_cube_20LKP</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Train model using LightTAE algorithm</span></span>
 <span><span class="va">ltae_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_train.html">sits_train</a></span><span class="op">(</span></span>
-<span>  samples <span class="op">=</span> <span class="va">samples_3bands</span>,</span>
-<span>  ml_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_lighttae.html">sits_lighttae</a></span><span class="op">(</span></span>
-<span>    opt_hparams <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>lr <span class="op">=</span> <span class="fl">0.001</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span>    samples <span class="op">=</span> <span class="va">samples_3bands</span>, </span>
+<span>    ml_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_lighttae.html">sits_lighttae</a></span><span class="op">(</span>opt_hparams <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>lr <span class="op">=</span> <span class="fl">0.001</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Plot the evolution of the model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ltae_model</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-109"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-109-1.png" alt="Training evolution of LightTAE model." width="80%"><p class="caption">
-Figure 65: Training evolution of LightTAE model.
+<span style="display:block;" id="fig:unnamed-chunk-106"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-106-1.png" alt="Training evolution of LightTAE model (Source: Authors)." width="80%"><p class="caption">
+Figure 65: Training evolution of LightTAE model (Source: Authors).
 </p>
 </div>
 </div>
 <div id="classification-using-parallel-processing" class="section level2 unnumbered">
 <h2>Classification using parallel processing<a class="anchor" aria-label="anchor" href="#classification-using-parallel-processing"><i class="fas fa-link"></i></a>
 </h2>
-<p>To classify both data cubes and sets of time series, use the function <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>, which uses parallel processing to speed up the performance, as described at the end of this Chapter. Its most relevant parameters are: (a) <code>data</code>, either a data cube or a set of time series; (b) <code>ml_model</code>, a trained model using one of the machine learning methods provided; (c) <code>multicores</code>, number of CPU cores that will be used for processing; (d) <code>memsize</code>, memory available for classification; (e) <code>output_dir</code>, directory where results will be stored; (f) <code>version</code>, for version control. If users want to follow the processing steps, they should turn on the parameters <code>verbose</code> to print information and <code>progress</code> to get a progress bar. The classification result is a data cube with a set of probability layers, one for each output class. Each probability layer contains the model’s assessment of how likely each pixel belongs to the related class. The probability cube can be visualized with <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code>.</p>
+<p>To classify both data cubes and sets of time series, use <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>, which uses parallel processing to speed up the performance, as described at the end of this Chapter. Its most relevant parameters are: (a) <code>data</code>, either a data cube or a set of time series; (b) <code>ml_model</code>, a trained model using one of the machine learning methods provided; (c) <code>multicores</code>, number of CPU cores that will be used for processing; (d) <code>memsize</code>, memory available for classification; (e) <code>output_dir</code>, directory where results will be stored; (f) <code>version</code>, for version control. To follow the processing steps, turn on the parameters <code>verbose</code> to print information and <code>progress</code> to get a progress bar. The classification result is a data cube with a set of probability layers, one for each output class. Each probability layer contains the model’s assessment of how likely each pixel belongs to the related class. The probability cube can be visualized with <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code>.</p>
 <div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Classify data cube</span></span>
 <span><span class="va">ro_cube_20LKP_probs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">ro_cube_20LKP</span>,</span>
-<span>  ml_model <span class="op">=</span> <span class="va">ltae_model</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp9"</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"ltae"</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span></span>
-<span><span class="op">)</span></span>
+<span>    data     <span class="op">=</span> <span class="va">ro_cube_20LKP</span>,</span>
+<span>    ml_model <span class="op">=</span> <span class="va">ltae_model</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp9"</span>,</span>
+<span>    version <span class="op">=</span> <span class="st">"ltae"</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_cube_20LKP_probs</span>, palette <span class="op">=</span> <span class="st">"YlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-110"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-110-1.png" alt="Probability maps produced by LightTAE model." width="80%"><p class="caption">
-Figure 66: Probability maps produced by LightTAE model.
+<span style="display:block;" id="fig:unnamed-chunk-107"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-107-1.png" alt="Probability maps produced by LightTAE model (Source: Authors)." width="80%"><p class="caption">
+Figure 66: Probability maps produced by LightTAE model (Source: Authors).
 </p>
 </div>
-<p>A probability cube is a helpful tool for data analysis. It is used for post-processing smoothing, as described in this Chapter, but also in uncertainty estimates and active learning, as described in the “Uncertainty and Active Learning” Chapter.</p>
+<p>A probability cube is a helpful tool for data analysis. It is used for post-processing smoothing, as described in this Chapter, but also in uncertainty estimates and active learning, as described in Chapter <a href="https://e-sensing.github.io/sitsbook/uncertainty-and-active-learning.html">Uncertainty and active learning</a>.</p>
 <div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate a thematic map</span></span>
 <span><span class="va">defor_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">ro_cube_20LKP_probs</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp9"</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"no_smooth"</span></span>
-<span><span class="op">)</span></span>
+<span>    cube <span class="op">=</span> <span class="va">ro_cube_20LKP_probs</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp9"</span>,</span>
+<span>    version <span class="op">=</span> <span class="st">"no_smooth"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">defor_map</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-111"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-111-1.png" alt="Final classification map." width="100%"><p class="caption">
-Figure 67: Final classification map.
+<span style="display:block;" id="fig:unnamed-chunk-108"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-108-1.png" alt="Final classification map (Source: Authors)." width="100%"><p class="caption">
+Figure 67: Final classification map (Source: Authors).
 </p>
 </div>
 <p>The labeled map generated from the pixel-based time series classification method exhibits several misclassified pixels, which are small patches surrounded by a different class. This occurrence of outliers is a common issue that arises due to the inherent nature of this classification approach. Regardless of their resolution, mixed pixels are prevalent in images, and each class exhibits considerable data variability. As a result, these factors can lead to outliers that are more likely to be misclassified. To overcome this limitation, <code>sits</code> employs post-processing smoothing techniques that leverage the spatial context of the probability cubes to refine the results. These techniques will be discussed in the next Chapter.</p>
@@ -235,127 +233,117 @@ Figure 67: Final classification map.
 <code class="sourceCode R"><span><span class="co"># Open classification map</span></span>
 <span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/Rondonia-Class"</span>, package <span class="op">=</span> <span class="st">"sitsdata"</span><span class="op">)</span></span>
 <span><span class="va">ro_class</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
-<span>  source <span class="op">=</span> <span class="st">"MPC"</span>,</span>
-<span>  collection <span class="op">=</span> <span class="st">"SENTINEL-2-L2A"</span>,</span>
-<span>  data_dir <span class="op">=</span> <span class="va">data_dir</span>,</span>
-<span>  parse_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"X1"</span>, <span class="st">"X2"</span>, <span class="st">"tile"</span>, <span class="st">"start_date"</span>, <span class="st">"end_date"</span>,</span>
-<span>    <span class="st">"band"</span>, <span class="st">"version"</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  bands <span class="op">=</span> <span class="st">"class"</span>,</span>
-<span>  labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"Water"</span>, <span class="st">"ClearCut_Burn"</span>, <span class="st">"ClearCut_Soil"</span>,</span>
-<span>    <span class="st">"ClearCut_Veg"</span>, <span class="st">"Forest"</span>, <span class="st">"Bare_Soil"</span>, <span class="st">"Wetland"</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span>    source <span class="op">=</span> <span class="st">"MPC"</span>,</span>
+<span>    collection <span class="op">=</span> <span class="st">"SENTINEL-2-L2A"</span>,</span>
+<span>    data_dir <span class="op">=</span> <span class="va">data_dir</span>,</span>
+<span>    parse_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"X1"</span>, <span class="st">"X2"</span>, <span class="st">"tile"</span>, <span class="st">"start_date"</span>, <span class="st">"end_date"</span>,</span>
+<span>                   <span class="st">"band"</span>, <span class="st">"version"</span><span class="op">)</span>,</span>
+<span>    bands <span class="op">=</span> <span class="st">"class"</span>,</span>
+<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Water"</span>, <span class="st">"ClearCut_Burn"</span>, <span class="st">"ClearCut_Soil"</span>,</span>
+<span>               <span class="st">"ClearCut_Veg"</span>, <span class="st">"Forest"</span>, <span class="st">"Bare_Soil"</span>, <span class="st">"Wetland"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_class</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-112"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-112-1.png" alt="original classification map." width="100%"><p class="caption">
-Figure 68: original classification map.
+<span style="display:block;" id="fig:unnamed-chunk-109"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-109-1.png" alt="Original classification map (Source: Authors)." width="100%"><p class="caption">
+Figure 68: Original classification map (Source: Authors).
 </p>
 </div>
-<p>The above map shows the total extent of deforestation by clear cuts estimated by the <code>sits</code> random forest algorithm in an area in Rondonia, Brazil, based on a time series of Sentinel-2 images for the period <code>2020-06-04</code> to <code>2021-08-26</code>. Suppose we want to estimate the deforestation that occurred period from June 2020 to August 2021. We need a reference map containing information on forest cuts before 2020.</p>
-<p>In this example, we use as a reference the PRODES deforestation map of Amazonia created by Brazil’s National Institute for Space Research (INPE). This map is produced by visual interpretation. PRODES measures deforestation every year, starting from August of one year to July of the following year. It contains classes that represent the natural world (“Forest”, “Water”, “NonForest”, and “NonForest2”) and classes that capture the yearly deforestation increments. These classes are named “dYYYY” and “rYYYY”; the first refers to deforestation in a given year (e.g., “d2008” for deforestation for August 2007 to July 2008); the second to places where the satellite data is not sufficient to determine the land class (e.g, “r2010” for 2010). This map is available on package “sitsdata”, as shown below.</p>
+<p>The above map shows the total extent of deforestation by clear cuts estimated by the <code>sits</code> random forest algorithm in an area in Rondonia, Brazil, based on a time series of Sentinel-2 images for the period 2020-06-04 to 2021-08-26. Suppose we want to estimate the deforestation that occurred from June 2020 to August 2021. We need a reference map containing information on forest cuts before 2020.</p>
+<p>In this example, we use as a reference the PRODES deforestation map of Amazonia created by Brazil’s National Institute for Space Research (INPE). This map is produced by visual interpretation. PRODES measures deforestation every year, starting from August of one year to July of the following year. It contains classes that represent the natural world (“Forest”, “Water”, “NonForest”, and “NonForest2”) and classes that capture the yearly deforestation increments. These classes are named “dYYYY” and “rYYYY”; the first refers to deforestation in a given year (e.g., “d2008” for deforestation for August 2007 to July 2008); the second to places where the satellite data is not sufficient to determine the land class (e.g, “r2010” for 2010). This map is available on package <code>sitsdata</code>, as shown below.</p>
 <div class="sourceCode" id="cb116"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/PRODES"</span>, package <span class="op">=</span> <span class="st">"sitsdata"</span><span class="op">)</span></span>
 <span><span class="va">prodes2021</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
-<span>  source <span class="op">=</span> <span class="st">"USGS"</span>,</span>
-<span>  collection <span class="op">=</span> <span class="st">"LANDSAT-C2L2-SR"</span>,</span>
-<span>  data_dir <span class="op">=</span> <span class="va">data_dir</span>,</span>
-<span>  parse_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"X1"</span>, <span class="st">"X2"</span>, <span class="st">"tile"</span>, <span class="st">"start_date"</span>, <span class="st">"end_date"</span>,</span>
-<span>    <span class="st">"band"</span>, <span class="st">"version"</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  bands <span class="op">=</span> <span class="st">"class"</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"v20220606"</span>,</span>
-<span>  labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"Forest"</span>, <span class="st">"Water"</span>, <span class="st">"NonForest"</span>,</span>
-<span>    <span class="st">"NonForest2"</span>, <span class="st">"NoClass"</span>, <span class="st">"d2007"</span>, <span class="st">"d2008"</span>,</span>
-<span>    <span class="st">"d2009"</span>, <span class="st">"d2010"</span>, <span class="st">"d2011"</span>, <span class="st">"d2012"</span>,</span>
-<span>    <span class="st">"d2013"</span>, <span class="st">"d2014"</span>, <span class="st">"d2015"</span>, <span class="st">"d2016"</span>,</span>
-<span>    <span class="st">"d2017"</span>, <span class="st">"d2018"</span>, <span class="st">"r2010"</span>, <span class="st">"r2011"</span>,</span>
-<span>    <span class="st">"r2012"</span>, <span class="st">"r2013"</span>, <span class="st">"r2014"</span>, <span class="st">"r2015"</span>,</span>
-<span>    <span class="st">"r2016"</span>, <span class="st">"r2017"</span>, <span class="st">"r2018"</span>, <span class="st">"d2019"</span>,</span>
-<span>    <span class="st">"r2019"</span>, <span class="st">"d2020"</span>, <span class="st">"NoClass"</span>, <span class="st">"r2020"</span>,</span>
-<span>    <span class="st">"Clouds2021"</span>, <span class="st">"d2021"</span>, <span class="st">"r2021"</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span>    source <span class="op">=</span> <span class="st">"USGS"</span>,</span>
+<span>    collection <span class="op">=</span> <span class="st">"LANDSAT-C2L2-SR"</span>,</span>
+<span>    data_dir <span class="op">=</span> <span class="va">data_dir</span>,</span>
+<span>    parse_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"X1"</span>, <span class="st">"X2"</span>, <span class="st">"tile"</span>, <span class="st">"start_date"</span>, <span class="st">"end_date"</span>,</span>
+<span>                   <span class="st">"band"</span>, <span class="st">"version"</span><span class="op">)</span>,</span>
+<span>    bands <span class="op">=</span> <span class="st">"class"</span>,</span>
+<span>    version <span class="op">=</span> <span class="st">"v20220606"</span>,</span>
+<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Forest"</span>, <span class="st">"Water"</span>, <span class="st">"NonForest"</span>,</span>
+<span>               <span class="st">"NonForest2"</span>, <span class="st">"NoClass"</span>, <span class="st">"d2007"</span>, <span class="st">"d2008"</span>,</span>
+<span>               <span class="st">"d2009"</span>, <span class="st">"d2010"</span>, <span class="st">"d2011"</span>, <span class="st">"d2012"</span>,</span>
+<span>               <span class="st">"d2013"</span>, <span class="st">"d2014"</span>, <span class="st">"d2015"</span>, <span class="st">"d2016"</span>,</span>
+<span>               <span class="st">"d2017"</span>, <span class="st">"d2018"</span>, <span class="st">"r2010"</span>, <span class="st">"r2011"</span>,</span>
+<span>               <span class="st">"r2012"</span>, <span class="st">"r2013"</span>, <span class="st">"r2014"</span>, <span class="st">"r2015"</span>,</span>
+<span>               <span class="st">"r2016"</span>, <span class="st">"r2017"</span>, <span class="st">"r2018"</span>, <span class="st">"d2019"</span>,</span>
+<span>               <span class="st">"r2019"</span>, <span class="st">"d2020"</span>, <span class="st">"NoClass"</span>, <span class="st">"r2020"</span>,</span>
+<span>               <span class="st">"Clouds2021"</span>, <span class="st">"d2021"</span>, <span class="st">"r2021"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Since the labels of the deforestation map are specialized and are not part of the default <code>sits</code> color table, we define a legend for better visualization of the different deforestation classes. Using this new legend, we can plot the PRODES deforestation map.</p>
 <div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use the RColorBrewer palette "YlOrBr" for the deforestation years</span></span>
 <span><span class="va">colors</span> <span class="op">&lt;-</span> <span class="fu">grDevices</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html">hcl.colors</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">15</span>, palette <span class="op">=</span> <span class="st">"YlOrBr"</span><span class="op">)</span></span>
 <span><span class="co"># Define the legend for the deforestation map</span></span>
 <span><span class="va">def_legend</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"Forest"</span> <span class="op">=</span> <span class="st">"forestgreen"</span>, <span class="st">"Water"</span> <span class="op">=</span> <span class="st">"dodgerblue3"</span>,</span>
-<span>  <span class="st">"NonForest"</span> <span class="op">=</span> <span class="st">"bisque2"</span>, <span class="st">"NonForest2"</span> <span class="op">=</span> <span class="st">"bisque2"</span>,</span>
-<span>  <span class="st">"d2007"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">"d2008"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,</span>
-<span>  <span class="st">"d2009"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>, <span class="st">"d2010"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>,</span>
-<span>  <span class="st">"d2011"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span>, <span class="st">"d2012"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span>,</span>
-<span>  <span class="st">"d2013"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span>, <span class="st">"d2014"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">8</span><span class="op">]</span>,</span>
-<span>  <span class="st">"d2015"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">9</span><span class="op">]</span>, <span class="st">"d2016"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">10</span><span class="op">]</span>,</span>
-<span>  <span class="st">"d2017"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">11</span><span class="op">]</span>, <span class="st">"d2018"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">12</span><span class="op">]</span>,</span>
-<span>  <span class="st">"d2019"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">13</span><span class="op">]</span>, <span class="st">"d2020"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">14</span><span class="op">]</span>,</span>
-<span>  <span class="st">"d2021"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">15</span><span class="op">]</span>, <span class="st">"r2010"</span> <span class="op">=</span> <span class="st">"azure2"</span>,</span>
-<span>  <span class="st">"r2011"</span> <span class="op">=</span> <span class="st">"azure2"</span>, <span class="st">"r2012"</span> <span class="op">=</span> <span class="st">"azure2"</span>,</span>
-<span>  <span class="st">"r2013"</span> <span class="op">=</span> <span class="st">"azure2"</span>, <span class="st">"r2014"</span> <span class="op">=</span> <span class="st">"azure2"</span>,</span>
-<span>  <span class="st">"r2015"</span> <span class="op">=</span> <span class="st">"azure2"</span>, <span class="st">"r2016"</span> <span class="op">=</span> <span class="st">"azure2"</span>,</span>
-<span>  <span class="st">"r2017"</span> <span class="op">=</span> <span class="st">"azure2"</span>, <span class="st">"r2018"</span> <span class="op">=</span> <span class="st">"azure2"</span>,</span>
-<span>  <span class="st">"r2019"</span> <span class="op">=</span> <span class="st">"azure2"</span>, <span class="st">"r2020"</span> <span class="op">=</span> <span class="st">"azure2"</span>,</span>
-<span>  <span class="st">"r2021"</span> <span class="op">=</span> <span class="st">"azure2"</span>, <span class="st">"NoClass"</span> <span class="op">=</span> <span class="st">"grey90"</span>,</span>
-<span>  <span class="st">"Clouds2021"</span> <span class="op">=</span> <span class="st">"grey90"</span></span>
-<span><span class="op">)</span></span>
+<span>    <span class="st">"Forest"</span> <span class="op">=</span> <span class="st">"forestgreen"</span>, <span class="st">"Water"</span> <span class="op">=</span> <span class="st">"dodgerblue3"</span>, </span>
+<span>    <span class="st">"NonForest"</span> <span class="op">=</span> <span class="st">"bisque2"</span>, <span class="st">"NonForest2"</span> <span class="op">=</span> <span class="st">"bisque2"</span>,</span>
+<span>    <span class="st">"d2007"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,  <span class="st">"d2008"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,</span>
+<span>    <span class="st">"d2009"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>,  <span class="st">"d2010"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>, </span>
+<span>    <span class="st">"d2011"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span>,  <span class="st">"d2012"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span>,</span>
+<span>    <span class="st">"d2013"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span>,  <span class="st">"d2014"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">8</span><span class="op">]</span>,</span>
+<span>    <span class="st">"d2015"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">9</span><span class="op">]</span>,  <span class="st">"d2016"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">10</span><span class="op">]</span>,</span>
+<span>    <span class="st">"d2017"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">11</span><span class="op">]</span>, <span class="st">"d2018"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">12</span><span class="op">]</span>,</span>
+<span>    <span class="st">"d2019"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">13</span><span class="op">]</span>, <span class="st">"d2020"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">14</span><span class="op">]</span>, </span>
+<span>    <span class="st">"d2021"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="fl">15</span><span class="op">]</span>, <span class="st">"r2010"</span> <span class="op">=</span> <span class="st">"azure2"</span>,</span>
+<span>    <span class="st">"r2011"</span> <span class="op">=</span> <span class="st">"azure2"</span>,   <span class="st">"r2012"</span> <span class="op">=</span> <span class="st">"azure2"</span>,</span>
+<span>    <span class="st">"r2013"</span> <span class="op">=</span> <span class="st">"azure2"</span>,   <span class="st">"r2014"</span> <span class="op">=</span> <span class="st">"azure2"</span>,</span>
+<span>    <span class="st">"r2015"</span> <span class="op">=</span> <span class="st">"azure2"</span>,   <span class="st">"r2016"</span> <span class="op">=</span> <span class="st">"azure2"</span>,</span>
+<span>    <span class="st">"r2017"</span> <span class="op">=</span> <span class="st">"azure2"</span>,   <span class="st">"r2018"</span> <span class="op">=</span> <span class="st">"azure2"</span>,</span>
+<span>    <span class="st">"r2019"</span> <span class="op">=</span> <span class="st">"azure2"</span>,   <span class="st">"r2020"</span> <span class="op">=</span> <span class="st">"azure2"</span>,</span>
+<span>    <span class="st">"r2021"</span> <span class="op">=</span> <span class="st">"azure2"</span>,   <span class="st">"NoClass"</span> <span class="op">=</span> <span class="st">"grey90"</span>,</span>
+<span>    <span class="st">"Clouds2021"</span> <span class="op">=</span> <span class="st">"grey90"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">prodes2021</span>, legend <span class="op">=</span> <span class="va">def_legend</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-114"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-114-1.png" alt="Deforestation map produced by PRODES." width="100%"><p class="caption">
-Figure 69: Deforestation map produced by PRODES.
+<span style="display:block;" id="fig:unnamed-chunk-111"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-111-1.png" alt="Deforestation map produced by PRODES (Source: Authors)." width="100%"><p class="caption">
+Figure 69: Deforestation map produced by PRODES (Source: Authors).
 </p>
 </div>
-<p>Taking the PRODES map as our reference, we can include new labels in the classified map produced by <code>sits</code> using <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code>. The new name “Defor_2020” will be applied to all pixels that PRODES considers that have been deforested before July 2020. We also use a “Non_Forest” class to include all pixels that PRODES takes as not covered by native vegetation, such as wetlands and rocky areas. The PRODES classes will be used as a mask over the <code>sits</code> deforestation map.</p>
+<p>Taking the PRODES map as our reference, we can include new labels in the classified map produced by <code>sits</code> using <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code>. The new name “Defor_2020” will be applied to all pixels that PRODES considers that have been deforested before July 2020. We also include a “Non_Forest” class to include all pixels that PRODES takes as not covered by native vegetation, such as wetlands and rocky areas. The PRODES classes will be used as a mask over the <code>sits</code> deforestation map.</p>
 <p>The <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code> operation requires the parameters: (a) <code>cube</code>, the classified data cube whose pixels will be reclassified; (b) <code>mask</code>, the reference data cube used as a mask; (c) <code>rules</code>, a named list. The names of the <code>rules</code> list will be the new label. Each new label is associated with a <code>mask</code> vector that includes the labels of the reference map that will be joined. <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code> then compares the original and reference map pixel by pixel. For each pixel of the reference map whose labels are in one of the <code>rules</code>, the algorithm relabels the original map. The result will be a reclassified map with the original labels plus the new labels that have been masked using the reference map.</p>
 <div class="sourceCode" id="cb118"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Reclassify cube</span></span>
 <span><span class="va">ro_def_2021</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify</a></span><span class="op">(</span></span>
-<span>  cube <span class="op">=</span> <span class="va">ro_class</span>,</span>
-<span>  mask <span class="op">=</span> <span class="va">prodes2021</span>,</span>
-<span>  rules <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
-<span>    <span class="st">"Non_Forest"</span> <span class="op">=</span> <span class="va">mask</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NonForest"</span>, <span class="st">"NonForest2"</span><span class="op">)</span>,</span>
-<span>    <span class="st">"Deforestation_Mask"</span> <span class="op">=</span> <span class="va">mask</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>      <span class="st">"d2007"</span>, <span class="st">"d2008"</span>, <span class="st">"d2009"</span>,</span>
-<span>      <span class="st">"d2010"</span>, <span class="st">"d2011"</span>, <span class="st">"d2012"</span>,</span>
-<span>      <span class="st">"d2013"</span>, <span class="st">"d2014"</span>, <span class="st">"d2015"</span>,</span>
-<span>      <span class="st">"d2016"</span>, <span class="st">"d2017"</span>, <span class="st">"d2018"</span>,</span>
-<span>      <span class="st">"d2019"</span>, <span class="st">"d2020"</span>,</span>
-<span>      <span class="st">"r2010"</span>, <span class="st">"r2011"</span>, <span class="st">"r2012"</span>,</span>
-<span>      <span class="st">"r2013"</span>, <span class="st">"r2014"</span>, <span class="st">"r2015"</span>,</span>
-<span>      <span class="st">"r2016"</span>, <span class="st">"r2017"</span>, <span class="st">"r2018"</span>,</span>
-<span>      <span class="st">"r2019"</span>, <span class="st">"r2020"</span>, <span class="st">"r2021"</span></span>
-<span>    <span class="op">)</span>,</span>
-<span>    <span class="st">"Water"</span> <span class="op">=</span> <span class="va">mask</span> <span class="op">==</span> <span class="st">"Water"</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">8</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp9"</span>,</span>
-<span>  version <span class="op">=</span> <span class="st">"reclass"</span></span>
-<span><span class="op">)</span></span>
+<span>    cube <span class="op">=</span> <span class="va">ro_class</span>,</span>
+<span>    mask <span class="op">=</span> <span class="va">prodes2021</span>,</span>
+<span>    rules <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>        <span class="st">"Non_Forest"</span> <span class="op">=</span> <span class="va">mask</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NonForest"</span>, <span class="st">"NonForest2"</span><span class="op">)</span>,</span>
+<span>        <span class="st">"Deforestation_Mask"</span> <span class="op">=</span> <span class="va">mask</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>            <span class="st">"d2007"</span>, <span class="st">"d2008"</span>, <span class="st">"d2009"</span>,</span>
+<span>            <span class="st">"d2010"</span>, <span class="st">"d2011"</span>, <span class="st">"d2012"</span>,</span>
+<span>            <span class="st">"d2013"</span>, <span class="st">"d2014"</span>, <span class="st">"d2015"</span>,</span>
+<span>            <span class="st">"d2016"</span>, <span class="st">"d2017"</span>, <span class="st">"d2018"</span>,</span>
+<span>            <span class="st">"d2019"</span>, <span class="st">"d2020"</span>,</span>
+<span>            <span class="st">"r2010"</span>, <span class="st">"r2011"</span>, <span class="st">"r2012"</span>,</span>
+<span>            <span class="st">"r2013"</span>, <span class="st">"r2014"</span>, <span class="st">"r2015"</span>,</span>
+<span>            <span class="st">"r2016"</span>, <span class="st">"r2017"</span>, <span class="st">"r2018"</span>,</span>
+<span>            <span class="st">"r2019"</span>, <span class="st">"r2020"</span>, <span class="st">"r2021"</span><span class="op">)</span>,</span>
+<span>        <span class="st">"Water"</span> <span class="op">=</span> <span class="va">mask</span> <span class="op">==</span> <span class="st">"Water"</span><span class="op">)</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">8</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp9"</span>,</span>
+<span>    version <span class="op">=</span> <span class="st">"reclass"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Plot the reclassified map</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_def_2021</span><span class="op">)</span></span></code></pre></div>
-<pre><code>#&gt; Warning: palette colors names missing for 8, 9. Therefore, palette color names will be ignored</code></pre>
+<pre><code>#&gt; Warning: palette colors names missing for 8, 9. Therefore, palette color names will
+#&gt; be ignored</code></pre>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-115"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-115-1.png" alt="Deforestation map by sits masked by PRODES map." width="100%"><p class="caption">
-Figure 70: Deforestation map by sits masked by PRODES map.
+<span style="display:block;" id="fig:unnamed-chunk-112"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-112-1.png" alt="Deforestation map by sits masked by PRODES map (Source: Authors)." width="100%"><p class="caption">
+Figure 70: Deforestation map by sits masked by PRODES map (Source: Authors).
 </p>
 </div>
-<p>The reclassified map has been split into deforestation before mid-2020 (using the PRODES map) and the areas classified by <code>sits</code> that are taken as being deforested from mid-2020 to mid-2021. This allows the experts to measure how much deforestation occurred in this period according to <code>sits</code> and compare the result with the PRODES visual interpretation map.</p>
-<p>The <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code> operation is not restricted to comparing deforestation maps. It can be used in any case that requires masking of a result based on a reference map.</p>
+<p>The reclassified map has been split into deforestation before mid-2020 (using the PRODES map) and the areas classified by <code>sits</code> that are taken as being deforested from mid-2020 to mid-2021. This allows the experts to measure how much deforestation occurred in this period according to <code>sits</code> and compare the result with the PRODES map.</p>
+<p>The <code><a href="https://rdrr.io/pkg/sits/man/sits_reclassify.html">sits_reclassify()</a></code> function is not restricted to comparing deforestation maps. It can be used in any case that requires masking of a result based on a reference map.</p>
 </div>
 <div id="how-parallel-processing-works" class="section level2 unnumbered">
 <h2>How parallel processing works<a class="anchor" aria-label="anchor" href="#how-parallel-processing-works"><i class="fas fa-link"></i></a>
 </h2>
-<p>This section provides an overview of how the functions <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>, <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code>, and <code><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification()</a></code> process images in parallel. To achieve efficiency, <code>sits</code> implements a fault-tolerant multitasking procedure for big EO data classification. Users are not burdened with the need to learn how to do multiprocessing. Thus, their learning curve is shortened. Image classification in <code>sits</code> is done by a cluster of independent workers linked to a virtual machine. To avoid communication overhead, all large payloads are read and stored independently; direct interaction between the main process and the workers is kept at a minimum.</p>
-<p>The classification procedure benefits from the fact that most images available in cloud collections are stored as COGs (cloud-optimized Geotiff). COGs are regular GeoTIFF files organized in regular square blocks to improve visualization and access for large data sets. Thus, data requests can be optimized to access only portions of the images. All cloud services supported by <code>sits</code> use COG files. The classification algorithm in <code>sits</code> uses COGs to ensure optimal data access, reducing I/O demand as much as possible.</p>
+<p>This section provides an overview of how <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>, <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code>, and <code><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification()</a></code> process images in parallel. To achieve efficiency, <code>sits</code> implements a fault-tolerant multitasking procedure for big Earth observation data classification. The learning curve is shortened as there is no need to learn how to do multiprocessing. Image classification in <code>sits</code> is done by a cluster of independent workers linked to a virtual machine. To avoid communication overhead, all large payloads are read and stored independently; direct interaction between the main process and the workers is kept at a minimum.</p>
+<p>The classification procedure benefits from the fact that most images available in cloud collections are stored as COGs (cloud-optimized GeoTIFF). COGs are regular GeoTIFF files organized in regular square blocks to improve visualization and access for large data sets. Thus, data requests can be optimized to access only portions of the images. All cloud services supported by <code>sits</code> use COG files. The classification algorithm in <code>sits</code> uses COGs to ensure optimal data access, reducing I/O demand as much as possible.</p>
 <p>The approach for parallel processing in <code>sits</code>, depicted in Figure <a href="image-classification-in-data-cubes.html#fig:par">71</a>, has the following steps:</p>
 <ol style="list-style-type: decimal">
 <li>Based on the block size of individual COG files, calculate the size of each chunk that must be loaded in memory, considering the number of bands and the timeline’s length. Chunk access is optimized for the efficient transfer of data blocks.</li>
@@ -367,11 +355,11 @@ Figure 70: Deforestation map by sits masked by PRODES map.
 </ol>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:par"></span>
-<img src="images/sits_parallel.png" alt="Parallel processing in sits (source: Simoes et al.,2021)." width="90%" height="90%"><p class="caption">
-Figure 71: Parallel processing in sits (source: Simoes et al.,2021).
+<img src="images/sits_parallel.png" alt="Parallel processing in sits (Source: Simoes et al. (2021).  Reproduction under fair use doctrine)." width="90%" height="90%"><p class="caption">
+Figure 71: Parallel processing in sits (Source: Simoes et al. (2021). Reproduction under fair use doctrine).
 </p>
 </div>
-<p>This approach has many advantages. It works in any virtual machine that supports R and has no dependencies on proprietary software. Processing is done in a concurrent and independent way, with no communication between workers. Failure of one worker does not cause the failure of big data processing. The software is prepared to resume classification processing from the last processed chunk, preventing failures such as memory exhaustion, power supply interruption, or network breakdown.</p>
+<p>This approach has many advantages. It has no dependencies on proprietary software and runs in any virtual machine that supports R. Processing is done in a concurrent and independent way, with no communication between workers. Failure of one worker does not cause the failure of big data processing. The software is prepared to resume classification processing from the last processed chunk, preventing failures such as memory exhaustion, power supply interruption, or network breakdown.</p>
 <p>To reduce processing time, it is necessary to adjust <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code>, <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code>, and <code><a href="https://rdrr.io/pkg/sits/man/sits_label_classification.html">sits_label_classification()</a></code> according to the capabilities of the host environment. The <code>memsize</code> parameter controls the size of the main memory (in GBytes) to be used for classification. A practical approach is to set <code>memsize</code> to the maximum memory available in the virtual machine for classification and to choose <code>multicores</code> as the largest number of cores available. Based on the memory available and the size of blocks in COG files, <code>sits</code> will access the images in an optimized way. In this way, <code>sits</code> tries to ensure the best possible use of the available resources.</p>
 
 </div>
@@ -405,7 +393,7 @@ Figure 71: Parallel processing in sits (source: Simoes et al.,2021).
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-04.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

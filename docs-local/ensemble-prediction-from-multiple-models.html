@@ -25,8 +25,8 @@
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.5/font.css" rel="stylesheet">
-<link href="libs/IBM_Plex_Mono-0.4.5/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.6/font.css" rel="stylesheet">
+<link href="libs/IBM_Plex_Mono-0.4.6/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
@@ -103,16 +103,7 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="ensemble-prediction-from-multiple-models" class="section level1 unnumbered">
 <h1>Ensemble prediction from multiple models<a class="anchor" aria-label="anchor" href="#ensemble-prediction-from-multiple-models"><i class="fas fa-link"></i></a>
 </h1>
-<p>Ensemble prediction is a powerful technique for combining predictions from multiple models to produce more accurate and robust predictions. In general, ensemble predictions produce better predictions than using a single model. This is because the errors of individual models can cancel out or be reduced when combined with the predictions of other models. As a result, ensemble predictions can lead to better overall accuracy and reduce the risk of overfitting.</p>
-<!---
-PEDRO: 44) Esta frase acima pode ser removida?
-GILBERTO: Removido.
--->
-<p>This can be especially useful when working with complex or uncertain data. By combining the predictions of multiple models, users can identify which features or factors are most important for making accurate predictions. When using ensemble methods, choosing diverse models with different sources of error is important to ensure that the ensemble predictions are more accurate and robust.</p>
-<!---
-PEDRO: 45) Este paragrafo acima parece mais um fechamento do capitulo.
-GILBERTO: De acordo. Colocado no fim do capítulo.
--->
+<p>Ensemble prediction is a powerful technique for combining predictions from multiple models to produce more accurate and robust predictions. In general, ensemble predictions produce better predictions than using a single model. This is because the errors of individual models can cancel out or be reduced when combined with the predictions of other models. As a result, ensemble predictions can lead to better overall accuracy and reduce the risk of overfitting. This can be especially useful when working with complex or uncertain data. By combining the predictions of multiple models, users can identify which features or factors are most important for making accurate predictions. When using ensemble methods, choosing diverse models with different sources of error is important to ensure that the ensemble predictions are more accurate and robust.</p>
 <p>The <code>sits</code> package provides <code><a href="https://rdrr.io/pkg/sits/man/sits_combine_predictions.html">sits_combine_predictions()</a></code> to estimate ensemble predictions using probability cubes produced by <code><a href="https://rdrr.io/pkg/sits/man/sits_classify.html">sits_classify()</a></code> and optionally post-processed with <code><a href="https://rdrr.io/pkg/sits/man/sits_smooth.html">sits_smooth()</a></code>. There are two ways to make ensemble predictions from multiple models:</p>
 <ul>
 <li><p>Averaging: In this approach, the predictions of each model are averaged to produce the final prediction. This method works well when the models have similar accuracy and errors.</p></li>
@@ -137,9 +128,9 @@ GILBERTO: De acordo. Colocado no fim do capítulo.
 <span>  blue <span class="op">=</span> <span class="st">"B02"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-151"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-151-1.png" alt="Color composite image for date 2020-07-06." width="100%"><p class="caption">
-Figure 90: Color composite image for date 2020-07-06.
+<span style="display:block;" id="fig:unnamed-chunk-148"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-148-1.png" alt="Color composite image for date 2020-07-06 (Source: Authors)." width="100%"><p class="caption">
+Figure 90: Color composite image for date 2020-07-06 (Source: Authors).
 </p>
 </div>
 <p>The image from 2020-07-06 shows many areas under deforestation, especially a large one located in the top center of the image. It is helpful to compare to an image one year later, which shows several burned areas resulting from forest removal followed by fire.</p>
@@ -151,9 +142,9 @@ Figure 90: Color composite image for date 2020-07-06.
 <span>  blue <span class="op">=</span> <span class="st">"B02"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-152"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-152-1.png" alt="Color composite image for date 2021-08-10." width="100%"><p class="caption">
-Figure 91: Color composite image for date 2021-08-10.
+<span style="display:block;" id="fig:unnamed-chunk-149"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-149-1.png" alt="Color composite image for date 2021-08-10 (Source: Authors)." width="100%"><p class="caption">
+Figure 91: Color composite image for date 2021-08-10 (Source: Authors).
 </p>
 </div>
 <p>The samples used in the classification are the same as those used in Chapter <a href="https://e-sensing.github.io/sitsbook/image-classification-in-data-cubes.html">Image classification in data cubes</a>. Please refer to that chapter for a more detailed description of the temporal response of the samples. We first reproduce the result obtained in that Chapter using <code><a href="https://rdrr.io/pkg/sits/man/sits_tempcnn.html">sits_tempcnn()</a></code>.</p>
@@ -200,9 +191,9 @@ Figure 91: Color composite image for date 2021-08-10.
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">defor_map_tcnn</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-153"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-153-1.png" alt="Image Classification using TempCNN model." width="100%"><p class="caption">
-Figure 92: Image Classification using TempCNN model.
+<span style="display:block;" id="fig:unnamed-chunk-150"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-150-1.png" alt="Image Classification using TempCNN model (Source: Authors)." width="100%"><p class="caption">
+Figure 92: Image Classification using TempCNN model (Source: Authors).
 </p>
 </div>
 <p>The deforestation map produced by <code><a href="https://rdrr.io/pkg/sits/man/sits_tempcnn.html">sits_tempcnn()</a></code> has spatial consistency; arguably, it underestimates the burned areas in the right-hand corner of the image. The method tries to model the temporal behavior of the reflectances. For this reason, it sometimes fails to detect changes in the last dates of the time series, as it occurs when areas are burned in August.</p>
@@ -241,9 +232,9 @@ Figure 92: Image Classification using TempCNN model.
 <span><span class="co"># Plot the random forest version of the classified cube</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ro_cube_label_rfor</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-154"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-154-1.png" alt="Land classification in Rondonia using a random forest algorithm." width="100%"><p class="caption">
-Figure 93: Land classification in Rondonia using a random forest algorithm.
+<span style="display:block;" id="fig:unnamed-chunk-151"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-151-1.png" alt="Land classification in Rondonia using a random forest algorithm (Source: Authors)." width="100%"><p class="caption">
+Figure 93: Land classification in Rondonia using a random forest algorithm (Source: Authors).
 </p>
 </div>
 <p>Comparing the two results, while most of the land areas have been classified equally, there are places of disagreement concerning the places classified as “Burned_Area” and “Highly_Degraded”. Since the random forest model is sensitive to the response of images at the end of the period, it tends to be better to distinguish burned areas. However, it tends to reduce the forest areas, classifying some of them as highly degraded. Such misclassification happens because the random forest algorithm disregards the temporal correlation of the input data. Values from a single date are used to distinguish between natural and degraded forest areas.</p>
@@ -271,9 +262,9 @@ Figure 93: Land classification in Rondonia using a random forest algorithm.
 <span><span class="co"># Plot the second version of the classified cube</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">s2_cube_average_class</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-155"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-155-1.png" alt="Land classification in Rondonia near Samuel dam using the average of the probabilities produced by lightTAE and tempCNN algorithms." width="100%"><p class="caption">
-Figure 94: Land classification in Rondonia near Samuel dam using the average of the probabilities produced by lightTAE and tempCNN algorithms.
+<span style="display:block;" id="fig:unnamed-chunk-152"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-152-1.png" alt="Land classification in Rondonia near Samuel dam using the average of the probabilities produced by lightTAE and tempCNN algorithms (Source: Authors)." width="100%"><p class="caption">
+Figure 94: Land classification in Rondonia near Samuel dam using the average of the probabilities produced by lightTAE and tempCNN algorithms (Source: Authors).
 </p>
 </div>
 <p>Compared with the initial map, the result has increased the number of pixels classified as burned areas and highly degraded. Not all areas classified as degraded forest by the random forest method have been included in the final map. Only those places where the random forest has high confidence have been included. The average map generally results in a better classification than the individual results.</p>
@@ -301,7 +292,7 @@ Figure 94: Land classification in Rondonia near Samuel dam using the average of 
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-04.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

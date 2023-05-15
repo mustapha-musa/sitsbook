@@ -25,8 +25,8 @@
 <meta name="twitter:image" content="/images/cover_sits_book.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.5/font.css" rel="stylesheet">
-<link href="libs/IBM_Plex_Mono-0.4.5/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/IBM_Plex_Serif-0.4.6/font.css" rel="stylesheet">
+<link href="libs/IBM_Plex_Mono-0.4.6/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
@@ -122,97 +122,88 @@
 <p>First, we define a data cube for a tile in the state of Rondonia, Brazil, including bands used to compute different vegetation indexes. We regularize the cube using a target resolution of 60 meters to reduce processing time.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a directory to store files</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="st">"./tempdir/chp5"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="st">"./tempdir/chp5"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="st">"./tempdir/chp5"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="st">"./tempdir/chp5"</span><span class="op">)</span></span>
 <span><span class="co"># Create an irregular data cube from MSPC</span></span>
 <span><span class="va">s2_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_cube.html">sits_cube</a></span><span class="op">(</span></span>
-<span>  source <span class="op">=</span> <span class="st">"AWS"</span>,</span>
-<span>  collection <span class="op">=</span> <span class="st">"SENTINEL-S2-L2A-COGS"</span>,</span>
-<span>  tiles <span class="op">=</span> <span class="st">"20LKP"</span>,</span>
-<span>  bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"B02"</span>, <span class="st">"B03"</span>, <span class="st">"B04"</span>,</span>
-<span>    <span class="st">"B05"</span>, <span class="st">"B06"</span>, <span class="st">"B07"</span>,</span>
-<span>    <span class="st">"B08"</span>, <span class="st">"B8A"</span>, <span class="st">"B11"</span>,</span>
-<span>    <span class="st">"B12"</span>, <span class="st">"CLOUD"</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2018-07-01"</span><span class="op">)</span>,</span>
-<span>  end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2018-08-31"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span>    source <span class="op">=</span> <span class="st">"AWS"</span>,</span>
+<span>    collection <span class="op">=</span> <span class="st">"SENTINEL-S2-L2A-COGS"</span>,</span>
+<span>    tiles <span class="op">=</span> <span class="st">"20LKP"</span>,</span>
+<span>    bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"B02"</span>, <span class="st">"B03"</span>, <span class="st">"B04"</span>, </span>
+<span>              <span class="st">"B05"</span>, <span class="st">"B06"</span>, <span class="st">"B07"</span>, </span>
+<span>              <span class="st">"B08"</span>, <span class="st">"B8A"</span>, <span class="st">"B11"</span>, </span>
+<span>              <span class="st">"B12"</span>,<span class="st">"CLOUD"</span><span class="op">)</span>,</span>
+<span>    start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2018-07-01"</span><span class="op">)</span>,</span>
+<span>    end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2018-08-31"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># Regularize the cube to 15 day intervals</span></span>
 <span><span class="va">reg_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_regularize.html">sits_regularize</a></span><span class="op">(</span></span>
-<span>  cube       <span class="op">=</span> <span class="va">s2_cube</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span>,</span>
-<span>  res        <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  period     <span class="op">=</span> <span class="st">"P15D"</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span>          cube       <span class="op">=</span> <span class="va">s2_cube</span>,</span>
+<span>          output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span>,</span>
+<span>          res        <span class="op">=</span> <span class="fl">60</span>,</span>
+<span>          period     <span class="op">=</span> <span class="st">"P15D"</span>,</span>
+<span>          multicores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 <p>There are many options for calculating NDVI-related indexes for Sentinel-2 bands. The most widely used method combines band B08 (785-899 nm) and band B04 (650-680 nm). Recent works in the literature propose using the red-edge bands B05 (698-713 nm), B06 (733-748 nm), and B07 (773-793 nm) for capturing subtle variations in chlorophyll absorption producing indexes, which are called Normalized Difference Vegetation Red-edge indexes (NDRE) <span class="citation"><a href="references.html#ref-Xie2019" role="doc-biblioref">[5]</a></span>. In a recent paper, Sun et al. <span class="citation"><a href="references.html#ref-Sun2020a" role="doc-biblioref">[6]</a></span> argue that a vegetation index built using bands B06 and B07 provide a better approximation to leaf area index estimates. In a recent review, Chaves et al. <span class="citation"><a href="references.html#ref-Chaves2020" role="doc-biblioref">[7]</a></span> argue that red-edge bands are important for distinguishing leaf structure and chlorophyll content of different vegetation species. In the example below, we show how to include additional indexes in the regular data cube with the Sentinel-2 spectral bands.</p>
 <p>We first calculate the NDVI in the usual way, using bands B08 and B04.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate NDVI index using bands B08 and B04</span></span>
 <span><span class="va">reg_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_apply.html">sits_apply</a></span><span class="op">(</span><span class="va">reg_cube</span>,</span>
-<span>  NDVI <span class="op">=</span> <span class="op">(</span><span class="va">B08</span> <span class="op">-</span> <span class="va">B04</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">B08</span> <span class="op">+</span> <span class="va">B04</span><span class="op">)</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span></span>
-<span><span class="op">)</span></span>
+<span>    NDVI <span class="op">=</span> <span class="op">(</span><span class="va">B08</span> <span class="op">-</span> <span class="va">B04</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="va">B08</span> <span class="op">+</span> <span class="va">B04</span><span class="op">)</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NDVI"</span>, palette <span class="op">=</span> <span class="st">"RdYlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-38"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-38-1.png" alt="NDVI using bands B08 and B04 of Sentinel-2." width="100%"><p class="caption">
-Figure 23: NDVI using bands B08 and B04 of Sentinel-2.
+<span style="display:block;" id="fig:unnamed-chunk-36"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-36-1.png" alt="NDVI using bands B08 and B04 of Sentinel-2 (Source: Authors)." width="100%"><p class="caption">
+Figure 23: NDVI using bands B08 and B04 of Sentinel-2 (Source: Authors).
 </p>
 </div>
 <p>We now compare the traditional NDVI with other vegetation indexes computed using red-edge bands. We first compute the NDRE1 using bands B06 and B05.</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate NDRE1 index using bands B06 and B05</span></span>
 <span><span class="va">reg_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_apply.html">sits_apply</a></span><span class="op">(</span><span class="va">reg_cube</span>,</span>
-<span>  NDRE1 <span class="op">=</span> <span class="op">(</span><span class="va">B06</span> <span class="op">-</span> <span class="va">B05</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">B06</span> <span class="op">+</span> <span class="va">B05</span><span class="op">)</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span></span>
-<span><span class="op">)</span></span>
+<span>    NDRE1 <span class="op">=</span> <span class="op">(</span><span class="va">B06</span> <span class="op">-</span> <span class="va">B05</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="va">B06</span> <span class="op">+</span> <span class="va">B05</span><span class="op">)</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
 <span><span class="co"># Plot NDRE1 index</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NDRE1"</span>, palette <span class="op">=</span> <span class="st">"RdYlGn"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NDRE1"</span>,  palette <span class="op">=</span> <span class="st">"RdYlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-39"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-39-1.png" alt="NDRE1 using bands B06 and B05 of Sentinel-2." width="100%"><p class="caption">
-Figure 24: NDRE1 using bands B06 and B05 of Sentinel-2.
+<span style="display:block;" id="fig:unnamed-chunk-37"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-37-1.png" alt="NDRE1 using bands B06 and B05 of Sentinel-2 (Source: Authors)." width="100%"><p class="caption">
+Figure 24: NDRE1 using bands B06 and B05 of Sentinel-2 (Source: Authors).
 </p>
 </div>
 <p>Notice that the contrast between forests and deforested areas is more robust in the NDRE1 index than with NDVI. To compare this index with other red-edge based indexes, one option is to compute NDRE2 using bands B07 and B05, as shown below.</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate NDRE2 index using bands B07 and B05</span></span>
 <span><span class="va">reg_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_apply.html">sits_apply</a></span><span class="op">(</span><span class="va">reg_cube</span>,</span>
-<span>  NDRE2 <span class="op">=</span> <span class="op">(</span><span class="va">B07</span> <span class="op">-</span> <span class="va">B05</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">B07</span> <span class="op">+</span> <span class="va">B05</span><span class="op">)</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span></span>
-<span><span class="op">)</span></span>
+<span>    NDRE2 <span class="op">=</span> <span class="op">(</span><span class="va">B07</span> <span class="op">-</span> <span class="va">B05</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="va">B07</span> <span class="op">+</span> <span class="va">B05</span><span class="op">)</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
 <span><span class="co"># Plot NDRE2 index</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NDRE2"</span>, palette <span class="op">=</span> <span class="st">"RdYlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-40"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-40-1.png" alt="NDRE2 using bands B07 and B05 of Sentinel-2." width="100%"><p class="caption">
-Figure 25: NDRE2 using bands B07 and B05 of Sentinel-2.
+<span style="display:block;" id="fig:unnamed-chunk-38"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-38-1.png" alt="NDRE2 using bands B07 and B05 of Sentinel-2 (Source: Authors)." width="100%"><p class="caption">
+Figure 25: NDRE2 using bands B07 and B05 of Sentinel-2 (Source: Authors).
 </p>
 </div>
 <p>Finally, we can calculate the third red-edge based vegetation index using bands B07 and B06.</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Calculate NDRE3 index using bands B07 and B06</span></span>
+<code class="sourceCode R"><span><span class="co"># Calculate NDRE3 index using bands B07 and B06 </span></span>
 <span><span class="va">reg_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_apply.html">sits_apply</a></span><span class="op">(</span><span class="va">reg_cube</span>,</span>
-<span>  NDRE3 <span class="op">=</span> <span class="op">(</span><span class="va">B07</span> <span class="op">-</span> <span class="va">B06</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">B07</span> <span class="op">+</span> <span class="va">B06</span><span class="op">)</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span></span>
-<span><span class="op">)</span></span>
+<span>    NDRE3 <span class="op">=</span> <span class="op">(</span><span class="va">B07</span> <span class="op">-</span> <span class="va">B06</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="va">B07</span> <span class="op">+</span> <span class="va">B06</span><span class="op">)</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
 <span><span class="co"># plot NDRE3 index</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NDRE3"</span>, palette <span class="op">=</span> <span class="st">"RdYlGn"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-41"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-41-1.png" alt="NDVI using bands B07 and B06 of Sentinel-2." width="90%"><p class="caption">
-Figure 26: NDVI using bands B07 and B06 of Sentinel-2.
+<span style="display:block;" id="fig:unnamed-chunk-39"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-39-1.png" alt="NDVI using bands B07 and B06 of Sentinel-2 (Source: Authors)." width="90%"><p class="caption">
+Figure 26: NDVI using bands B07 and B06 of Sentinel-2 (Source: Authors).
 </p>
 </div>
 </div>
@@ -223,17 +214,16 @@ Figure 26: NDVI using bands B07 and B06 of Sentinel-2.
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate the NBR index</span></span>
 <span><span class="va">reg_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_apply.html">sits_apply</a></span><span class="op">(</span><span class="va">reg_cube</span>,</span>
-<span>  NBR <span class="op">=</span> <span class="op">(</span><span class="va">B12</span> <span class="op">-</span> <span class="va">B8A</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">B12</span> <span class="op">+</span> <span class="va">B8A</span><span class="op">)</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span></span>
-<span><span class="op">)</span></span>
+<span>    NBR <span class="op">=</span> <span class="op">(</span><span class="va">B12</span> <span class="op">-</span> <span class="va">B8A</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="va">B12</span> <span class="op">+</span> <span class="va">B8A</span><span class="op">)</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
 <span><span class="co"># Plot the NBR for the first date"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"NBR"</span>, palette <span class="op">=</span> <span class="st">"Reds"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-42"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-42-1.png" alt="NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP." width="100%"><p class="caption">
-Figure 27: NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP.
+<span style="display:block;" id="fig:unnamed-chunk-40"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-40-1.png" alt="NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP (Source: Authors)." width="100%"><p class="caption">
+Figure 27: NBR ratio for a regular data cube built using Sentinel-2 tiles and 20LKP and 20LLP (Source: Authors).
 </p>
 </div>
 </div>
@@ -243,7 +233,7 @@ Figure 27: NBR ratio for a regular data cube built using Sentinel-2 tiles and 20
 <p>Mixture models are statistical models that represent the pixel values in a remote sensing image as a combination of multiple pure land cover types. This is due to the presence of different land cover types, atmospheric conditions, and sensor characteristics, which can cause the pixel values to mix different spectral responses. Many pixels in images of medium-resolution satellites such as Landsat or Sentinel-2 contain a mixture of spectral responses of different land cover types inside a resolution element <span class="citation"><a href="references.html#ref-Shimabukuro2019" role="doc-biblioref">[10]</a></span>. Assuming that the set of land cover classes (called endmembers) is known, spectral mixture analysis derives a set of new bands containing each endmember proportion. The most used method for spectral mixture analysis is the linear model <span class="citation"><a href="references.html#ref-Shimabukuro2019" role="doc-biblioref">[10]</a></span>.</p>
 <p>The main idea behind the linear mixture model is that the observed pixel spectrum can be expressed as a linear combination of the spectra of the pure endmembers, weighted by their respective proportions (or abundances) within the pixel. Mathematically, the model can be represented as:</p>
 <p><span class="math display">\[
-R_i = \sum_{j=1}^N a_{i,j}*x_j + \epsilon_i, i \in {1,...M}, M &gt; N
+R_i = \sum_{j=1}^N a_{i,j}*x_j + \epsilon_i, i \in {1,...M}, M &gt; N,
 \]</span>
 where <span class="math inline">\(i=1,..M\)</span> is the set of spectral bands and <span class="math inline">\(j=1,..N\)</span> is the set of land classes. For each pixel, <span class="math inline">\(R_i\)</span> is the reflectance in the i-th spectral band, <span class="math inline">\(x_j\)</span> is the reflectance value due to the j-th endmember, and <span class="math inline">\(a_{i,j}\)</span> is the proportion between the j-th endmember and the i-th spectral band. The model includes an error term <span class="math inline">\(e_i\)</span>. The linear model can be interpreted as a system of equations where the spectral response of the pixel is a linear combination of the spectral response of the endmembers <span class="citation"><a href="references.html#ref-Shimabukuro2019" role="doc-biblioref">[10]</a></span>. To solve this system of equations and obtain the proportion of each endmember, <code>sits</code> uses a non-negative least squares (NNLS) regression algorithm, which is available in the R package <code>RStoolbox</code> and was developed by Jakob Schwalb-Willmann, based on the sequential coordinate-wise algorithm (SCA) proposed on Franc et al. <span class="citation"><a href="references.html#ref-Franc2005" role="doc-biblioref">[11]</a></span>.</p>
 <p>To run the mixture model in <code>sits</code>, it is necessary to inform the values of pixels which represent spectral responses of a unique class. These are the so-called “pure” pixels. These pixels should be chosen carefully and based on expert knowledge of the area. The quality of the resulting endmember images depends on the quality of the pure pixels. Since <code>sits</code> supports multiple endmember spectral mixture analysis <span class="citation"><a href="references.html#ref-Roberts1998" role="doc-biblioref">[12]</a></span>, users can specify more than one pure pixel per endmember to account for natural variability.</p>
@@ -251,43 +241,41 @@ where <span class="math inline">\(i=1,..M\)</span> is the set of spectral bands 
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define the endmembers for three classes and six bands</span></span>
 <span><span class="va">em</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html">tribble</a></span><span class="op">(</span></span>
-<span>  <span class="op">~</span><span class="va">class</span>,   <span class="op">~</span><span class="va">B02</span>, <span class="op">~</span><span class="va">B03</span>, <span class="op">~</span><span class="va">B04</span>, <span class="op">~</span><span class="va">B8A</span>, <span class="op">~</span><span class="va">B11</span>, <span class="op">~</span><span class="va">B12</span>,</span>
-<span>  <span class="st">"forest"</span>,  <span class="fl">200</span>,  <span class="fl">352</span>,  <span class="fl">189</span>, <span class="fl">2800</span>, <span class="fl">1340</span>,  <span class="fl">546</span>,</span>
-<span>  <span class="st">"soil"</span>,    <span class="fl">400</span>,  <span class="fl">650</span>,  <span class="fl">700</span>, <span class="fl">3600</span>, <span class="fl">3500</span>, <span class="fl">1800</span>,</span>
-<span>  <span class="st">"water"</span>,   <span class="fl">700</span>, <span class="fl">1100</span>, <span class="fl">1400</span>,  <span class="fl">850</span>,   <span class="fl">40</span>,   <span class="fl">26</span></span>
-<span><span class="op">)</span></span>
+<span>    <span class="op">~</span><span class="va">class</span>,   <span class="op">~</span><span class="va">B02</span>, <span class="op">~</span><span class="va">B03</span>, <span class="op">~</span><span class="va">B04</span>, <span class="op">~</span><span class="va">B8A</span>, <span class="op">~</span><span class="va">B11</span>, <span class="op">~</span><span class="va">B12</span>,</span>
+<span>    <span class="st">"forest"</span>,  <span class="fl">200</span>,  <span class="fl">352</span>,  <span class="fl">189</span>, <span class="fl">2800</span>, <span class="fl">1340</span>,  <span class="fl">546</span>,</span>
+<span>    <span class="st">"soil"</span>,    <span class="fl">400</span>,  <span class="fl">650</span>,  <span class="fl">700</span>, <span class="fl">3600</span>, <span class="fl">3500</span>, <span class="fl">1800</span>,</span>
+<span>    <span class="st">"water"</span>,   <span class="fl">700</span>, <span class="fl">1100</span>, <span class="fl">1400</span>,  <span class="fl">850</span>,   <span class="fl">40</span>,   <span class="fl">26</span><span class="op">)</span></span>
 <span><span class="co"># Generate the mixture model</span></span>
 <span><span class="va">reg_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sits/man/sits_mixture_model.html">sits_mixture_model</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">reg_cube</span>,</span>
-<span>  endmembers <span class="op">=</span> <span class="va">em</span>,</span>
-<span>  multicores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  memsize <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span></span>
-<span><span class="op">)</span></span>
+<span>    data <span class="op">=</span> <span class="va">reg_cube</span>,</span>
+<span>    endmembers <span class="op">=</span> <span class="va">em</span>,</span>
+<span>    multicores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    memsize <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>    output_dir <span class="op">=</span> <span class="st">"./tempdir/chp5"</span><span class="op">)</span></span>
 <span><span class="co"># Plot the FOREST for the first date using the Greens palette</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"FOREST"</span>, palette <span class="op">=</span> <span class="st">"Greens"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-43"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-43-1.png" alt="Percentage of forest per pixel estimated by mixture model." width="100%"><p class="caption">
-Figure 28: Percentage of forest per pixel estimated by mixture model.
+<span style="display:block;" id="fig:unnamed-chunk-41"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-41-1.png" alt="Percentage of forest per pixel estimated by mixture model (Source: Authors)." width="100%"><p class="caption">
+Figure 28: Percentage of forest per pixel estimated by mixture model (Source: Authors).
 </p>
 </div>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the water endmember for the first date using the Blues palette</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"WATER"</span>, palette <span class="op">=</span> <span class="st">"Blues"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-44"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-44-1.png" alt="Percentage of water per pixel estimated by mixture model." width="100%"><p class="caption">
-Figure 29: Percentage of water per pixel estimated by mixture model.
+<span style="display:block;" id="fig:unnamed-chunk-42"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-42-1.png" alt="Percentage of water per pixel estimated by mixture model (Source: Authors)." width="100%"><p class="caption">
+Figure 29: Percentage of water per pixel estimated by mixture model (Source: Authors).
 </p>
 </div>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Plot the SOIL endmember for the first date using the orange red (OrRd) palette</span></span>
+<code class="sourceCode R"><span><span class="co"># Plot the SOIL endmember for the first date using the orange red (OrRd) palette </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reg_cube</span>, band <span class="op">=</span> <span class="st">"SOIL"</span>, palette <span class="op">=</span> <span class="st">"OrRd"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-45"></span>
-<img src="sitsbook_files/figure-html/unnamed-chunk-45-1.png" alt="Percentage of soil per pixel estimated by mixture model." width="100%"><p class="caption">
-Figure 30: Percentage of soil per pixel estimated by mixture model.
+<span style="display:block;" id="fig:unnamed-chunk-43"></span>
+<img src="sitsbook_files/figure-html/unnamed-chunk-43-1.png" alt="Percentage of soil per pixel estimated by mixture model (Source: Authors)." width="100%"><p class="caption">
+Figure 30: Percentage of soil per pixel estimated by mixture model (Source: Authors).
 </p>
 </div>
 <p>Linear mixture models (LMM) improve the interpretation of remote sensing images by accounting for mixed pixels and providing a more accurate representation of the Earth’s surface. Some of their key benefits include:</p>
@@ -328,7 +316,7 @@ Figure 30: Percentage of soil per pixel estimated by mixture model.
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-04.</p>
+    <p>"<strong><strong>sits</strong>: Satellite Image Time Series Analysis on Earth Observation Data Cubes</strong>" was written by Gilberto Camara, Rolf Simoes, Felipe Souza, Charlotte Pelletier, Alber Sanchez, Pedro R. Andrade, Karine Ferreira, Gilberto Queiroz. It was last built on 2023-05-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
