@@ -1,0 +1,89 @@
+# Object-based time series image analysis{-}
+
+```{r, include = FALSE}
+source("common.R")
+```
+
+```{r, tidy = "styler"}
+library(supercells)    # superpixels for spatial data
+library(terra)         # spatial raster data reading and handling
+library(sf)            # spatial vector data reading and handling
+
+# =====
+data_dir <- "~/sitsbook/tempdir/chp5"
+
+s2_cube <- sits_cube(
+    source = "AWS",
+    collection = "SENTINEL-S2-L2A-COGS",
+    bands = c(
+        "B02", "B03", "B04",
+        "B05", "B06", "B07",
+        "B08", "B8A", "B11",
+        "B12"
+    ),
+    data_dir = data_dir,
+    parse_info = c("X1", "X2", "tile", "band", "date")
+)
+
+cube <- s2_cube
+date <- as.Date("2018-07-03")
+
+segments2 <- sits_supercells(
+    cube = cube,
+    tiles = "20LKP",
+    bands = c("B03", "B04", "B08", "B8A", "B11"),
+    date = date,
+    step = 20,
+    multicores = 4
+)
+
+plot(s2_cube,
+     tile = "20LKP",
+     red = "B11",
+     green = "B8A",
+     blue = "B03",
+     segments = segments2,
+     seg_color = "white"
+)
+segs <- sits_get_data(
+    cube = s2_cube, 
+    samples = segments2, 
+    bands = c("B02", "B04"),
+    multicores = 1)
+# Files are available in a local directory 
+data_dir <- system.file("extdata/Rondonia-20LKP/", package = "sitsdata")
+# Read data cube
+ro_cube_20LKP <- sits_cube(
+    source = "MPC",
+    collection = "SENTINEL-2-L2A",
+    data_dir = data_dir,
+    parse_info = c('X1', "tile", "band", "date"))
+
+dates <- sits_timeline(ro_cube_20LKP)
+plot(ro_cube_20LKP, 
+     red = "B11",
+     green = "B8A",
+     blue = "B02",
+     date = dates[[2]]
+)
+
+segments <- sits_supercells(
+    ro_cube_20LKP,
+    tiles = "20LKP",
+    bands = c("B02", "B8A", "B11"),
+    date = dates[[2]],
+    step = 50,
+    multicores = 4
+)
+
+plot(ro_cube_20LKP, 
+     red = "B11",
+     green = "B8A",
+     blue = "B02",
+     date = dates[[2]],
+     segments = segments
+)
+
+segs <- sits_get_data(ro_cube_20LKP, segments, multicores = 3)
+
+```

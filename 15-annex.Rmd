@@ -1,27 +1,11 @@
 # Technical Annex {-}
 
-<!--
-PEDRO: Me parece que este capitulo e o anterior (Visualising and exporting data) poderiam ser um unico capitulo. Inclusive, o capitulo anterior comeca com "This Chapter is intended for programmers and experts  who would like to extend the capabilities of `sits` by including [...] **machine learning algorithms**, [...]"). O capitulo anterior tambem tem um numero de palavras consideravelmente menor do que os demais capitulos (so' e' maior do que o 01-setup.Rmd):
-
-   454 01-setup.Rmd
-   846 02-acknowledgements.Rmd
-  2652 03-intro.Rmd
-  3260 04-datacubes.Rmd
-  2126 05-cubeoperations.Rmd
-  2054 06-timeseries.Rmd
-  4129 07-clustering.Rmd
-  6892 08-machinelearning.Rmd
-  2653 09-rasterclassification.Rmd
-  3044 10-bayesiansmoothing.Rmd
-  2673 11-validation.Rmd
-  2513 12-uncertainty.Rmd
-  1188 13-ensembleprediction.Rmd
-=> 491 14-visualization.Rmd
-  1869 15-annex.Rmd
-     2 16-references.Rmd
-   574 index.Rmd
- 37420 total
--->
+```{r, include = FALSE}
+source("common.R")
+sits:::.conf_set_options("tmap_legend_text_size" = 0.7)
+sits:::.conf_set_options("tmap_legend_title_size" = 0.7)
+sits:::.conf_set_options("tmap_max_cells" = 1e+09) 
+```
 
 This Chapter contains technical details on the algorithms available in `sits`. It is intended to support those that want to understand how the package works and also want to contribute to its development.
 
@@ -40,10 +24,9 @@ sits_train <- function(samples, ml_method){
 }
 ```
 
-<!--
-PEDRO: behavior ou behaviour (abaixo)? O livro tem varias ocorrencias das duas palavras
--->
-In R terms, `sits_train()` is a function factory, or a function that makes functions. Such behaviour is possible because functions are first-class objects in R. In other words, they can be bound to a name in the same way that variables are. A second propriety of R is that functions capture (enclose) the environment in which they are created. In other words, when a function is returned as a result of another function, the internal variables used to create this function are available inside its environment. In programming language, this technique is called "closure". 
+In R terms, `sits_train()` is a function factory, or a function that makes functions. Such behavior is possible because functions are first-class objects in R. In other words, they can be bound to a name in the same way that variables are. A second propriety of R is that functions capture (enclose) the environment in which they are created. In other words, when a function is returned as a result of another function, the internal variables used to create it are available inside its environment. In programming language, this technique is called "closure". 
+
+The following definition from Wikipedia captures the purpose of clousures: *"Operationally, a closure is a record storing a function together with an environment. The environment is a mapping associating each free variable of the function with the value or reference to which the name was bound when the closure was created. A closure allows the function to access those captured variables through the closure's copies of their values or references, even when the function is invoked outside their scope."*
 
 In `sits`, the properties of closures are used as a basis for making training and classification independent. The return of `sits_train()` is a model that contains information on how to classify input values, as well as information on the samples used to train the model. 
 
@@ -270,3 +253,70 @@ plot(sinop_map, title = "Sinop Classification Map")
 ```
 
 The above example shows how it is possible to extend `sits` with new machine learning algorithms.
+
+## How colors work in sits{-}
+
+In examples provided in the book, the color legend is taken from a predefined color table provided by `sits`. This default color table is displayed using `sits_colors_show()`. This color definition file assigns colors to 99 class names, including the IPCC and IGBP land classes. 
+
+```{r, tidy = "styler", out.width = "100%", out.height = "100%", echo = FALSE, fig.align="center", fig.cap="Default colors used in the sits package (Source: Authors)."}
+# Display default `sits` colors
+sits_colors_show()
+```
+
+The color table can be extended or adjusted by accessing and modifying the default color table, which is retrieved using `sits_colors()`.
+
+```{r}
+# Retrieve the color table
+color_tb <- sits_colors()
+# Show the color table
+color_tb
+```
+
+The default color table can be redefined using `sits_colors_set()`. As an example of a user-defined color table, consider a definition that covers level 1 of the Anderson Classification System used in the US National Land Cover Data, obtained by defining a new color table, as shown below. The colors can be defined by HEX values or by names accepted as R color codes.
+```{r, tidy = "styler", out.width = "80%", out.height = "80%", fig.align="center", fig.cap="Example of Anderson Land Classification Scheme use in sits (Source: Authors)."}
+# Define a color table based on the Anderson Land Classification System
+us_nlcd <- tibble::tibble(name = character(), color = character())
+us_nlcd <- us_nlcd %>% 
+  tibble::add_row(name = "Urban Built Up", color =  "#85929E") %>% 
+  tibble::add_row(name = "Agricultural Land", color = "#F0B27A") %>% 
+  tibble::add_row(name = "Rangeland", color = "#F1C40F") %>% 
+  tibble::add_row(name = "Forest Land", color = "#27AE60") %>% 
+  tibble::add_row(name = "Water", color = "#2980B9") %>% 
+  tibble::add_row(name = "Wetland", color = "#D4E6F1") %>% 
+  tibble::add_row(name = "Barren Land", color = "#FDEBD0") %>% 
+  tibble::add_row(name = "Tundra", color = "#EBDEF0") %>% 
+  tibble::add_row(name = "Snow and Ice", color = "#F7F9F9")
+# Load the color table into `sits`
+sits_colors_set(us_nlcd)
+# Show the new color table used by sits
+sits_colors_show()
+```
+
+The original default `sits` color table can be restored using `sits_colors_reset()`. 
+
+```{r, eval = TRUE, echo = FALSE, warning = FALSE, message = FALSE} 
+# Reset the color table
+sits_colors_reset()
+```
+
+As an alternative, a legend can be used directly as a parameter to `plot()`. Please see the example provided in Section "Map Reclassification" in Chapter [Image classification in data cubes](https://e-sensing.github.io/sitsbook/image-classification-in-data-cubes.html). 
+
+## Exporting data to JSON{-}
+
+Both the data cube and the time series tibble can be exported to exchange formats such as JSON.
+
+```{r, tidy = "styler", eval = FALSE}
+library(jsonlite)
+# Export the data cube to JSON
+jsonlite::write_json(
+  x = s2_20LKP_cube_MPC,
+  path = "./data_cube.json",
+  pretty = TRUE)
+
+# Export the time series to JSON
+jsonlite::write_json(
+  x = samples_prodes_4classes,
+  path = "./time_series.json",
+  pretty = TRUE)
+```
+
